@@ -24,7 +24,8 @@ import { DOCS } from '../docs';
           </ul>
           <div fzTabPanel value="preview">
             <ng-template ngTabContent>
-              <div class="flex min-h-48 items-center justify-center rounded-md border p-6 sm:p-10">
+              <!-- The demo host gets the full width and centers its content, so w-full demos (accordion, card) don't shrink to their text. -->
+              <div class="flex min-h-48 items-center justify-center rounded-md border p-6 sm:p-10 [&>*]:flex [&>*]:w-full [&>*]:justify-center">
                 @if (files.hasValue()) {
                   <ng-container *ngComponentOutlet="files.value()[0]" />
                 } @else if (files.error()) {
