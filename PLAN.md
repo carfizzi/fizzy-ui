@@ -1,6 +1,6 @@
 # fizzy-ui: component plan
 
-Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry.json`, is shown in the playground, and has its own test in `registry/ui/<name>.spec.ts`.
+Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry.json`, has a docs page (`src/app/demos/<name>.ts` + an entry in `src/app/docs.ts`), and has its own test in `registry/ui/<name>.spec.ts`.
 
 ## Done
 
@@ -57,16 +57,16 @@ Decision: **same repo**, by turning the playground (`src/`) into the docs app ra
 - shadcn/ui does the same: its docs site lives in the same monorepo as the registry.
 Move it to its own repo only if it later needs its own release cycle or heavy dependencies (search, MDX pipeline).
 
-- [ ] Routing: one page per component (`/components/<name>`), plus Introduction, Installation (`init`, `add`), Theming
-- [ ] Component page: live demo(s), `npx fizzy-ui add <name>` command, usage snippet, keyboard table, accessibility notes
-- [ ] "View source": show the registry file as text (esbuild `loader: 'text'` import attribute), so it is always the real file
-- [ ] Copy-to-clipboard for commands and code, light/dark toggle, sidebar navigation
-- [ ] Keep `app.a11y.spec.ts` green on every page (one axe run per route)
+- [x] Routing: one page per component (`/components/<name>`, data in `src/app/docs.ts`), plus Introduction, Installation (`init`, `add`), Theming
+- [x] Component page: live demo, `npx fizzy-ui add <name>` command, usage snippet (the demo file itself, imports rewritten to `./ui/`), keyboard table, accessibility notes
+- [x] "View source": show the registry file as text (esbuild `loader: 'text'` import attribute), so it is always the real file
+- [x] Copy-to-clipboard for commands and code, light/dark toggle (remembered, no flash), sidebar navigation (a left sheet on mobile), skip link
+- [x] Keep `app.a11y.spec.ts` green on every page (one axe run per route, plus opened popups; a test fails if a registry item has no page)
 - [ ] Deploy: GitHub Pages needs a public repo (or a paid plan for private), otherwise Cloudflare Pages / Netlify / Vercel. Decide when the repo goes public
 
 ## Cross-cutting
 
 - [x] Split the test: one spec per component in `registry/ui/<name>.spec.ts` (the playground spec is gone)
-- [x] Automated accessibility check with axe-core on every playground example (`src/app/app.a11y.spec.ts`, initial state + opened panels; `color-contrast` off in jsdom)
+- [x] Automated accessibility check with axe-core on every docs page and example (`src/app/app.a11y.spec.ts`, initial state + opened panels; `color-contrast` off in jsdom)
 - [ ] CLI tests: `init` and `add` on a fresh app, unknown names rejected, existing files not overwritten (checked by hand so far)
 - [ ] Publish the CLI to npm (check that the `fizzy-ui` name is free first)

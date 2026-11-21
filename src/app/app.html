@@ -1,316 +1,44 @@
-<main class="mx-auto flex max-w-2xl flex-col gap-10 p-6">
-  <header class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold">fizzy-ui</h1>
-    <button fzButton variant="outline" size="sm" (click)="toggleDark()">Toggle dark</button>
-  </header>
+<a href="#main" class="sr-only z-50 rounded-md bg-background px-3 py-2 focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:ring-2 focus:ring-ring">Skip to content</a>
 
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Button</h2>
-    <div class="flex flex-wrap gap-2">
-      <button fzButton>Default</button>
-      <button fzButton variant="secondary">Secondary</button>
-      <button fzButton variant="outline">Outline</button>
-      <button fzButton variant="ghost">Ghost</button>
-      <button fzButton variant="destructive">Destructive</button>
-      <button fzButton disabled>Disabled</button>
-    </div>
-  </section>
+<header class="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
+  <div class="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
+    <button fzButton variant="ghost" size="sm" class="md:hidden" (click)="mobileNav.open()" aria-label="Open navigation">
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+    </button>
+    <a routerLink="/" class="font-semibold tracking-tight">fizzy-ui</a>
+    <button fzButton variant="ghost" size="sm" class="ml-auto aria-pressed:bg-accent" [attr.aria-pressed]="dark()" (click)="toggleDark()">Dark mode</button>
+  </div>
+</header>
 
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Tabs</h2>
-    <div fzTabs>
-      <ul fzTabList [(selectedTab)]="tab">
-        <li fzTab value="account">Account</li>
-        <li fzTab value="password">Password</li>
-        <li fzTab value="billing" disabled>Billing</li>
-      </ul>
-      <div fzTabPanel value="account"><ng-template ngTabContent>Make changes to your account here.</ng-template></div>
-      <div fzTabPanel value="password"><ng-template ngTabContent>Change your password here.</ng-template></div>
-      <div fzTabPanel value="billing"><ng-template ngTabContent>Billing.</ng-template></div>
-    </div>
-    <p class="text-sm text-muted-foreground">selected: {{ tab() }}</p>
-  </section>
+<div class="mx-auto flex max-w-6xl">
+  <nav aria-label="Documentation" class="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r p-4 md:block">
+    <ng-container *ngTemplateOutlet="links" />
+  </nav>
+  <main id="main" tabindex="-1" class="min-w-0 flex-1 px-4 py-8 outline-none md:px-10">
+    <router-outlet />
+  </main>
+</div>
 
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Menu</h2>
-    <div>
-      <button fzButton variant="outline" [fzMenuTrigger]="fileMenu.menu">File</button>
-      <div fzMenu #fileMenu="fzMenu" (itemSelected)="action.set($event)">
-        <div fzMenuItem value="new">New file</div>
-        <div fzMenuItem value="open">Open…</div>
-        <div fzMenuItem value="share" [submenu]="shareMenu.menu">Share</div>
-        <div fzMenuSeparator></div>
-        <div fzMenuItem value="delete" [disabled]="true">Delete</div>
-      </div>
-      <div fzMenu #shareMenu="fzMenu" (itemSelected)="action.set($event)">
-        <div fzMenuItem value="email">Email</div>
-        <div fzMenuItem value="link">Copy link</div>
-      </div>
-    </div>
-    <p class="text-sm text-muted-foreground">last action: {{ action() ?? '—' }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Select</h2>
-    <span id="framework-label" class="text-sm font-medium">Framework</span>
-    <fz-select [(value)]="framework" placeholder="Pick a framework" aria-labelledby="framework-label" class="max-w-56">
-      <fz-select-item value="angular" label="Angular" />
-      <fz-select-item value="react" label="React" />
-      <fz-select-item value="vue" label="Vue" />
-      <fz-select-item value="ember" label="Ember (disabled)" disabled />
-      <fz-select-item value="svelte" label="Svelte" />
-    </fz-select>
-    <p class="text-sm text-muted-foreground">value: {{ framework() ?? '—' }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Multiselect</h2>
-    <span id="toppings-label" class="text-sm font-medium">Toppings</span>
-    <fz-multiselect [(value)]="toppings" placeholder="Pick toppings" aria-labelledby="toppings-label" class="max-w-56">
-      <fz-select-item value="cheese" label="Cheese" />
-      <fz-select-item value="mushrooms" label="Mushrooms" />
-      <fz-select-item value="olives" label="Olives" />
-      <fz-select-item value="pineapple" label="Pineapple (sold out)" disabled />
-      <fz-select-item value="basil" label="Basil" />
-    </fz-multiselect>
-    <p class="text-sm text-muted-foreground">value: {{ toppings().join(', ') || '—' }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Combobox (autocomplete)</h2>
-    <label fzLabel for="country">Country</label>
-    <input id="country" fzCombobox [options]="countries" [(value)]="country" placeholder="Type a country" class="max-w-56" />
-    <p class="text-sm text-muted-foreground">value: {{ country() || '—' }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Toolbar</h2>
-    <div fzToolbar aria-label="Text formatting">
-      <button fzToolbarItem [(pressed)]="bold" aria-label="Bold"><b>B</b></button>
-      <button fzToolbarItem [(pressed)]="italic" aria-label="Italic"><i>I</i></button>
-      <div fzSeparator orientation="vertical" class="mx-1 h-5!"></div>
-      <div fzToolbarGroup [(value)]="align" aria-label="Alignment">
-        <button fzToolbarItem value="left">Left</button>
-        <button fzToolbarItem value="center">Center</button>
-        <button fzToolbarItem value="right">Right</button>
-      </div>
-      <div fzSeparator orientation="vertical" class="mx-1 h-5!"></div>
-      <button fzToolbarItem [disabled]="true">Share</button>
-    </div>
-    <p class="text-sm text-muted-foreground">bold: {{ bold() }}, italic: {{ italic() }}, align: {{ align() }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Tree</h2>
-    <fz-tree [nodes]="files" [(value)]="file" aria-label="Project files" class="max-w-64" />
-    <p class="text-sm text-muted-foreground">value: {{ file().join(', ') || '—' }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Grid (data table)</h2>
-    <div class="rounded-md border">
-      <table fzGrid aria-label="Team" [enableSelection]="true" selectionMode="explicit">
-        <tr fzGridRow>
-          <th fzGridCell role="columnheader">Name</th>
-          <th fzGridCell role="columnheader">Role</th>
-          <th fzGridCell role="columnheader">City (editable)</th>
-        </tr>
-        @for (person of people(); track person.name) {
-          <tr fzGridRow class="last:border-b-0">
-            <td fzGridCell>{{ person.name }}</td>
-            <td fzGridCell [disabled]="person.role === 'Retired'">{{ person.role }}</td>
-            <td fzGridCell>
-              <input
-                fzGridCellInput
-                widgetType="editable"
-                [attr.aria-label]="person.name + ' city'"
-                [value]="person.city"
-                (change)="setCity(person.name, $any($event.target).value)"
-              />
-            </td>
-          </tr>
-        }
-      </table>
-    </div>
-    <p class="text-sm text-muted-foreground">cities: {{ cities() }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Checkbox, switch, radio group, slider</h2>
-    <div class="flex flex-col gap-3 text-sm">
-      <label class="flex items-center gap-2"><input type="checkbox" fzCheckbox [checked]="terms()" (change)="terms.set($any($event.target).checked)" /> Accept terms</label>
-      <label class="flex items-center gap-2"><input type="checkbox" fzCheckbox [indeterminate]="true" /> Select all (mixed)</label>
-      <label class="flex items-center gap-2"><input type="checkbox" fzCheckbox disabled /> Disabled</label>
-      <label class="flex items-center gap-2"><input type="checkbox" fzSwitch [checked]="airplane()" (change)="airplane.set($any($event.target).checked)" /> Airplane mode</label>
-      <div fzRadioGroup aria-label="Plan">
-        @for (p of plans; track p) {
-          <label class="flex items-center gap-2"><input type="radio" fzRadio name="plan" [value]="p" [checked]="plan() === p" (change)="plan.set(p)" /> {{ p }}</label>
-        }
-      </div>
-      <label for="volume">Volume: {{ volume() }}</label>
-      <input id="volume" type="range" fzSlider min="0" max="100" [value]="volume()" (input)="volume.set(+$any($event.target).value)" class="max-w-64" />
-    </div>
-    <p class="text-sm text-muted-foreground">terms: {{ terms() }}, airplane: {{ airplane() }}, plan: {{ plan() }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Popover, tooltip, dialog, sheet</h2>
-    <div class="flex flex-wrap gap-2">
-      <button fzButton variant="outline" [fzPopoverTrigger]="pop">Dimensions</button>
-      <div fzPopover #pop="fzPopover" aria-label="Dimensions" class="flex flex-col gap-3">
-        <p class="font-medium">Dimensions</p>
-        <label fzLabel for="pop-width">Width</label>
-        <input fzInput id="pop-width" value="100%" />
-        <button fzButton size="sm" (click)="pop.close()">Apply</button>
-      </div>
-      <button fzButton variant="outline" fzTooltip="Copies the link to your clipboard">Hover me</button>
-      <button fzButton variant="outline" (click)="dlg.open()">Open dialog</button>
-      <button fzButton variant="outline" (click)="sheet.open()">Open sheet</button>
-    </div>
-    <ng-template fzDialog #dlg="fzDialog">
-      <h2 fzDialogTitle>Edit profile</h2>
-      <p class="text-sm text-muted-foreground">Make changes to your profile here.</p>
-      <label fzLabel for="dlg-name">Name</label>
-      <input fzInput id="dlg-name" value="Ada Lovelace" />
-      <div class="flex justify-end gap-2">
-        <button fzButton variant="outline" fzDialogClose>Cancel</button>
-        <button fzButton fzDialogClose>Save</button>
-      </div>
-    </ng-template>
-    <ng-template fzDialog side="right" #sheet="fzDialog">
-      <h2 fzDialogTitle>Settings</h2>
-      <p class="text-sm text-muted-foreground">A sheet is a dialog docked to an edge.</p>
-      <label class="flex items-center gap-2 text-sm"><input type="checkbox" fzSwitch /> Notifications</label>
-      <button fzButton variant="outline" fzDialogClose class="mt-auto">Close</button>
-    </ng-template>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Menubar</h2>
-    <div fzMenubar aria-label="Editor" (itemSelected)="action.set($event)">
-      <div fzMenuItem value="file" [submenu]="mbFile.menu">File</div>
-      <div fzMenuItem value="edit" [submenu]="mbEdit.menu">Edit</div>
-      <div fzMenuItem value="view" [submenu]="mbView.menu">View</div>
-    </div>
-    <div fzMenu #mbFile="fzMenu">
-      <div fzMenuItem value="new-tab">New tab</div>
-      <div fzMenuItem value="new-window">New window</div>
-      <div fzMenuSeparator></div>
-      <div fzMenuItem value="print">Print…</div>
-    </div>
-    <div fzMenu #mbEdit="fzMenu">
-      <div fzMenuItem value="undo">Undo</div>
-      <div fzMenuItem value="redo" [disabled]="true">Redo</div>
-      <div fzMenuSeparator></div>
-      <div fzMenuItem value="find" [submenu]="mbFind.menu">Find</div>
-    </div>
-    <div fzMenu #mbFind="fzMenu">
-      <div fzMenuItem value="search-web">Search the web</div>
-      <div fzMenuItem value="find-next">Find next</div>
-    </div>
-    <div fzMenu #mbView="fzMenu">
-      <div fzMenuItem value="zoom-in">Zoom in</div>
-      <div fzMenuItem value="zoom-out">Zoom out</div>
-    </div>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Context menu</h2>
-    <div
-      [fzContextMenu]="ctxMenu"
-      tabindex="0"
-      class="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      Right click here (or focus and press the context-menu key)
-    </div>
-    <div fzMenu #ctxMenu="fzMenu" (itemSelected)="action.set($event)">
-      <div fzMenuItem value="back">Back</div>
-      <div fzMenuItem value="reload">Reload</div>
-      <div fzMenuSeparator></div>
-      <div fzMenuItem value="inspect">Inspect</div>
-    </div>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Accordion</h2>
-    <div fzAccordion>
-      <fz-accordion-item title="Is it accessible?">Yes. Behavior and ARIA come from &#64;angular/aria.</fz-accordion-item>
-      <fz-accordion-item title="Is it styled?">Yes, with Tailwind and CSS variables you own.</fz-accordion-item>
-      <fz-accordion-item title="Disabled item" [disabled]="true">Hidden.</fz-accordion-item>
-    </div>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Listbox</h2>
-    <ul fzListbox multi selectionMode="explicit" [(value)]="fruits" aria-label="Fruits" class="w-56">
-      @for (f of ['apple', 'banana', 'cherry', 'durian']; track f) {
-        <li fzOption [value]="f" [label]="f">{{ f }}</li>
+<ng-template #links>
+  <div class="flex flex-col gap-6 text-sm">
+    <div class="flex flex-col gap-1">
+      <h2 class="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Getting started</h2>
+      @for (g of guides; track g.path) {
+        <a [routerLink]="g.path" routerLinkActive="bg-accent font-medium text-accent-foreground" ariaCurrentWhenActive="page" class="rounded-md px-2 py-1.5 hover:bg-accent/60">{{ g.title }}</a>
       }
-    </ul>
-    <p class="text-sm text-muted-foreground">selected: {{ fruits().join(', ') }}</p>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Card, input, textarea, label</h2>
-    <form fzCard class="max-w-sm">
-      <div fzCardHeader>
-        <h3 fzCardTitle>Contact</h3>
-        <p fzCardDescription>We reply within a day.</p>
-      </div>
-      <div fzCardContent class="flex flex-col gap-4">
-        <div class="flex flex-col gap-2">
-          <label fzLabel for="email">Email</label>
-          <input fzInput id="email" type="email" placeholder="you@example.com" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label fzLabel for="msg">Message</label>
-          <textarea fzTextarea id="msg" placeholder="Hi..."></textarea>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label fzLabel for="bad">Invalid</label>
-          <input fzInput id="bad" aria-invalid="true" value="not an email" />
-        </div>
-      </div>
-      <div fzCardFooter class="justify-end">
-        <button fzButton type="button" variant="outline">Cancel</button>
-        <button fzButton type="button">Send</button>
-      </div>
-    </form>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Badge</h2>
-    <div class="flex flex-wrap gap-2">
-      <span fzBadge>Default</span>
-      <span fzBadge variant="secondary">Secondary</span>
-      <span fzBadge variant="outline">Outline</span>
-      <span fzBadge variant="destructive">Destructive</span>
     </div>
-  </section>
+    <div class="flex flex-col gap-1">
+      <h2 class="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Components</h2>
+      @for (d of docs; track d.name) {
+        <a [routerLink]="['/components', d.name]" routerLinkActive="bg-accent font-medium text-accent-foreground" ariaCurrentWhenActive="page" class="rounded-md px-2 py-1.5 hover:bg-accent/60">{{ d.title }}</a>
+      }
+    </div>
+  </div>
+</ng-template>
 
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Separator</h2>
-    <div fzSeparator></div>
-    <div class="flex h-5 items-center gap-4 text-sm">
-      <span>Docs</span>
-      <div fzSeparator orientation="vertical"></div>
-      <span>Source</span>
-    </div>
-  </section>
-
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-medium">Skeleton and avatar</h2>
-    <div class="flex items-center gap-4" role="status" aria-busy="true" aria-label="Loading profile">
-      <div fzSkeleton class="size-10 rounded-full"></div>
-      <div class="flex flex-col gap-2">
-        <div fzSkeleton class="h-4 w-40"></div>
-        <div fzSkeleton class="h-4 w-28"></div>
-      </div>
-    </div>
-    <div class="flex gap-2">
-      <fz-avatar src="https://github.com/angular.png" alt="Angular" fallback="NG" />
-      <fz-avatar src="/missing.png" alt="Broken image" fallback="BI" />
-      <fz-avatar alt="No image" fallback="NI" />
-    </div>
-  </section>
-</main>
+<ng-template fzDialog side="left" #mobileNav="fzDialog">
+  <h2 fzDialogTitle class="sr-only">Navigation</h2>
+  <nav aria-label="Documentation" class="-mx-2 overflow-y-auto">
+    <ng-container *ngTemplateOutlet="links" />
+  </nav>
+</ng-template>

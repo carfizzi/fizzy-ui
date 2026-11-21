@@ -32,12 +32,12 @@ Dark mode: add the `dark` class to `<html>`. Theme: edit the variables in `src/f
 
 - `registry/`: the source of truth. `registry.json` lists the components, `ui/*.ts` holds them, `theme/fizzy.css` holds the tokens.
 - `cli/`: the `fizzy-ui` CLI (no dependencies). `npm publish` from `cli/` bundles `registry/`.
-- `src/`: playground app that imports straight from `registry/`.
+- `src/`: the docs site; its demos import straight from `registry/`.
 
 ## Develop
 
 ```sh
-npm start      # playground at http://localhost:4200
+npm start      # docs site at http://localhost:4200
 npm test       # behavior tests
 node cli/index.mjs add tabs --registry ./registry   # try the CLI inside another project
 ```
@@ -46,4 +46,4 @@ node cli/index.mjs add tabs --registry ./registry   # try the CLI inside another
 
 1. Write `registry/ui/<name>.ts`. Compose the Angular Aria directive with `hostDirectives` and put Tailwind classes on `host`. Import only from `@angular/*`, since the file gets copied as-is.
 2. Register it in `registry/registry.json` with its `files` and `dependencies`.
-3. Show it in `src/app/app.html` and cover it in `src/app/app.spec.ts`.
+3. Add a demo in `src/app/demos/<name>.ts` and its entry in `src/app/docs.ts` (the a11y spec fails until you do), and a test in `registry/ui/<name>.spec.ts`.

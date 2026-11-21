@@ -1,45 +1,97 @@
+import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import axe from 'axe-core';
+import registry from '../../registry/registry.json';
 import { App } from './app';
+import { routes } from './app.routes';
+import { DOCS } from './docs';
 
-// Runs axe on every playground example. color-contrast is off: jsdom has no layout or computed colors.
-async function violations(root: HTMLElement) {
-  const { violations } = await axe.run(root, { rules: { 'color-contrast': { enabled: false } } });
+// Runs axe on every docs page and example. color-contrast is off: jsdom has no layout or computed colors.
+// region is off: pages and demos are tested outside the shell, which provides the landmarks (tested on its own).
+async function violations(root: Element) {
+  const { violations } = await axe.run(root, { rules: { 'color-contrast': { enabled: false }, region: { enabled: false } } });
   return violations.map((v) => `${v.id}: ${v.help}\n  ${v.nodes.map((n) => n.target.join(' ')).join('\n  ')}`);
 }
 
-describe('playground accessibility (axe)', () => {
-  it('has no violations in the initial state', async () => {
+async function page(url: string) {
+  const harness = await RouterTestingHarness.create(url);
+  await harness.fixture.whenStable(); // the demo and sources load through a resource
+  return harness.routeNativeElement!;
+}
+
+async function demo(name: string) {
+  const [Demo] = await DOCS.find((d) => d.name === name)!.load();
+  const fixture = TestBed.createComponent(Demo as Type<unknown>);
+  document.body.appendChild(fixture.nativeElement);
+  await fixture.whenStable();
+  const el: HTMLElement = fixture.nativeElement;
+  return { el, stable: () => fixture.whenStable() };
+}
+
+describe('docs', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter(routes, withComponentInputBinding())] }));
+  afterEach(() => (document.body.innerHTML = ''));
+
+  it('has one page per registry component, pointing at the file add copies', () => {
+    expect(DOCS.map((d) => d.name).sort()).toEqual(Object.keys(registry.items).sort());
+    const items: Record<string, { files: string[] }> = registry.items;
+    for (const d of DOCS) expect(items[d.name].files).toEqual([`ui/${d.file}`]);
+  });
+
+  it('shell (header, sidebar) has no violations', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     expect(await violations(fixture.nativeElement)).toEqual([]);
+    expect(fixture.nativeElement.querySelectorAll('nav a').length).toBe(DOCS.length + 3);
   });
 
-  it('has no violations with panels opened', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const el: HTMLElement = fixture.nativeElement;
-    el.querySelector<HTMLElement>('[ngAccordionTrigger]')!.click();
-    el.querySelectorAll<HTMLElement>('[fzTab]')[1].click();
-    el.querySelector<HTMLElement>('fz-select')!.click();
-    el.querySelector<HTMLElement>('fz-multiselect')!.click();
-    el.querySelector<HTMLElement>('input[fzCombobox]')!.click();
-    [...el.querySelectorAll<HTMLElement>('[role=treeitem]')].find((i) => i.textContent!.trim().startsWith('registry'))!.click();
-    await fixture.whenStable();
+  it.each(['/introduction', '/installation', '/theming'])('%s has no violations', async (url) => {
+    expect(await violations(await page(url))).toEqual([]);
+  });
+
+  it.each(DOCS.map((d) => d.name))('/components/%s renders its demo and source, no violations', async (name) => {
+    const el = await page(`/components/${name}`);
+    expect(el.querySelector('h1')!.textContent).toBe(DOCS.find((d) => d.name === name)!.title);
+    expect(el.querySelector('[role=tabpanel] .flex')!.children.length).toBeGreaterThan(0); // the demo, not "Loading…"
+    expect(el.textContent).toContain(`npx fizzy-ui add ${name}`);
+    expect(el.querySelector('details code')!.textContent).toContain('export const FZ_');
     expect(await violations(el)).toEqual([]);
   });
 
-  it('has no violations in an open popover and dialog (they render outside the app root)', async () => {
-    const fixture = TestBed.createComponent(App);
-    document.body.appendChild(fixture.nativeElement);
-    await fixture.whenStable();
-    const el: HTMLElement = fixture.nativeElement;
-    [...el.querySelectorAll<HTMLElement>('button')].find((b) => b.textContent!.trim() === 'Dimensions')!.click();
-    await fixture.whenStable();
-    expect(await violations(document.querySelector<HTMLElement>('[fzPopover]')!)).toEqual([]);
-    [...el.querySelectorAll<HTMLElement>('button')].find((b) => b.textContent!.trim() === 'Open dialog')!.click();
-    await fixture.whenStable();
-    expect(await violations(document.querySelector<HTMLElement>('.cdk-dialog-container')!)).toEqual([]);
-    document.body.innerHTML = '';
+  it('the code tab shows the demo as a user writes it', async () => {
+    const harness = await RouterTestingHarness.create('/components/tabs');
+    await harness.fixture.whenStable();
+    const el = harness.routeNativeElement!;
+    el.querySelectorAll<HTMLElement>('[fzTab]')[1].click();
+    await harness.fixture.whenStable();
+    const code = el.querySelector('[role=tabpanel]:not([inert]) code')!.textContent!;
+    expect(code).toContain("from './ui/tabs'");
+    expect(code).not.toContain('registry');
+  });
+
+  it('an unknown component says so', async () => {
+    expect((await page('/components/nope')).textContent).toContain('There is no component called “nope”');
+  });
+
+  // On document.body: popups live in the CDK overlay container, outside the demo.
+  it.each([
+    ['accordion', (el: HTMLElement) => el.querySelector<HTMLElement>('[ngAccordionTrigger]')!.click()],
+    ['tabs', (el: HTMLElement) => el.querySelectorAll<HTMLElement>('[fzTab]')[1].click()],
+    ['select', (el: HTMLElement) => el.querySelector<HTMLElement>('fz-select')!.click()],
+    ['multiselect', (el: HTMLElement) => el.querySelector<HTMLElement>('fz-multiselect')!.click()],
+    ['combobox', (el: HTMLElement) => el.querySelector<HTMLElement>('input[fzCombobox]')!.click()],
+    ['tree', (el: HTMLElement) => [...el.querySelectorAll<HTMLElement>('[role=treeitem]')].find((i) => i.textContent!.trim().startsWith('registry'))!.click()],
+    ['menu', (el: HTMLElement) => el.querySelector<HTMLElement>('button[aria-haspopup]')!.click()],
+    ['popover', (el: HTMLElement) => el.querySelector<HTMLElement>('button[aria-haspopup=dialog]')!.click()],
+    ['dialog', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
+    ['sheet', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
+  ] as const)('%s opened has no violations', async (name, open) => {
+    const { el, stable } = await demo(name);
+    open(el);
+    await stable();
+    if (name === 'dialog' || name === 'sheet') expect(document.querySelector('.cdk-dialog-container')).not.toBeNull();
+    expect(await violations(document.body)).toEqual([]);
   });
 });
