@@ -47,6 +47,6 @@ Test for each: variants and the expected classes are applied. Separator also che
 ## Cross-cutting
 
 - [x] Split the test: one spec per component in `registry/ui/<name>.spec.ts` (the playground spec is gone)
-- [ ] Automated accessibility check with axe-core on every playground example
+- [x] Automated accessibility check with axe-core on every playground example (`src/app/app.a11y.spec.ts`, initial state + opened panels; `color-contrast` off in jsdom)
 - [ ] CLI tests: `init` and `add` on a fresh app, unknown names rejected, existing files not overwritten (checked by hand so far)
 - [ ] Publish the CLI to npm (check that the `fizzy-ui` name is free first)

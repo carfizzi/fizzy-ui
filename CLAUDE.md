@@ -11,7 +11,7 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
   - `ui/*.ts` holds the components.
   - `theme/fizzy.css` holds the tokens, with `.dark` for dark mode.
 - `cli/index.mjs` is the `fizzy-ui` CLI (`init`, `add`, `list`). It has zero dependencies. `npm publish` from `cli/` bundles `registry/` through `prepack`.
-- `src/` is the playground app. It imports straight from `../../registry/ui/*`. Tests live next to each component in `registry/ui/<name>.spec.ts` (picked up through `angular.json` test `include` and `tsconfig.spec.json`; `prepack` strips them from the npm package).
+- `src/` is the playground app. It imports straight from `../../registry/ui/*`. Tests live next to each component in `registry/ui/<name>.spec.ts` (picked up through `angular.json` test `include` and `tsconfig.spec.json`; `prepack` strips them from the npm package). `src/app/app.a11y.spec.ts` runs axe-core on the whole playground, so a new example is covered automatically.
 
 ## Component conventions
 
