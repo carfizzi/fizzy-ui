@@ -17,6 +17,13 @@ import { FZ_COMBOBOX } from '../../registry/ui/combobox';
 import { FZ_TOOLBAR } from '../../registry/ui/toolbar';
 import { FZ_TREE, FzTreeNode } from '../../registry/ui/tree';
 import { FZ_GRID } from '../../registry/ui/grid';
+import { FZ_CHECKBOX } from '../../registry/ui/checkbox';
+import { FZ_SWITCH } from '../../registry/ui/switch';
+import { FZ_RADIO_GROUP } from '../../registry/ui/radio-group';
+import { FZ_SLIDER } from '../../registry/ui/slider';
+import { FZ_POPOVER } from '../../registry/ui/popover';
+import { FZ_TOOLTIP } from '../../registry/ui/tooltip';
+import { FZ_DIALOG } from '../../registry/ui/dialog';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +31,7 @@ import { FZ_GRID } from '../../registry/ui/grid';
     FZ_BUTTON, FZ_TABS, FZ_ACCORDION, FZ_LISTBOX,
     FZ_INPUT, FZ_TEXTAREA, FZ_LABEL, FZ_CARD, FZ_BADGE, FZ_SEPARATOR, FZ_SKELETON, FZ_AVATAR, FZ_MENU, FZ_MENUBAR, FZ_CONTEXT_MENU, FZ_SELECT, FZ_MULTISELECT, FZ_COMBOBOX,
     FZ_TOOLBAR, FZ_TREE, FZ_GRID,
+    FZ_CHECKBOX, FZ_SWITCH, FZ_RADIO_GROUP, FZ_SLIDER, FZ_POPOVER, FZ_TOOLTIP, FZ_DIALOG,
   ],
   templateUrl: './app.html',
 })
@@ -35,6 +43,11 @@ export class App {
   protected readonly toppings = signal<string[]>(['cheese']);
   protected readonly countries = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Canada', 'Denmark', 'France', 'Germany', 'Iceland', 'Ireland', 'Italy', 'Japan', 'Norway', 'Portugal', 'Spain', 'Sweden'];
   protected readonly fruits = signal<string[]>(['apple']);
+  protected readonly terms = signal(true);
+  protected readonly airplane = signal(false);
+  protected readonly plans = ['Free', 'Pro', 'Team'];
+  protected readonly plan = signal('Pro');
+  protected readonly volume = signal(40);
   protected readonly bold = signal(false);
   protected readonly italic = signal(false);
   protected readonly align = signal('left');

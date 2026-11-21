@@ -22,6 +22,14 @@
     "combobox": { "files": ["ui/combobox.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "toolbar": { "files": ["ui/toolbar.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "tree": { "files": ["ui/tree.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
-    "grid": { "files": ["ui/grid.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "grid": { "files": ["ui/grid.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "checkbox": { "files": ["ui/checkbox.ts"], "dependencies": [] },
+    "switch": { "files": ["ui/switch.ts"], "dependencies": [] },
+    "radio-group": { "files": ["ui/radio-group.ts"], "dependencies": [] },
+    "slider": { "files": ["ui/slider.ts"], "dependencies": [] },
+    "popover": { "files": ["ui/popover.ts"], "dependencies": ["@angular/cdk"] },
+    "tooltip": { "files": ["ui/tooltip.ts"], "dependencies": ["@angular/cdk"] },
+    "dialog": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] },
+    "sheet": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] }
   }
 }

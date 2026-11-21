@@ -23,6 +23,8 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 - Popups (menu now; later select, combobox, popover, tooltip) follow `registry/ui/menu.ts`. The panel directive is the Aria directive through `hostDirectives`, so the user's items keep DI. An effect moves the panel element into a CDK overlay (`DomPortal`, native popover, `withPopoverLocation('inline')`) while Aria says it is visible. The panel `exportAs`es itself with a `.menu` field for `[fzMenuTrigger]` and `[submenu]`. `menubar` and `context-menu` live in `menu.ts` too (their registry entries point to the same file), because they share `FzMenu` and `FzMenuItem`.
 - `select.ts` is the other popup shape. When the popup lives in the component's own template (items passed as data, `<fz-select-item>` read with `contentChildren`), use `cdkConnectedOverlay` there, as the Aria examples do. With `focusMode="activedescendant"`, the popup cancels `mousedown` so focus never leaves the trigger.
 - `combobox.ts` is the third shape. The trigger is the user's own `<input>`, so labels and attributes stay native. An `<input>` can't host a template, so the directive creates its popup component as a sibling with `ViewContainerRef.createComponent` and passes itself in.
+- `dialog.ts` opens an `ng-template` through the CDK `Dialog` service (focus trap, Escape, backdrop, focus restore, `aria-hidden` on the rest). `popover.ts` copies the FzMenu overlay pattern; `tooltip.ts` keeps its element next to the trigger while hidden so `aria-describedby` always resolves.
+- Form controls (checkbox, switch, radio-group, slider) are styled native inputs, not Aria: keep it that way so forms and labels keep working.
 - A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, an example in `src/app/app.html`, and `registry/ui/<name>.spec.ts`.
 
 ## Commands
@@ -46,4 +48,7 @@ node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another
 - Tree `selectionMode` defaults to `explicit` (listbox and grid default to `follow`).
 - A grid cell that holds a `ngGridCellWidget` never takes focus itself: the widget does. Enter only switches the widget between navigation and editing (`data-active-control`).
 - Roving widgets (menubar, grid) keep one item `data-active` at rest: tie the highlight to focus (`focus-within`, `focus-visible`), not to `data-active` alone.
+- CDK's own CSS is unlayered, so it beats Tailwind utilities (which live in `@layer`) on the same property: use `!` there (`max-w-lg!` on an overlay pane, `flex!` on `.cdk-dialog-container`). CDK also sets an inline `maxWidth: 80vw` on dialogs unless `maxWidth: ''`.
+- Tailwind finds classes by scanning source text: never build class names at runtime (no `'[&::x]:' + y`).
+- In CDP scripts, `rawKeyDown` Enter does not click a native `<button>`: send `keyDown` with `text: '\r'`.
 - Versions: Angular 22, `@angular/aria` 22.3, Node 24.

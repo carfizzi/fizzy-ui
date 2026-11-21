@@ -136,6 +136,56 @@
   </section>
 
   <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Checkbox, switch, radio group, slider</h2>
+    <div class="flex flex-col gap-3 text-sm">
+      <label class="flex items-center gap-2"><input type="checkbox" fzCheckbox [checked]="terms()" (change)="terms.set($any($event.target).checked)" /> Accept terms</label>
+      <label class="flex items-center gap-2"><input type="checkbox" fzCheckbox [indeterminate]="true" /> Select all (mixed)</label>
+      <label class="flex items-center gap-2"><input type="checkbox" fzCheckbox disabled /> Disabled</label>
+      <label class="flex items-center gap-2"><input type="checkbox" fzSwitch [checked]="airplane()" (change)="airplane.set($any($event.target).checked)" /> Airplane mode</label>
+      <div fzRadioGroup aria-label="Plan">
+        @for (p of plans; track p) {
+          <label class="flex items-center gap-2"><input type="radio" fzRadio name="plan" [value]="p" [checked]="plan() === p" (change)="plan.set(p)" /> {{ p }}</label>
+        }
+      </div>
+      <label for="volume">Volume: {{ volume() }}</label>
+      <input id="volume" type="range" fzSlider min="0" max="100" [value]="volume()" (input)="volume.set(+$any($event.target).value)" class="max-w-64" />
+    </div>
+    <p class="text-sm text-muted-foreground">terms: {{ terms() }}, airplane: {{ airplane() }}, plan: {{ plan() }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Popover, tooltip, dialog, sheet</h2>
+    <div class="flex flex-wrap gap-2">
+      <button fzButton variant="outline" [fzPopoverTrigger]="pop">Dimensions</button>
+      <div fzPopover #pop="fzPopover" aria-label="Dimensions" class="flex flex-col gap-3">
+        <p class="font-medium">Dimensions</p>
+        <label fzLabel for="pop-width">Width</label>
+        <input fzInput id="pop-width" value="100%" />
+        <button fzButton size="sm" (click)="pop.close()">Apply</button>
+      </div>
+      <button fzButton variant="outline" fzTooltip="Copies the link to your clipboard">Hover me</button>
+      <button fzButton variant="outline" (click)="dlg.open()">Open dialog</button>
+      <button fzButton variant="outline" (click)="sheet.open()">Open sheet</button>
+    </div>
+    <ng-template fzDialog #dlg="fzDialog">
+      <h2 fzDialogTitle>Edit profile</h2>
+      <p class="text-sm text-muted-foreground">Make changes to your profile here.</p>
+      <label fzLabel for="dlg-name">Name</label>
+      <input fzInput id="dlg-name" value="Ada Lovelace" />
+      <div class="flex justify-end gap-2">
+        <button fzButton variant="outline" fzDialogClose>Cancel</button>
+        <button fzButton fzDialogClose>Save</button>
+      </div>
+    </ng-template>
+    <ng-template fzDialog side="right" #sheet="fzDialog">
+      <h2 fzDialogTitle>Settings</h2>
+      <p class="text-sm text-muted-foreground">A sheet is a dialog docked to an edge.</p>
+      <label class="flex items-center gap-2 text-sm"><input type="checkbox" fzSwitch /> Notifications</label>
+      <button fzButton variant="outline" fzDialogClose class="mt-auto">Close</button>
+    </ng-template>
+  </section>
+
+  <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Menubar</h2>
     <div fzMenubar aria-label="Editor" (itemSelected)="action.set($event)">
       <div fzMenuItem value="file" [submenu]="mbFile.menu">File</div>

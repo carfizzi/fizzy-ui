@@ -28,4 +28,18 @@ describe('playground accessibility (axe)', () => {
     await fixture.whenStable();
     expect(await violations(el)).toEqual([]);
   });
+
+  it('has no violations in an open popover and dialog (they render outside the app root)', async () => {
+    const fixture = TestBed.createComponent(App);
+    document.body.appendChild(fixture.nativeElement);
+    await fixture.whenStable();
+    const el: HTMLElement = fixture.nativeElement;
+    [...el.querySelectorAll<HTMLElement>('button')].find((b) => b.textContent!.trim() === 'Dimensions')!.click();
+    await fixture.whenStable();
+    expect(await violations(document.querySelector<HTMLElement>('[fzPopover]')!)).toEqual([]);
+    [...el.querySelectorAll<HTMLElement>('button')].find((b) => b.textContent!.trim() === 'Open dialog')!.click();
+    await fixture.whenStable();
+    expect(await violations(document.querySelector<HTMLElement>('.cdk-dialog-container')!)).toEqual([]);
+    document.body.innerHTML = '';
+  });
 });

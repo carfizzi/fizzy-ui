@@ -36,13 +36,15 @@ Test for each: variants and the expected classes are applied. Separator also che
 
 ## Phase 3: built on CDK or native HTML (not in Angular Aria)
 
-- [ ] **dialog / sheet** (`@angular/cdk/dialog`). Test: focus trap, Esc closes, focus returns to the trigger
-- [ ] **popover** (CDK overlay). Test: opens and closes, Esc, click outside
-- [ ] **tooltip** (CDK overlay). Test: shows on hover and focus, `aria-describedby`
-- [ ] **checkbox**. Test: `aria-checked`, indeterminate state, Space toggles
-- [ ] **switch**. Test: `role="switch"`, `aria-checked`, Space toggles
-- [ ] **radio-group**. Test: arrow keys move the selection, one value only
-- [ ] **slider**. Test: arrow keys and Home/End change the value, `aria-valuenow`
+Form controls are styled native inputs: browsers already give them roles, keyboard, labels and forms support (`ngModel`, reactive and signal forms), so there is no Aria directive to compose.
+
+- [x] **dialog / sheet** (`@angular/cdk/dialog`, `dialog.ts`, `side` for sheets). Test: named by `fzDialogTitle`, rest of the page `aria-hidden`, focus inside + trap anchors, Esc closes and focus returns, `fzDialogClose` result, right sheet full height. Checked in headless Chrome (Tab stays inside, backdrop click, light/dark)
+- [x] **popover** (CDK overlay, `popover.ts`, the FzMenu pattern). Test: dialog role wired to the trigger, opens with focus on the first field, Esc closes and gives focus back, trigger toggles, click outside and focus leaving close it. Checked in headless Chrome
+- [x] **tooltip** (CDK overlay, `tooltip.ts`). Test: `aria-describedby` (kept alongside existing ones), hover after 500ms, short hover never shows, hoverable (pointer onto the tooltip), Escape, keyboard focus at once but not mouse focus. Checked in headless Chrome
+- [x] **checkbox** (styled native input). Test: label click, `ngModel`, native `indeterminate` cleared by a click, disabled. Space checked in headless Chrome
+- [x] **switch** (native checkbox + `role="switch"`). Test: role, checked state, label click. Space checked in headless Chrome
+- [x] **radio-group** (`radiogroup` around native radios). Test: role, one value only (label and radio clicks). Arrow keys checked in headless Chrome
+- [x] **slider** (styled native range). Test: `--fz-fill` follows input events and bindings. Arrows, Home/End, Page Up checked in headless Chrome
 
 ## Phase 4: docs / showcase web app
 
