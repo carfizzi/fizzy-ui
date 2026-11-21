@@ -69,6 +69,41 @@ describe('FzDialog', () => {
     expect(result).toBe('saved');
   });
 
+  it('plays the exit animation before closing: inert meanwhile, later closes wait, first result wins', async () => {
+    const { q, dialogEl, host, stable } = await setup();
+    let finish!: () => void;
+    const finished = new Promise<void>((r) => (finish = r));
+    // jsdom has no Web Animations: pretend the pane has a running exit animation.
+    const proto = HTMLElement.prototype as unknown as { getAnimations?: () => unknown[] };
+    const original = proto.getAnimations;
+    proto.getAnimations = function (this: HTMLElement) {
+      return this.hasAttribute('data-closing') ? [{ finished }] : [];
+    };
+    try {
+      q('open').focus();
+      const ref = host.dialog().open();
+      let result: unknown = 'not closed';
+      ref.closed.subscribe((r) => (result = r));
+      await stable();
+      q('save').click();
+      await stable();
+      const pane = document.querySelector<HTMLElement>('.cdk-overlay-pane')!;
+      expect(dialogEl()).not.toBeNull();
+      expect(pane.hasAttribute('data-closing')).toBe(true);
+      expect(pane.inert).toBe(true);
+      expect(result).toBe('not closed');
+      ref.close('ignored'); // a second close while leaving waits for the first
+      finish();
+      await finished;
+      await stable();
+      expect(dialogEl()).toBeNull();
+      expect(result).toBe('saved');
+      expect(document.activeElement).toBe(q('open'));
+    } finally {
+      proto.getAnimations = original;
+    }
+  });
+
   it('side="right" is a full-height sheet', async () => {
     const { host, stable } = await setup();
     host.sheet().open();

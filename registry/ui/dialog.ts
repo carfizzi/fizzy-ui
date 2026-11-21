@@ -8,13 +8,14 @@ type Side = 'center' | 'left' | 'right' | 'top' | 'bottom';
 // `!` where CDK styles the same property: its CSS is unlayered and beats Tailwind's layered utilities
 // (`.cdk-overlay-pane { max-width: 100% }`, `.cdk-dialog-container { display: block }`).
 const CONTENT = 'bg-background text-foreground shadow-lg [&>.cdk-dialog-container]:flex! [&>.cdk-dialog-container]:flex-col [&>.cdk-dialog-container]:gap-4 [&>.cdk-dialog-container]:outline-none';
-// Enter: a dialog fades and grows slightly, a sheet slides in from its edge (fizzy.css; fades under Reduce Motion).
+// A dialog fades and grows slightly, a sheet slides in from its edge, and they leave the same way
+// (data-closing). Keyframes in fizzy.css; fades under Reduce Motion.
 const PANEL: Record<Side, string> = {
-  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! rounded-lg border p-6 animate-fz-dialog`,
-  right: `${CONTENT} w-3/4 max-w-sm! border-l p-6 animate-fz-sheet-right`,
-  left: `${CONTENT} w-3/4 max-w-sm! border-r p-6 animate-fz-sheet-left`,
-  top: `${CONTENT} border-b p-6 animate-fz-sheet-top`,
-  bottom: `${CONTENT} border-t p-6 animate-fz-sheet-bottom`,
+  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! rounded-lg border p-6 animate-fz-dialog data-closing:animate-fz-dialog-out`,
+  right: `${CONTENT} w-3/4 max-w-sm! border-l p-6 animate-fz-sheet-right data-closing:animate-fz-sheet-right-out`,
+  left: `${CONTENT} w-3/4 max-w-sm! border-r p-6 animate-fz-sheet-left data-closing:animate-fz-sheet-left-out`,
+  top: `${CONTENT} border-b p-6 animate-fz-sheet-top data-closing:animate-fz-sheet-top-out`,
+  bottom: `${CONTENT} border-t p-6 animate-fz-sheet-bottom data-closing:animate-fz-sheet-bottom-out`,
 };
 let nextId = 0;
 
@@ -22,7 +23,8 @@ let nextId = 0;
  * Modal dialog, or a sheet with `side="right"` (left, top, bottom):
  * `<ng-template fzDialog #dlg="fzDialog">` holding an `<h2 fzDialogTitle>` (required: it names
  * the dialog), content, and `<button fzDialogClose>`. Open with `dlg.open()`. The CDK traps focus,
- * closes on Escape and backdrop click, and gives focus back to the opener.
+ * closes on Escape and backdrop click, and gives focus back to the opener. Every close plays the
+ * exit animation first; the panel is inert meanwhile.
  */
 @Directive({ selector: 'ng-template[fzDialog]', exportAs: 'fzDialog' })
 export class FzDialog<R = unknown> {
@@ -36,7 +38,8 @@ export class FzDialog<R = unknown> {
 
   open(): DialogRef<R> {
     const side = this.side();
-    this.ref = this.dialog.open<R>(this.template, {
+    let state: 'open' | 'leaving' | 'closed' = 'open';
+    const ref = (this.ref = this.dialog.open<R>(this.template, {
       viewContainerRef: this.viewContainerRef,
       ariaLabelledBy: this.titleId,
       panelClass: PANEL[side].split(' '),
@@ -45,12 +48,34 @@ export class FzDialog<R = unknown> {
       positionStrategy: this.position(side),
       height: side === 'left' || side === 'right' ? '100%' : undefined,
       width: side === 'top' || side === 'bottom' ? '100%' : undefined,
-    });
-    return this.ref;
+      // Escape, backdrop, fzDialogClose and close() all ask here: the first ask plays the exit animation,
+      // later ones wait for it, then the dialog closes for real with the first result.
+      closePredicate: (result: unknown) => {
+        if (state !== 'open') return state === 'closed';
+        const leaving = this.leave(ref);
+        if (!leaving.length) return true; // motion off, or no animation support (tests)
+        state = 'leaving';
+        Promise.allSettled(leaving.map((a) => a.finished)).then(() => {
+          state = 'closed';
+          ref.close(result as R | undefined);
+        });
+        return false;
+      },
+    }));
+    return ref;
   }
 
   close(result?: R) {
     this.ref?.close(result);
+  }
+
+  /** Starts the exit animation and returns what is running. */
+  private leave(ref: DialogRef<R>): Animation[] {
+    const pane = ref.overlayRef.overlayElement;
+    pane.inert = true; // no clicks or focus while it leaves; the CDK gives focus back when it closes
+    pane.dataset['closing'] = '';
+    ref.overlayRef.backdropElement?.classList.remove('cdk-overlay-backdrop-showing'); // fade it out alongside
+    return pane.getAnimations?.() ?? [];
   }
 
   private position(side: Side): PositionStrategy | undefined {

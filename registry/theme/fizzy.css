@@ -27,6 +27,7 @@
   --fz-duration-popup: 400ms; /* popover, menu, select, combobox, accordion */
   --fz-duration-control: 330ms; /* switch */
   --fz-duration-fade: 150ms; /* tooltip */
+  --fz-duration-exit: 260ms; /* dialog, sheet closing: a 0.2s spring, leaving is quicker than arriving */
 }
 
 /* Enter animations. Keyframes, not transitions: CDK shows a panel before adding its classes, so
@@ -37,6 +38,11 @@
 @keyframes fz-slide-in-left { from { translate: -100% 0; } }
 @keyframes fz-slide-in-top { from { translate: 0 -100%; } }
 @keyframes fz-slide-in-bottom { from { translate: 0 100%; } }
+@keyframes fz-pop-out { to { opacity: 0; scale: 0.96; } }
+@keyframes fz-slide-out-right { to { translate: 100% 0; } }
+@keyframes fz-slide-out-left { to { translate: -100% 0; } }
+@keyframes fz-slide-out-top { to { translate: 0 -100%; } }
+@keyframes fz-slide-out-bottom { to { translate: 0 100%; } }
 
 /* Reduce Motion (Apple HIG): fades instead of scale and slide, no bounce, no height animation. */
 @media (prefers-reduced-motion: reduce) {
@@ -48,6 +54,11 @@
   @keyframes fz-slide-in-left { from { opacity: 0; } }
   @keyframes fz-slide-in-top { from { opacity: 0; } }
   @keyframes fz-slide-in-bottom { from { opacity: 0; } }
+  @keyframes fz-pop-out { to { opacity: 0; } }
+  @keyframes fz-slide-out-right { to { opacity: 0; } }
+  @keyframes fz-slide-out-left { to { opacity: 0; } }
+  @keyframes fz-slide-out-top { to { opacity: 0; } }
+  @keyframes fz-slide-out-bottom { to { opacity: 0; } }
 }
 
 .dark {
@@ -94,6 +105,11 @@
   --animate-fz-sheet-left: fz-slide-in-left var(--fz-duration-panel) var(--fz-spring);
   --animate-fz-sheet-top: fz-slide-in-top var(--fz-duration-panel) var(--fz-spring);
   --animate-fz-sheet-bottom: fz-slide-in-bottom var(--fz-duration-panel) var(--fz-spring);
+  --animate-fz-dialog-out: fz-pop-out var(--fz-duration-exit) var(--fz-spring) forwards;
+  --animate-fz-sheet-right-out: fz-slide-out-right var(--fz-duration-exit) var(--fz-spring) forwards;
+  --animate-fz-sheet-left-out: fz-slide-out-left var(--fz-duration-exit) var(--fz-spring) forwards;
+  --animate-fz-sheet-top-out: fz-slide-out-top var(--fz-duration-exit) var(--fz-spring) forwards;
+  --animate-fz-sheet-bottom-out: fz-slide-out-bottom var(--fz-duration-exit) var(--fz-spring) forwards;
 }
 
 @layer base {

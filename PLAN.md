@@ -72,5 +72,5 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
 - [ ] Publish the CLI to npm (check that the `fizzy-ui` name is free first)
 - [ ] Animations and transitions, Apple style (HIG Motion, WWDC23 "Animate with springs"): springs as CSS `linear()`, durations as tokens in `fizzy.css` (0s turns motion off), Reduce Motion swaps scale/slide for fades
   - [x] A: enter animations (dialog, sheet, popover, menu, select, combobox, tooltip), accordion height, switch spring. Checked in Chrome: spring curve, origin from the trigger side, submenus instant, fades only under Reduce Motion
-  - [ ] B: exit animations for dialog and sheet (CDK `closePredicate`: animate, then close; focus returns at once)
+  - [x] B: exit animations for dialog and sheet (CDK `closePredicate`: the first close plays the exit, later ones wait, then it closes with the first result; panel inert meanwhile, backdrop fades alongside, CDK gives focus back at the end). Checked in Chrome: Escape, backdrop, fzDialogClose, double Escape, reopen during exit, mobile nav, Reduce Motion
   - [ ] C: exit animations for popover, menu, select, combobox, tooltip (mark the panel closing and inert, detach after the animation; instant in jsdom)
