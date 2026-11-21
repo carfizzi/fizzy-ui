@@ -17,6 +17,37 @@
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
+  /* Motion: Apple-style springs (WWDC23 "Animate with springs"), sampled for CSS. A curve spans
+     1.3x the spring's duration so it can settle: 650ms is a 0.5s spring. Set a duration to 0s to
+     turn that motion off. */
+  --fz-spring: linear(0, 0.064, 0.197, 0.346, 0.486, 0.605, 0.702, 0.779, 0.837, 0.882, 0.914, 0.939, 0.956, 0.969, 0.978, 0.984, 0.989, 0.992, 0.995, 0.996, 1); /* bounce 0 */
+  --fz-spring-snappy: linear(0, 0.066, 0.21, 0.375, 0.532, 0.666, 0.772, 0.853, 0.91, 0.949, 0.975, 0.991, 1, 1.004, 1.006, 1.006, 1.006, 1.005, 1.004, 1.003, 1); /* bounce 0.15 */
+  --fz-duration-panel: 650ms; /* dialog, sheet */
+  --fz-duration-popup: 400ms; /* popover, menu, select, combobox, accordion */
+  --fz-duration-control: 330ms; /* switch */
+  --fz-duration-fade: 150ms; /* tooltip */
+}
+
+/* Enter animations. Keyframes, not transitions: CDK shows a panel before adding its classes, so
+   @starting-style would come too late. */
+@keyframes fz-pop-in { from { opacity: 0; scale: 0.96; } }
+@keyframes fz-fade-in { from { opacity: 0; } }
+@keyframes fz-slide-in-right { from { translate: 100% 0; } }
+@keyframes fz-slide-in-left { from { translate: -100% 0; } }
+@keyframes fz-slide-in-top { from { translate: 0 -100%; } }
+@keyframes fz-slide-in-bottom { from { translate: 0 100%; } }
+
+/* Reduce Motion (Apple HIG): fades instead of scale and slide, no bounce, no height animation. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --fz-spring-snappy: var(--fz-spring);
+  }
+  @keyframes fz-pop-in { from { opacity: 0; } }
+  @keyframes fz-slide-in-right { from { opacity: 0; } }
+  @keyframes fz-slide-in-left { from { opacity: 0; } }
+  @keyframes fz-slide-in-top { from { opacity: 0; } }
+  @keyframes fz-slide-in-bottom { from { opacity: 0; } }
 }
 
 .dark {
@@ -54,6 +85,15 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --ease-spring: var(--fz-spring);
+  --ease-spring-snappy: var(--fz-spring-snappy);
+  --animate-fz-popup: fz-pop-in var(--fz-duration-popup) var(--fz-spring);
+  --animate-fz-dialog: fz-pop-in var(--fz-duration-panel) var(--fz-spring);
+  --animate-fz-tooltip: fz-fade-in var(--fz-duration-fade) ease-out;
+  --animate-fz-sheet-right: fz-slide-in-right var(--fz-duration-panel) var(--fz-spring);
+  --animate-fz-sheet-left: fz-slide-in-left var(--fz-duration-panel) var(--fz-spring);
+  --animate-fz-sheet-top: fz-slide-in-top var(--fz-duration-panel) var(--fz-spring);
+  --animate-fz-sheet-bottom: fz-slide-in-bottom var(--fz-duration-panel) var(--fz-spring);
 }
 
 @layer base {

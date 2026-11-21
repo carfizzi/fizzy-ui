@@ -8,12 +8,13 @@ type Side = 'center' | 'left' | 'right' | 'top' | 'bottom';
 // `!` where CDK styles the same property: its CSS is unlayered and beats Tailwind's layered utilities
 // (`.cdk-overlay-pane { max-width: 100% }`, `.cdk-dialog-container { display: block }`).
 const CONTENT = 'bg-background text-foreground shadow-lg [&>.cdk-dialog-container]:flex! [&>.cdk-dialog-container]:flex-col [&>.cdk-dialog-container]:gap-4 [&>.cdk-dialog-container]:outline-none';
+// Enter: a dialog fades and grows slightly, a sheet slides in from its edge (fizzy.css; fades under Reduce Motion).
 const PANEL: Record<Side, string> = {
-  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! rounded-lg border p-6`,
-  right: `${CONTENT} w-3/4 max-w-sm! border-l p-6`,
-  left: `${CONTENT} w-3/4 max-w-sm! border-r p-6`,
-  top: `${CONTENT} border-b p-6`,
-  bottom: `${CONTENT} border-t p-6`,
+  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! rounded-lg border p-6 animate-fz-dialog`,
+  right: `${CONTENT} w-3/4 max-w-sm! border-l p-6 animate-fz-sheet-right`,
+  left: `${CONTENT} w-3/4 max-w-sm! border-r p-6 animate-fz-sheet-left`,
+  top: `${CONTENT} border-b p-6 animate-fz-sheet-top`,
+  bottom: `${CONTENT} border-t p-6 animate-fz-sheet-bottom`,
 };
 let nextId = 0;
 

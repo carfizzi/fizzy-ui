@@ -5,7 +5,8 @@ import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
 
 const POSITIONS: ConnectedPosition[] = [
   { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
-  { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4 },
+  // panelClass: the popup grows from the trigger side when it flips above.
+  { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4, panelClass: 'fz-above' },
 ];
 
 /**
@@ -51,7 +52,7 @@ export class FzCombobox {
       [cdkConnectedOverlayOpen]="open()"
     >
       <ng-template ngComboboxPopup [combobox]="owner().combobox">
-        <div class="w-full rounded-md border bg-background p-1 text-sm text-foreground shadow-md" (mousedown)="$event.preventDefault()">
+        <div class="w-full rounded-md border bg-background p-1 text-sm text-foreground shadow-md animate-fz-popup origin-top in-[.fz-above]:origin-bottom" (mousedown)="$event.preventDefault()">
           @if (owner().filtered().length) {
             <div
               ngListbox

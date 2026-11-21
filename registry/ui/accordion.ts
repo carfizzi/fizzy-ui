@@ -21,11 +21,19 @@ export class FzAccordion {}
         class="group flex flex-1 items-center justify-between gap-4 py-4 text-left text-sm font-medium outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
       >
         {{ title() }}
-        <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 shrink-0 text-muted-foreground transition-transform group-aria-expanded:rotate-180" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6" /></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 shrink-0 text-muted-foreground transition-transform duration-(--fz-duration-popup) ease-spring group-aria-expanded:rotate-180" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6" /></svg>
       </button>
     </h3>
-    <div ngAccordionPanel #panel="ngAccordionPanel" class="pb-4 text-sm [&[inert]]:hidden">
-      <ng-template ngAccordionContent><ng-content /></ng-template>
+    <!-- Height animates through grid rows (0fr <-> 1fr); preserveContent keeps the content for the collapse. -->
+    <div
+      ngAccordionPanel
+      #panel="ngAccordionPanel"
+      [preserveContent]="true"
+      class="grid grid-rows-[1fr] text-sm transition-[grid-template-rows] duration-(--fz-duration-popup) ease-spring motion-reduce:transition-none [&[inert]]:grid-rows-[0fr]"
+    >
+      <div class="min-h-0 overflow-hidden">
+        <div class="pb-4"><ng-template ngAccordionContent><ng-content /></ng-template></div>
+      </div>
     </div>
   `,
 })

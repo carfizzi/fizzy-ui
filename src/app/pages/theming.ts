@@ -29,6 +29,18 @@ import { CodeBlock } from '../code-block';
         <code class="rounded bg-muted px-1">&lt;html&gt;</code> to switch, as the toggle on this site does.
       </p>
 
+      <h2 class="mt-4 text-xl font-semibold tracking-tight">Motion</h2>
+      <p>
+        Panels open with Apple-style springs: brief, no bounce, never in the way. Dialogs and popups fade in and grow
+        slightly from their trigger, sheets slide in from their edge, the accordion grows to its height and the switch
+        thumb settles with a hint of bounce. Submenus, tabs, trees and other frequent interactions stay instant.
+      </p>
+      <ul class="list-disc space-y-1 pl-6 text-sm text-muted-foreground">
+        <li><code class="rounded bg-muted px-1">--fz-spring</code> and <code class="rounded bg-muted px-1">--fz-spring-snappy</code> are the curves (bounce 0 and 0.15).</li>
+        <li><code class="rounded bg-muted px-1">--fz-duration-*</code> set the timing. Set one to <code class="rounded bg-muted px-1">0s</code> to turn that motion off.</li>
+        <li>With Reduce Motion on, scale and slide become fades, bounce goes away and the accordion changes at once.</li>
+      </ul>
+
       <h2 class="mt-4 text-xl font-semibold tracking-tight">The file</h2>
       @if (css.hasValue()) {
         <app-code-block [code]="css.value()" label="fizzy.css" />

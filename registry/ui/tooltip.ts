@@ -38,7 +38,9 @@ export class FzTooltip {
   constructor() {
     const id = `fz-tooltip-${nextId++}`;
     Object.assign(this.tip, { id, role: 'tooltip', hidden: true });
-    this.tip.className = 'w-max max-w-xs rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md';
+    this.tip.className =
+      'w-max max-w-xs rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md ' +
+      'animate-fz-tooltip';
     // Hoverable (WCAG 1.4.13): moving the pointer onto the tooltip keeps it open.
     this.tip.addEventListener('pointerenter', () => clearTimeout(this.timer));
     this.tip.addEventListener('pointerleave', () => this.hide(HIDE_DELAY));

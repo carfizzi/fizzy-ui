@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Directive, ElementRef, Injector, afterNextRender, effect, inject, input, untracked, viewChild } from '@angular/core';
+import { Component, DestroyRef, Directive, ElementRef, Injector, afterNextRender, computed, effect, inject, input, untracked, viewChild } from '@angular/core';
 import { Menu, MenuBar, MenuItem, MenuTrigger } from '@angular/aria/menu';
 import { DomPortal } from '@angular/cdk/portal';
 import {
@@ -32,11 +32,14 @@ const SUBMENU: ConnectedPosition[] = [
   host: {
     class:
       'flex min-w-40 flex-col rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none ' +
-      'data-[visible=false]:hidden',
+      'data-[visible=false]:hidden animate-fz-popup data-submenu:animate-none',
+    // Submenus (and menubar menus, which switch as you move along the bar) open instantly: frequent.
+    '[attr.data-submenu]': 'submenu() || null',
   },
 })
 export class FzMenu {
   readonly menu = inject(Menu);
+  protected readonly submenu = computed(() => this.menu.parent() instanceof MenuItem);
   private readonly el = inject(ElementRef<HTMLElement>);
   private readonly injector = inject(Injector);
   private overlay?: OverlayRef;
@@ -65,6 +68,7 @@ export class FzMenu {
       usePopover: true,
       positionStrategy: createFlexibleConnectedPositionStrategy(this.injector, anchor)
         .withPopoverLocation('inline')
+        .withTransformOriginOn(':scope > .cdk-overlay-pane > *')
         .withPositions(this.isNested() ? SUBMENU : DROPDOWN),
       scrollStrategy: createRepositionScrollStrategy(this.injector),
     });

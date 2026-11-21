@@ -16,7 +16,8 @@ import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
 
 const POSITIONS: ConnectedPosition[] = [
   { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
-  { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4 },
+  // panelClass: the popup grows from the trigger side when it flips above.
+  { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4, panelClass: 'fz-above' },
 ];
 
 const TRIGGER =
@@ -24,7 +25,7 @@ const TRIGGER =
   'text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 const CSS = {
-  list: 'flex max-h-72 w-full flex-col gap-0.5 overflow-y-auto rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none',
+  list: 'flex max-h-72 w-full flex-col gap-0.5 overflow-y-auto rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none animate-fz-popup origin-top in-[.fz-above]:origin-bottom',
   option:
     'flex cursor-default select-none items-center justify-between rounded-sm px-2 py-1.5 outline-none ' +
     'data-[active=true]:bg-accent data-[active=true]:text-accent-foreground aria-disabled:opacity-50 ' +

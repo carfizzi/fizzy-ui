@@ -31,7 +31,7 @@ let nextId = 0;
     '(keydown.escape)': 'close()',
     '(focusout)': 'onFocusOut($event)',
     '(document:pointerdown)': 'onOutside($event)',
-    class: 'w-72 rounded-md border bg-background p-4 text-sm text-foreground shadow-md outline-none',
+    class: 'w-72 rounded-md border bg-background p-4 text-sm text-foreground shadow-md outline-none animate-fz-popup',
   },
 })
 export class FzPopover {
@@ -67,6 +67,7 @@ export class FzPopover {
       usePopover: true,
       positionStrategy: createFlexibleConnectedPositionStrategy(this.injector, this.anchor)
         .withPopoverLocation('inline')
+        .withTransformOriginOn(':scope > .cdk-overlay-pane > *')
         .withPositions(POSITIONS),
       scrollStrategy: createRepositionScrollStrategy(this.injector),
     });

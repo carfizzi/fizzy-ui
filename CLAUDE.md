@@ -24,6 +24,7 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 - `select.ts` is the other popup shape. When the popup lives in the component's own template (items passed as data, `<fz-select-item>` read with `contentChildren`), use `cdkConnectedOverlay` there, as the Aria examples do. With `focusMode="activedescendant"`, the popup cancels `mousedown` so focus never leaves the trigger.
 - `combobox.ts` is the third shape. The trigger is the user's own `<input>`, so labels and attributes stay native. An `<input>` can't host a template, so the directive creates its popup component as a sibling with `ViewContainerRef.createComponent` and passes itself in.
 - `dialog.ts` opens an `ng-template` through the CDK `Dialog` service (focus trap, Escape, backdrop, focus restore, `aria-hidden` on the rest). `popover.ts` copies the FzMenu overlay pattern; `tooltip.ts` keeps its element next to the trigger while hidden so `aria-describedby` always resolves.
+- Motion follows Apple's HIG: springs (`--fz-spring`, `ease-spring`) and the durations in `fizzy.css`. Enter animations are theme keyframes (`animate-fz-popup`, `animate-fz-dialog`, `animate-fz-sheet-*`, `animate-fz-tooltip`), whose Reduce Motion versions are fades. State changes (accordion height, switch thumb, chevrons) are transitions with `ease-spring`. Frequent interactions (submenus, menubar, tabs, tree, checkbox) stay instant.
 - Form controls (checkbox, switch, radio-group, slider) are styled native inputs, not Aria: keep it that way so forms and labels keep working.
 - A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, a demo in `src/app/demos/<name>.ts` plus its entry in `src/app/docs.ts`, and `registry/ui/<name>.spec.ts`.
 
@@ -49,6 +50,7 @@ node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another
 - A grid cell that holds a `ngGridCellWidget` never takes focus itself: the widget does. Enter only switches the widget between navigation and editing (`data-active-control`).
 - Roving widgets (menubar, grid) keep one item `data-active` at rest: tie the highlight to focus (`focus-within`, `focus-visible`), not to `data-active` alone.
 - CDK's own CSS is unlayered, so it beats Tailwind utilities (which live in `@layer`) on the same property: use `!` there (`max-w-lg!` on an overlay pane, `flex!` on `.cdk-dialog-container`). CDK also sets an inline `maxWidth: 80vw` on dialogs unless `maxWidth: ''`.
+- `@starting-style` does not work on CDK overlay panes: CDK shows the pane before adding `panelClass`, and Chrome computes its style in between. Use keyframe animations for enter.
 - Tailwind finds classes by scanning source text: never build class names at runtime (no `'[&::x]:' + y`).
 - In CDP scripts, `rawKeyDown` Enter does not click a native `<button>`: send `keyDown` with `text: '\r'`.
 - Source shown on the docs comes from `import('…', { with: { loader: 'text' } })` (Angular's import attribute). TypeScript still types it as the module: read `.default` through a cast. Never use a template-literal import path: esbuild then bundles the whole folder, specs included.
