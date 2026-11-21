@@ -1,5 +1,5 @@
-import { DestroyRef, Directive, ElementRef, Injector, effect, inject, untracked } from '@angular/core';
-import { Menu, MenuItem, MenuTrigger } from '@angular/aria/menu';
+import { Component, DestroyRef, Directive, ElementRef, Injector, effect, inject, input, untracked, viewChild } from '@angular/core';
+import { Menu, MenuBar, MenuItem, MenuTrigger } from '@angular/aria/menu';
 import { DomPortal } from '@angular/cdk/portal';
 import {
   ConnectedPosition,
@@ -44,13 +44,19 @@ export class FzMenu {
   constructor() {
     effect(() => {
       const parent = this.menu.parent();
-      // A submenu is placed (still hidden by data-visible) as soon as its parent menu shows:
-      // Aria focuses into it the moment it opens and closes the parent if focus lands outside it.
+      // A submenu is placed (still hidden by data-visible) as soon as its parent menu shows, and a
+      // menubar submenu right away: Aria focuses into it the moment it opens and closes the
+      // parent if focus lands outside it.
       const grandparent = parent instanceof MenuItem ? parent.parent : undefined;
-      const open = grandparent instanceof Menu ? grandparent.visible() : this.menu.visible();
+      const open = grandparent instanceof Menu ? grandparent.visible() : !!grandparent || this.menu.visible();
       untracked(() => (parent && open ? this.attach(parent.element) : this.overlay?.detach()));
     });
     inject(DestroyRef).onDestroy(() => this.overlay?.dispose());
+  }
+
+  /** Re-reads the anchor's position, e.g. after a context menu moved it. */
+  reposition() {
+    this.overlay?.updatePosition();
   }
 
   private attach(anchor: HTMLElement) {
@@ -59,10 +65,15 @@ export class FzMenu {
       usePopover: true,
       positionStrategy: createFlexibleConnectedPositionStrategy(this.injector, anchor)
         .withPopoverLocation('inline')
-        .withPositions(this.menu.parent() instanceof MenuItem ? SUBMENU : DROPDOWN),
+        .withPositions(this.isNested() ? SUBMENU : DROPDOWN),
       scrollStrategy: createRepositionScrollStrategy(this.injector),
     });
     this.overlay.attach(new DomPortal(this.el));
+  }
+
+  private isNested() {
+    const parent = this.menu.parent();
+    return parent instanceof MenuItem && parent.parent instanceof Menu;
   }
 }
 
@@ -92,4 +103,68 @@ export class FzMenuItem {}
 })
 export class FzMenuSeparator {}
 
+/** Horizontal bar of `fzMenuItem`s, each with a `[submenu]`. */
+@Directive({
+  selector: '[fzMenubar]',
+  hostDirectives: [{ directive: MenuBar, inputs: ['disabled', 'softDisabled', 'wrap', 'typeaheadDelay'], outputs: ['itemSelected'] }],
+  host: {
+    class:
+      'flex h-9 w-fit items-center gap-1 rounded-md border bg-background p-1 text-sm ' +
+      // top-level items open downwards: no submenu chevron (more specific than the item's own rule)
+      '[&>[role=menuitem][aria-haspopup=true]]:after:content-none',
+  },
+})
+export class FzMenubar {}
+
+/**
+ * Right-click area: `<div [fzContextMenu]="ref">…</div>` with `<div fzMenu #ref="fzMenu">`.
+ * Opens at the pointer (or where the keyboard's context-menu key fires) and gives focus back on close.
+ */
+@Component({
+  selector: '[fzContextMenu]',
+  imports: [MenuTrigger],
+  host: { '(contextmenu)': 'open($event)' },
+  template: `
+    <ng-content />
+    <!-- Invisible anchor moved to the pointer: the menu is positioned against it. -->
+    <span #anchor ngMenuTrigger [menu]="fzContextMenu().menu" style="position: fixed; visibility: hidden"></span>
+  `,
+})
+export class FzContextMenu {
+  readonly fzContextMenu = input.required<FzMenu>();
+  private readonly anchor = viewChild.required('anchor', { read: ElementRef<HTMLElement> });
+  private readonly trigger = viewChild.required(MenuTrigger);
+  private previousFocus: HTMLElement | null = null;
+
+  constructor() {
+    let wasOpen = false;
+    effect(() => {
+      const open = this.trigger().expanded();
+      if (wasOpen && !open) untracked(() => this.restoreFocus());
+      wasOpen = open;
+    });
+  }
+
+  protected open(event: MouseEvent) {
+    event.preventDefault();
+    this.previousFocus = document.activeElement as HTMLElement | null;
+    const { style } = this.anchor().nativeElement;
+    // DROPDOWN puts the menu 4px below its anchor; lift the anchor so the menu starts at the pointer.
+    style.left = `${event.clientX}px`;
+    style.top = `${event.clientY - 4}px`;
+    if (this.trigger().expanded()) this.fzContextMenu().reposition();
+    else this.trigger().open();
+  }
+
+  // Aria refocuses the (invisible) anchor on close, which fails: put focus back where it was,
+  // unless the user already moved it somewhere else.
+  private restoreFocus() {
+    const active = document.activeElement;
+    const lost = !active || active === document.body || active === this.anchor().nativeElement || this.fzContextMenu().menu.element.contains(active);
+    if (lost) this.previousFocus?.focus();
+  }
+}
+
 export const FZ_MENU = [FzMenu, FzMenuTrigger, FzMenuItem, FzMenuSeparator] as const;
+export const FZ_MENUBAR = [FzMenubar, FzMenu, FzMenuItem, FzMenuSeparator] as const;
+export const FZ_CONTEXT_MENU = [FzContextMenu, FzMenu, FzMenuItem, FzMenuSeparator] as const;

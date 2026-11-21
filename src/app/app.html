@@ -51,6 +51,52 @@
   </section>
 
   <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Menubar</h2>
+    <div fzMenubar aria-label="Editor" (itemSelected)="action.set($event)">
+      <div fzMenuItem value="file" [submenu]="mbFile.menu">File</div>
+      <div fzMenuItem value="edit" [submenu]="mbEdit.menu">Edit</div>
+      <div fzMenuItem value="view" [submenu]="mbView.menu">View</div>
+    </div>
+    <div fzMenu #mbFile="fzMenu">
+      <div fzMenuItem value="new-tab">New tab</div>
+      <div fzMenuItem value="new-window">New window</div>
+      <div fzMenuSeparator></div>
+      <div fzMenuItem value="print">Print…</div>
+    </div>
+    <div fzMenu #mbEdit="fzMenu">
+      <div fzMenuItem value="undo">Undo</div>
+      <div fzMenuItem value="redo" [disabled]="true">Redo</div>
+      <div fzMenuSeparator></div>
+      <div fzMenuItem value="find" [submenu]="mbFind.menu">Find</div>
+    </div>
+    <div fzMenu #mbFind="fzMenu">
+      <div fzMenuItem value="search-web">Search the web</div>
+      <div fzMenuItem value="find-next">Find next</div>
+    </div>
+    <div fzMenu #mbView="fzMenu">
+      <div fzMenuItem value="zoom-in">Zoom in</div>
+      <div fzMenuItem value="zoom-out">Zoom out</div>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Context menu</h2>
+    <div
+      [fzContextMenu]="ctxMenu"
+      tabindex="0"
+      class="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      Right click here (or focus and press the context-menu key)
+    </div>
+    <div fzMenu #ctxMenu="fzMenu" (itemSelected)="action.set($event)">
+      <div fzMenuItem value="back">Back</div>
+      <div fzMenuItem value="reload">Reload</div>
+      <div fzMenuSeparator></div>
+      <div fzMenuItem value="inspect">Inspect</div>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Accordion</h2>
     <div fzAccordion>
       <fz-accordion-item title="Is it accessible?">Yes. Behavior and ARIA come from &#64;angular/aria.</fz-accordion-item>

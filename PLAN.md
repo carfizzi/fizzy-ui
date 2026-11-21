@@ -12,8 +12,8 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 ## Phase 1: built on Angular Aria behaviors
 
 - [x] **menu / dropdown-menu** (`@angular/aria/menu` + CDK overlay). Test: opens from the trigger, arrow keys, Enter selects and returns focus, Esc closes and returns focus, submenus (ArrowRight/Left), disabled item. Also checked in real headless Chrome: placement, submenu, outside click
-- [ ] **menubar** (`@angular/aria/menu`, MenuBar). Test: left/right arrows between items, opening submenus
-- [ ] **context-menu** (`@angular/aria/menu`). Test: opens on right click, position, Esc
+- [x] **menubar** (`@angular/aria/menu`, MenuBar, in `menu.ts`). Test: menubar roles, click and ArrowDown open, ArrowLeft/Right along the bar even from an open menu, Escape returns focus, nested submenu + Enter. Checked in headless Chrome
+- [x] **context-menu** (`@angular/aria/menu`, in `menu.ts`). Test: right click opens at the pointer (default prevented), a second right click moves it, Esc and Enter close and give focus back, no focus stealing. Checked in headless Chrome, context-menu key included
 - [ ] **select** (`@angular/aria/combobox` + listbox). Test: opens, picks a value, typeahead, disabled options
 - [ ] **multiselect** (`@angular/aria/combobox` + listbox multi). Test: picks several values, deselects
 - [ ] **autocomplete / combobox** (`@angular/aria/combobox`). Test: filters while typing, `aria-activedescendant`, Enter picks

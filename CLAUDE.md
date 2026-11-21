@@ -20,7 +20,7 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 - When a template ref is needed, for example the accordion trigger's `[panel]`, use a small component instead. Host directives don't expose `exportAs`. See `registry/ui/accordion.ts`.
 - A file may import only `@angular/*`, because it gets copied as-is into user projects. Each file exports a `FZ_<NAME>` array for `imports`.
 - Use only theme tokens (`bg-primary`, `text-muted-foreground`, `border`, `ring-ring`). No hardcoded colors.
-- Popups (menu now; later select, combobox, popover, tooltip) follow `registry/ui/menu.ts`. The panel directive is the Aria directive through `hostDirectives`, so the user's items keep DI. An effect moves the panel element into a CDK overlay (`DomPortal`, native popover, `withPopoverLocation('inline')`) while Aria says it is visible. The panel `exportAs`es itself with a `.menu` field for `[fzMenuTrigger]` and `[submenu]`.
+- Popups (menu now; later select, combobox, popover, tooltip) follow `registry/ui/menu.ts`. The panel directive is the Aria directive through `hostDirectives`, so the user's items keep DI. An effect moves the panel element into a CDK overlay (`DomPortal`, native popover, `withPopoverLocation('inline')`) while Aria says it is visible. The panel `exportAs`es itself with a `.menu` field for `[fzMenuTrigger]` and `[submenu]`. `menubar` and `context-menu` live in `menu.ts` too (their registry entries point to the same file), because they share `FzMenu` and `FzMenuItem`.
 - A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, an example in `src/app/app.html`, and `registry/ui/<name>.spec.ts`.
 
 ## Commands
@@ -38,6 +38,7 @@ node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another
 - Listbox `multi` with the default `selectionMode` (`follow`): a plain click replaces the selection and Ctrl+click adds. For checkbox-style toggling, use `selectionMode="explicit"`.
 - Aria `softDisabled` is `true` by default: disabled items get focus from the keyboard (arrows, Home/End) but are never selected. Tests rely on this.
 - A submenu must sit inside its parent menu in the DOM, otherwise Aria's focusout closes the parent. `inline` popovers do that in browsers. jsdom has no popover API, so `menu.spec.ts` stubs it. The submenu overlay attaches as soon as the parent menu is visible (hidden via `data-visible`), because Aria focuses into it synchronously on open.
+- Aria sets its own `id` on menus and items, and open menus move in the DOM. In tests, find menus by a `data-*` attribute, not by `id` or document order.
 - Bindings like `[fzMenuTrigger]="x"` are properties and are not in the DOM. In tests and scripts, select by ARIA (`button[aria-haspopup]`).
 - Some Aria inputs have no boolean transform (`MenuItem.disabled`): use `[disabled]="true"`, not the bare attribute.
 - Versions: Angular 22, `@angular/aria` 22.3, Node 24.

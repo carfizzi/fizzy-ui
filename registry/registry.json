@@ -14,6 +14,8 @@
     "separator": { "files": ["ui/separator.ts"], "dependencies": [] },
     "skeleton": { "files": ["ui/skeleton.ts"], "dependencies": [] },
     "avatar": { "files": ["ui/avatar.ts"], "dependencies": [] },
-    "menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "menubar": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "context-menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
   }
 }
