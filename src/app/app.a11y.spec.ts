@@ -21,6 +21,7 @@ describe('playground accessibility (axe)', () => {
     const el: HTMLElement = fixture.nativeElement;
     el.querySelector<HTMLElement>('[ngAccordionTrigger]')!.click();
     el.querySelectorAll<HTMLElement>('[fzTab]')[1].click();
+    el.querySelector<HTMLElement>('fz-select')!.click();
     await fixture.whenStable();
     expect(await violations(el)).toEqual([]);
   });

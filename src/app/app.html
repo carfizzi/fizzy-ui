@@ -51,6 +51,19 @@
   </section>
 
   <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Select</h2>
+    <span id="framework-label" class="text-sm font-medium">Framework</span>
+    <fz-select [(value)]="framework" placeholder="Pick a framework" aria-labelledby="framework-label" class="max-w-56">
+      <fz-select-item value="angular" label="Angular" />
+      <fz-select-item value="react" label="React" />
+      <fz-select-item value="vue" label="Vue" />
+      <fz-select-item value="ember" label="Ember (disabled)" disabled />
+      <fz-select-item value="svelte" label="Svelte" />
+    </fz-select>
+    <p class="text-sm text-muted-foreground">value: {{ framework() ?? '—' }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Menubar</h2>
     <div fzMenubar aria-label="Editor" (itemSelected)="action.set($event)">
       <div fzMenuItem value="file" [submenu]="mbFile.menu">File</div>

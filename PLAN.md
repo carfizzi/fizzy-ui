@@ -14,7 +14,7 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 - [x] **menu / dropdown-menu** (`@angular/aria/menu` + CDK overlay). Test: opens from the trigger, arrow keys, Enter selects and returns focus, Esc closes and returns focus, submenus (ArrowRight/Left), disabled item. Also checked in real headless Chrome: placement, submenu, outside click
 - [x] **menubar** (`@angular/aria/menu`, MenuBar, in `menu.ts`). Test: menubar roles, click and ArrowDown open, ArrowLeft/Right along the bar even from an open menu, Escape returns focus, nested submenu + Enter. Checked in headless Chrome
 - [x] **context-menu** (`@angular/aria/menu`, in `menu.ts`). Test: right click opens at the pointer (default prevented), a second right click moves it, Esc and Enter close and give focus back, no focus stealing. Checked in headless Chrome, context-menu key included
-- [ ] **select** (`@angular/aria/combobox` + listbox). Test: opens, picks a value, typeahead, disabled options
+- [x] **select** (`@angular/aria/combobox` + listbox, `select.ts`). Test: closed combobox with placeholder, click/keyboard open, `aria-activedescendant`, Enter/click pick and close, focus stays on the select, Escape keeps the value, re-clicking the selected option keeps it, disabled option/select. Checked in headless Chrome. Typeahead not tested yet
 - [ ] **multiselect** (`@angular/aria/combobox` + listbox multi). Test: picks several values, deselects
 - [ ] **autocomplete / combobox** (`@angular/aria/combobox`). Test: filters while typing, `aria-activedescendant`, Enter picks
 - [ ] **toolbar** (`@angular/aria/toolbar`). Test: roving focus with arrow keys, toggle groups

@@ -16,6 +16,7 @@
     "avatar": { "files": ["ui/avatar.ts"], "dependencies": [] },
     "menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "menubar": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
-    "context-menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "context-menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "select": { "files": ["ui/select.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
   }
 }
