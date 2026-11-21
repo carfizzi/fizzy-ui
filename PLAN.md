@@ -70,3 +70,4 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
 - [x] Automated accessibility check with axe-core on every docs page and example (`src/app/app.a11y.spec.ts`, initial state + opened panels; `color-contrast` off in jsdom)
 - [ ] CLI tests: `init` and `add` on a fresh app, unknown names rejected, existing files not overwritten (checked by hand so far)
 - [ ] Publish the CLI to npm (check that the `fizzy-ui` name is free first)
+- [ ] Animations and transitions: analyze, then improve. Today nothing animates on open/close (dialog, sheet, popover, menu, select, tooltip, accordion). Check what the CDK overlay and Tailwind v4 allow (`transition-discrete`, `starting:`, `@starting-style`, exit animations before detach). Keep them opt-in or light, and turn them off under `prefers-reduced-motion`
