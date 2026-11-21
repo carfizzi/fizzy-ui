@@ -15,7 +15,7 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 - [x] **menubar** (`@angular/aria/menu`, MenuBar, in `menu.ts`). Test: menubar roles, click and ArrowDown open, ArrowLeft/Right along the bar even from an open menu, Escape returns focus, nested submenu + Enter. Checked in headless Chrome
 - [x] **context-menu** (`@angular/aria/menu`, in `menu.ts`). Test: right click opens at the pointer (default prevented), a second right click moves it, Esc and Enter close and give focus back, no focus stealing. Checked in headless Chrome, context-menu key included
 - [x] **select** (`@angular/aria/combobox` + listbox, `select.ts`). Test: closed combobox with placeholder, click/keyboard open, `aria-activedescendant`, Enter/click pick and close, focus stays on the select, Escape keeps the value, re-clicking the selected option keeps it, disabled option/select. Checked in headless Chrome. Typeahead not tested yet
-- [ ] **multiselect** (`@angular/aria/combobox` + listbox multi). Test: picks several values, deselects
+- [x] **multiselect** (`@angular/aria/combobox` + listbox multi, in `select.ts`). Test: click/Space/Enter toggle and keep the list open, labels joined in the trigger, outside value reflected, disabled option ignored, Escape closes with focus kept. Checked in headless Chrome (Tab and outside click close)
 - [x] **autocomplete / combobox** (`@angular/aria/combobox`, `combobox.ts`). Test: native label + role on the input, typing opens and filters (case-insensitive contains), `aria-activedescendant`, Enter/click write the option and keep focus, "No results" shown and announced, Escape. Checked in headless Chrome. Options are plain strings for now
 - [ ] **toolbar** (`@angular/aria/toolbar`). Test: roving focus with arrow keys, toggle groups
 - [ ] **tree** (`@angular/aria/tree`). Test: arrow keys expand and collapse, selection
@@ -43,6 +43,24 @@ Test for each: variants and the expected classes are applied. Separator also che
 - [ ] **switch**. Test: `role="switch"`, `aria-checked`, Space toggles
 - [ ] **radio-group**. Test: arrow keys move the selection, one value only
 - [ ] **slider**. Test: arrow keys and Home/End change the value, `aria-valuenow`
+
+## Phase 4: docs / showcase web app
+
+An Angular site that documents and shows off the library, the way ui.shadcn.com does for shadcn.
+
+Decision: **same repo**, by turning the playground (`src/`) into the docs app rather than adding a second repo. Reasons:
+- Examples import `registry/ui/*` directly, so docs never drift from the code a user gets from `fizzy-ui add`.
+- The axe check (`app.a11y.spec.ts`) keeps running on every example the docs show.
+- One PR changes a component, its test and its docs together.
+- shadcn/ui does the same: its docs site lives in the same monorepo as the registry.
+Move it to its own repo only if it later needs its own release cycle or heavy dependencies (search, MDX pipeline).
+
+- [ ] Routing: one page per component (`/components/<name>`), plus Introduction, Installation (`init`, `add`), Theming
+- [ ] Component page: live demo(s), `npx fizzy-ui add <name>` command, usage snippet, keyboard table, accessibility notes
+- [ ] "View source": show the registry file as text (esbuild `loader: 'text'` import attribute), so it is always the real file
+- [ ] Copy-to-clipboard for commands and code, light/dark toggle, sidebar navigation
+- [ ] Keep `app.a11y.spec.ts` green on every page (one axe run per route)
+- [ ] Deploy: GitHub Pages needs a public repo (or a paid plan for private), otherwise Cloudflare Pages / Netlify / Vercel. Decide when the repo goes public
 
 ## Cross-cutting
 

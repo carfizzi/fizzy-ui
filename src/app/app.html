@@ -64,6 +64,19 @@
   </section>
 
   <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Multiselect</h2>
+    <span id="toppings-label" class="text-sm font-medium">Toppings</span>
+    <fz-multiselect [(value)]="toppings" placeholder="Pick toppings" aria-labelledby="toppings-label" class="max-w-56">
+      <fz-select-item value="cheese" label="Cheese" />
+      <fz-select-item value="mushrooms" label="Mushrooms" />
+      <fz-select-item value="olives" label="Olives" />
+      <fz-select-item value="pineapple" label="Pineapple (sold out)" disabled />
+      <fz-select-item value="basil" label="Basil" />
+    </fz-multiselect>
+    <p class="text-sm text-muted-foreground">value: {{ toppings().join(', ') || '—' }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Combobox (autocomplete)</h2>
     <label fzLabel for="country">Country</label>
     <input id="country" fzCombobox [options]="countries" [(value)]="country" placeholder="Type a country" class="max-w-56" />

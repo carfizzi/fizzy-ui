@@ -22,6 +22,7 @@ describe('playground accessibility (axe)', () => {
     el.querySelector<HTMLElement>('[ngAccordionTrigger]')!.click();
     el.querySelectorAll<HTMLElement>('[fzTab]')[1].click();
     el.querySelector<HTMLElement>('fz-select')!.click();
+    el.querySelector<HTMLElement>('fz-multiselect')!.click();
     el.querySelector<HTMLElement>('input[fzCombobox]')!.click();
     await fixture.whenStable();
     expect(await violations(el)).toEqual([]);
