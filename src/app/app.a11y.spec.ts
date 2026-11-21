@@ -24,6 +24,7 @@ describe('playground accessibility (axe)', () => {
     el.querySelector<HTMLElement>('fz-select')!.click();
     el.querySelector<HTMLElement>('fz-multiselect')!.click();
     el.querySelector<HTMLElement>('input[fzCombobox]')!.click();
+    [...el.querySelectorAll<HTMLElement>('[role=treeitem]')].find((i) => i.textContent!.trim().startsWith('registry'))!.click();
     await fixture.whenStable();
     expect(await violations(el)).toEqual([]);
   });

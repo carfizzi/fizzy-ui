@@ -42,5 +42,8 @@ node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another
 - A submenu must sit inside its parent menu in the DOM, otherwise Aria's focusout closes the parent. `inline` popovers do that in browsers. jsdom has no popover API, so `menu.spec.ts` stubs it. The submenu overlay attaches as soon as the parent menu is visible (hidden via `data-visible`), because Aria focuses into it synchronously on open.
 - Aria sets its own `id` on menus and items, and open menus move in the DOM. In tests, find menus by a `data-*` attribute, not by `id` or document order.
 - Bindings like `[fzMenuTrigger]="x"` are properties and are not in the DOM. In tests and scripts, select by ARIA (`button[aria-haspopup]`).
-- Some Aria inputs have no boolean transform (`MenuItem.disabled`): use `[disabled]="true"`, not the bare attribute.
+- Some Aria inputs have no boolean transform (`MenuItem.disabled`, `GridCell.disabled`): use `[disabled]="true"`, not the bare attribute.
+- Tree `selectionMode` defaults to `explicit` (listbox and grid default to `follow`).
+- A grid cell that holds a `ngGridCellWidget` never takes focus itself: the widget does. Enter only switches the widget between navigation and editing (`data-active-control`).
+- Roving widgets (menubar, grid) keep one item `data-active` at rest: tie the highlight to focus (`focus-within`, `focus-visible`), not to `data-active` alone.
 - Versions: Angular 22, `@angular/aria` 22.3, Node 24.

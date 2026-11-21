@@ -84,6 +84,58 @@
   </section>
 
   <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Toolbar</h2>
+    <div fzToolbar aria-label="Text formatting">
+      <button fzToolbarItem [(pressed)]="bold" aria-label="Bold"><b>B</b></button>
+      <button fzToolbarItem [(pressed)]="italic" aria-label="Italic"><i>I</i></button>
+      <div fzSeparator orientation="vertical" class="mx-1 h-5!"></div>
+      <div fzToolbarGroup [(value)]="align" aria-label="Alignment">
+        <button fzToolbarItem value="left">Left</button>
+        <button fzToolbarItem value="center">Center</button>
+        <button fzToolbarItem value="right">Right</button>
+      </div>
+      <div fzSeparator orientation="vertical" class="mx-1 h-5!"></div>
+      <button fzToolbarItem [disabled]="true">Share</button>
+    </div>
+    <p class="text-sm text-muted-foreground">bold: {{ bold() }}, italic: {{ italic() }}, align: {{ align() }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Tree</h2>
+    <fz-tree [nodes]="files" [(value)]="file" aria-label="Project files" class="max-w-64" />
+    <p class="text-sm text-muted-foreground">value: {{ file().join(', ') || '—' }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Grid (data table)</h2>
+    <div class="rounded-md border">
+      <table fzGrid aria-label="Team" [enableSelection]="true" selectionMode="explicit">
+        <tr fzGridRow>
+          <th fzGridCell role="columnheader">Name</th>
+          <th fzGridCell role="columnheader">Role</th>
+          <th fzGridCell role="columnheader">City (editable)</th>
+        </tr>
+        @for (person of people(); track person.name) {
+          <tr fzGridRow class="last:border-b-0">
+            <td fzGridCell>{{ person.name }}</td>
+            <td fzGridCell [disabled]="person.role === 'Retired'">{{ person.role }}</td>
+            <td fzGridCell>
+              <input
+                fzGridCellInput
+                widgetType="editable"
+                [attr.aria-label]="person.name + ' city'"
+                [value]="person.city"
+                (change)="setCity(person.name, $any($event.target).value)"
+              />
+            </td>
+          </tr>
+        }
+      </table>
+    </div>
+    <p class="text-sm text-muted-foreground">cities: {{ cities() }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Menubar</h2>
     <div fzMenubar aria-label="Editor" (itemSelected)="action.set($event)">
       <div fzMenuItem value="file" [submenu]="mbFile.menu">File</div>

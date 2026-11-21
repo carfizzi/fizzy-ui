@@ -19,6 +19,9 @@
     "context-menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "select": { "files": ["ui/select.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "multiselect": { "files": ["ui/select.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
-    "combobox": { "files": ["ui/combobox.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "combobox": { "files": ["ui/combobox.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "toolbar": { "files": ["ui/toolbar.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "tree": { "files": ["ui/tree.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "grid": { "files": ["ui/grid.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
   }
 }

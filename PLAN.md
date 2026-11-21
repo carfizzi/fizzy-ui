@@ -17,9 +17,9 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 - [x] **select** (`@angular/aria/combobox` + listbox, `select.ts`). Test: closed combobox with placeholder, click/keyboard open, `aria-activedescendant`, Enter/click pick and close, focus stays on the select, Escape keeps the value, re-clicking the selected option keeps it, disabled option/select. Checked in headless Chrome. Typeahead not tested yet
 - [x] **multiselect** (`@angular/aria/combobox` + listbox multi, in `select.ts`). Test: click/Space/Enter toggle and keep the list open, labels joined in the trigger, outside value reflected, disabled option ignored, Escape closes with focus kept. Checked in headless Chrome (Tab and outside click close)
 - [x] **autocomplete / combobox** (`@angular/aria/combobox`, `combobox.ts`). Test: native label + role on the input, typing opens and filters (case-insensitive contains), `aria-activedescendant`, Enter/click write the option and keep focus, "No results" shown and announced, Escape. Checked in headless Chrome. Options are plain strings for now
-- [ ] **toolbar** (`@angular/aria/toolbar`). Test: roving focus with arrow keys, toggle groups
-- [ ] **tree** (`@angular/aria/tree`). Test: arrow keys expand and collapse, selection
-- [ ] **grid / data-table** (`@angular/aria/grid`). Test: arrow keys move between cells, editable cells
+- [x] **toolbar** (`@angular/aria/toolbar`, `toolbar.ts`). Test: toolbar/radiogroup/radio/`aria-pressed` roles, one Tab stop, arrows + Home/End with wrap, Up/Down inside a group, `[(pressed)]` toggles, `fzToolbarGroup [(value)]` single choice, disabled item ignored. Checked in headless Chrome
+- [x] **tree** (`@angular/aria/tree`, `tree.ts`, data-driven `[nodes]`). Test: tree/group/level roles, collapsed children not rendered, Right/Left expand, enter, parent, collapse, explicit (default) vs follow selection, click toggles, multi + Space, outside value. Checked in headless Chrome (typeahead too)
+- [x] **grid / data-table** (`@angular/aria/grid`, `grid.ts`, on the user's `<table>`). Test: grid/row/columnheader roles, one Tab stop, arrows (looping) + Home/End + Ctrl+Home/End, Space selects with `[(selected)]`, disabled cell never selected, editable cell (Enter or typing edits, arrows stay in the input, Enter/Escape stop). Checked in headless Chrome. No sorting/pagination yet
 
 ## Phase 2: styles only (no Aria needed)
 
