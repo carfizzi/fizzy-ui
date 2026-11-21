@@ -13,6 +13,7 @@
     "badge": { "files": ["ui/badge.ts"], "dependencies": [] },
     "separator": { "files": ["ui/separator.ts"], "dependencies": [] },
     "skeleton": { "files": ["ui/skeleton.ts"], "dependencies": [] },
-    "avatar": { "files": ["ui/avatar.ts"], "dependencies": [] }
+    "avatar": { "files": ["ui/avatar.ts"], "dependencies": [] },
+    "menu": { "files": ["ui/menu.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
   }
 }

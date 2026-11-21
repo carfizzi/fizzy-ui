@@ -32,6 +32,25 @@
   </section>
 
   <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Menu</h2>
+    <div>
+      <button fzButton variant="outline" [fzMenuTrigger]="fileMenu.menu">File</button>
+      <div fzMenu #fileMenu="fzMenu" (itemSelected)="action.set($event)">
+        <div fzMenuItem value="new">New file</div>
+        <div fzMenuItem value="open">Open…</div>
+        <div fzMenuItem value="share" [submenu]="shareMenu.menu">Share</div>
+        <div fzMenuSeparator></div>
+        <div fzMenuItem value="delete" [disabled]="true">Delete</div>
+      </div>
+      <div fzMenu #shareMenu="fzMenu" (itemSelected)="action.set($event)">
+        <div fzMenuItem value="email">Email</div>
+        <div fzMenuItem value="link">Copy link</div>
+      </div>
+    </div>
+    <p class="text-sm text-muted-foreground">last action: {{ action() ?? '—' }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Accordion</h2>
     <div fzAccordion>
       <fz-accordion-item title="Is it accessible?">Yes. Behavior and ARIA come from &#64;angular/aria.</fz-accordion-item>

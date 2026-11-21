@@ -11,7 +11,7 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 
 ## Phase 1: built on Angular Aria behaviors
 
-- [ ] **menu / dropdown-menu** (`@angular/aria/menu` + CDK overlay). Test: opens from the trigger, arrow keys, Esc closes and returns focus, submenus
+- [x] **menu / dropdown-menu** (`@angular/aria/menu` + CDK overlay). Test: opens from the trigger, arrow keys, Enter selects and returns focus, Esc closes and returns focus, submenus (ArrowRight/Left), disabled item. Also checked in real headless Chrome: placement, submenu, outside click
 - [ ] **menubar** (`@angular/aria/menu`, MenuBar). Test: left/right arrows between items, opening submenus
 - [ ] **context-menu** (`@angular/aria/menu`). Test: opens on right click, position, Esc
 - [ ] **select** (`@angular/aria/combobox` + listbox). Test: opens, picks a value, typeahead, disabled options
