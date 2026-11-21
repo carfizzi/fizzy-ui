@@ -1,12 +1,18 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { FzButton } from '../../registry/ui/button';
+import { FZ_TABS } from '../../registry/ui/tabs';
+import { FZ_ACCORDION } from '../../registry/ui/accordion';
+import { FZ_LISTBOX } from '../../registry/ui/listbox';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [FzButton, FZ_TABS, FZ_ACCORDION, FZ_LISTBOX],
   templateUrl: './app.html',
-  styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('fizzy-ui');
+  protected readonly tab = signal<string | undefined>('account');
+  protected readonly fruits = signal<string[]>(['apple']);
+  protected toggleDark() {
+    document.documentElement.classList.toggle('dark');
+  }
 }

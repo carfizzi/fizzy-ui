@@ -1,0 +1,10 @@
+{
+  "name": "fizzy-ui",
+  "theme": "theme/fizzy.css",
+  "items": {
+    "button": { "files": ["ui/button.ts"], "dependencies": [] },
+    "tabs": { "files": ["ui/tabs.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "accordion": { "files": ["ui/accordion.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "listbox": { "files": ["ui/listbox.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+  }
+}

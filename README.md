@@ -1,59 +1,49 @@
-# FizzyUi
+# fizzy-ui
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.1.
+shadcn-style components for Angular, built on [`@angular/aria`](https://angular.dev/guide/aria/overview).
+Angular Aria provides behavior and accessibility (keyboard, focus, ARIA). fizzy-ui adds the styling (Tailwind v4 + CSS variables).
+You copy the source into your project and the code is yours.
 
-## Development server
+## Use in an Angular app
 
-To start a local development server, run:
-
-```bash
-ng serve
+```sh
+npx fizzy-ui init                 # src/fizzy.css theme, Tailwind setup, imports in styles.css
+npx fizzy-ui add tabs accordion   # copies to src/app/ui/, installs @angular/aria
+npx fizzy-ui list
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Options: `--path <dir>` (default `src/app/ui`), `--overwrite`, `--registry <dir|url>`, `--skip-install`.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```ts
+import { FZ_TABS } from './ui/tabs';
+@Component({ imports: [FZ_TABS], template: `
+  <div fzTabs>
+    <ul fzTabList [(selectedTab)]="tab">
+      <li fzTab value="a">A</li><li fzTab value="b">B</li>
+    </ul>
+    <div fzTabPanel value="a"><ng-template ngTabContent>Panel A</ng-template></div>
+    <div fzTabPanel value="b"><ng-template ngTabContent>Panel B</ng-template></div>
+  </div>` })
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Dark mode: add the `dark` class to `<html>`. Theme: edit the variables in `src/fizzy.css`.
 
-```bash
-ng generate --help
+## Repo layout
+
+- `registry/`: the source of truth. `registry.json` lists the components, `ui/*.ts` holds them, `theme/fizzy.css` holds the tokens.
+- `cli/`: the `fizzy-ui` CLI (no dependencies). `npm publish` from `cli/` bundles `registry/`.
+- `src/`: playground app that imports straight from `registry/`.
+
+## Develop
+
+```sh
+npm start      # playground at http://localhost:4200
+npm test       # behavior tests
+node cli/index.mjs add tabs --registry ./registry   # try the CLI inside another project
 ```
 
-## Building
+## Add a component
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Write `registry/ui/<name>.ts`. Compose the Angular Aria directive with `hostDirectives` and put Tailwind classes on `host`. Import only from `@angular/*`, since the file gets copied as-is.
+2. Register it in `registry/registry.json` with its `files` and `dependencies`.
+3. Show it in `src/app/app.html` and cover it in `src/app/app.spec.ts`.
