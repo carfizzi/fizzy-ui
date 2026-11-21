@@ -49,4 +49,68 @@
     </ul>
     <p class="text-sm text-muted-foreground">selected: {{ fruits().join(', ') }}</p>
   </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Card, input, textarea, label</h2>
+    <form fzCard class="max-w-sm">
+      <div fzCardHeader>
+        <h3 fzCardTitle>Contact</h3>
+        <p fzCardDescription>We reply within a day.</p>
+      </div>
+      <div fzCardContent class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <label fzLabel for="email">Email</label>
+          <input fzInput id="email" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label fzLabel for="msg">Message</label>
+          <textarea fzTextarea id="msg" placeholder="Hi..."></textarea>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label fzLabel for="bad">Invalid</label>
+          <input fzInput id="bad" aria-invalid="true" value="not an email" />
+        </div>
+      </div>
+      <div fzCardFooter class="justify-end">
+        <button fzButton type="button" variant="outline">Cancel</button>
+        <button fzButton type="button">Send</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Badge</h2>
+    <div class="flex flex-wrap gap-2">
+      <span fzBadge>Default</span>
+      <span fzBadge variant="secondary">Secondary</span>
+      <span fzBadge variant="outline">Outline</span>
+      <span fzBadge variant="destructive">Destructive</span>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Separator</h2>
+    <div fzSeparator></div>
+    <div class="flex h-5 items-center gap-4 text-sm">
+      <span>Docs</span>
+      <div fzSeparator orientation="vertical"></div>
+      <span>Source</span>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Skeleton and avatar</h2>
+    <div class="flex items-center gap-4" role="status" aria-busy="true" aria-label="Loading profile">
+      <div fzSkeleton class="size-10 rounded-full"></div>
+      <div class="flex flex-col gap-2">
+        <div fzSkeleton class="h-4 w-40"></div>
+        <div fzSkeleton class="h-4 w-28"></div>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <fz-avatar src="https://github.com/angular.png" alt="Angular" fallback="NG" />
+      <fz-avatar src="/missing.png" alt="Broken image" fallback="BI" />
+      <fz-avatar alt="No image" fallback="NI" />
+    </div>
+  </section>
 </main>

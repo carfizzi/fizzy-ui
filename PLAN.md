@@ -23,16 +23,16 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 
 ## Phase 2: styles only (no Aria needed)
 
-- [ ] input
-- [ ] textarea
-- [ ] label
-- [ ] card
-- [ ] badge
-- [ ] separator
-- [ ] skeleton
-- [ ] avatar
+- [x] input
+- [x] textarea
+- [x] label
+- [x] card
+- [x] badge
+- [x] separator
+- [x] skeleton
+- [x] avatar
 
-Test for each: variants and the expected classes are applied.
+Test for each: variants and the expected classes are applied. Separator also checks `role`/`aria-orientation`; avatar checks the fallback on image error.
 
 ## Phase 3: built on CDK or native HTML (not in Angular Aria)
 

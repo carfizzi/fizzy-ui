@@ -5,6 +5,14 @@
     "button": { "files": ["ui/button.ts"], "dependencies": [] },
     "tabs": { "files": ["ui/tabs.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "accordion": { "files": ["ui/accordion.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
-    "listbox": { "files": ["ui/listbox.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "listbox": { "files": ["ui/listbox.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "input": { "files": ["ui/input.ts"], "dependencies": [] },
+    "textarea": { "files": ["ui/textarea.ts"], "dependencies": [] },
+    "label": { "files": ["ui/label.ts"], "dependencies": [] },
+    "card": { "files": ["ui/card.ts"], "dependencies": [] },
+    "badge": { "files": ["ui/badge.ts"], "dependencies": [] },
+    "separator": { "files": ["ui/separator.ts"], "dependencies": [] },
+    "skeleton": { "files": ["ui/skeleton.ts"], "dependencies": [] },
+    "avatar": { "files": ["ui/avatar.ts"], "dependencies": [] }
   }
 }

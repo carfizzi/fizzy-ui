@@ -10,7 +10,7 @@ const variants = {
   secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
   outline: 'border bg-background hover:bg-accent hover:text-accent-foreground',
   ghost: 'hover:bg-accent hover:text-accent-foreground',
-  destructive: 'bg-destructive text-white hover:bg-destructive/90',
+  destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
 };
 
 const sizes = { default: 'h-9 px-4', sm: 'h-8 px-3', lg: 'h-10 px-6', icon: 'size-9' };
@@ -24,3 +24,5 @@ export class FzButton {
   readonly size = input<keyof typeof sizes>('default');
   protected readonly classes = computed(() => `${base} ${variants[this.variant()]} ${sizes[this.size()]}`);
 }
+
+export const FZ_BUTTON = [FzButton] as const;
