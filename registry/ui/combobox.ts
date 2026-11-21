@@ -1,4 +1,4 @@
-import { Component, Directive, ElementRef, ViewContainerRef, computed, inject, input, linkedSignal } from '@angular/core';
+import { Component, Directive, ElementRef, ViewContainerRef, computed, effect, inject, input, linkedSignal, signal, untracked, viewChild } from '@angular/core';
 import { Combobox, ComboboxPopup, ComboboxWidget } from '@angular/aria/combobox';
 import { Listbox, Option } from '@angular/aria/listbox';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
@@ -8,6 +8,59 @@ const POSITIONS: ConnectedPosition[] = [
   // panelClass: the popup grows from the trigger side when it flips above.
   { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4, panelClass: 'fz-above' },
 ];
+
+/**
+ * Exit animation: marks `el` data-closing (its exit keyframes) and inert, then calls `done` once the
+ * animations end. With none (motion off, or tests) it calls `done` at once and returns undefined;
+ * otherwise it returns a cancel, for a reopen.
+ */
+function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
+  let live = true;
+  const clear = () => {
+    el.removeAttribute('data-closing');
+    el.inert = false;
+  };
+  el.setAttribute('data-closing', '');
+  el.inert = true;
+  const running = el.getAnimations?.() ?? [];
+  if (!running.length) {
+    done();
+    clear();
+    return undefined;
+  }
+  void Promise.allSettled(running.map((a) => a.finished)).then(() => {
+    if (!live) return;
+    live = false;
+    done();
+    clear();
+  });
+  return () => {
+    live = false;
+    clear();
+  };
+}
+
+/**
+ * Keeps a combobox popup on screen while it plays its exit animation: open the overlay on
+ * `expanded() || leaving()`. The popup content must outlive `expanded`, hence preserveContent.
+ */
+function closingPopup(combobox: () => Combobox, popup: () => ElementRef<HTMLElement> | undefined) {
+  const leaving = signal(false);
+  let cancel: (() => void) | undefined;
+  effect(() => {
+    const open = combobox().expanded();
+    untracked(() => {
+      combobox().preserveContent.set(true);
+      cancel?.();
+      cancel = undefined;
+      const el = popup()?.nativeElement;
+      if (open || !el) return leaving.set(false);
+      leaving.set(true);
+      cancel = leave(el, () => leaving.set(false));
+    });
+  });
+  return leaving;
+}
 
 /**
  * Autocomplete on your own `<input>`: `<input fzCombobox [options]="list" [(value)]="text">`.
@@ -49,10 +102,10 @@ export class FzCombobox {
     <ng-template
       [cdkConnectedOverlay]="{ origin: owner().element, usePopover: 'inline', matchWidth: true }"
       [cdkConnectedOverlayPositions]="positions"
-      [cdkConnectedOverlayOpen]="open()"
+      [cdkConnectedOverlayOpen]="open() || leaving()"
     >
       <ng-template ngComboboxPopup [combobox]="owner().combobox">
-        <div class="w-full rounded-md border bg-background p-1 text-sm text-foreground shadow-md animate-fz-popup origin-top in-[.fz-above]:origin-bottom" (mousedown)="$event.preventDefault()">
+        <div class="w-full rounded-md border bg-background p-1 text-sm text-foreground shadow-md animate-fz-popup origin-top in-[.fz-above]:origin-bottom data-closing:animate-fz-fade-out" #popup (mousedown)="$event.preventDefault()">
           @if (owner().filtered().length) {
             <div
               ngListbox
@@ -89,6 +142,8 @@ export class FzComboboxPanel {
   readonly owner = input.required<FzCombobox>();
   protected readonly positions = POSITIONS;
   protected readonly open = computed(() => this.owner().combobox.expanded());
+  private readonly popup = viewChild<ElementRef<HTMLElement>>('popup');
+  protected readonly leaving = closingPopup(() => this.owner().combobox, this.popup);
   protected readonly selected = linkedSignal<string[]>(() => {
     const text = this.owner().combobox.value();
     return this.owner().options().includes(text) ? [text] : [];

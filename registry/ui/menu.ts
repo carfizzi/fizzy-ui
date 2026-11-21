@@ -19,6 +19,37 @@ const SUBMENU: ConnectedPosition[] = [
 ];
 
 /**
+ * Exit animation: marks `el` data-closing (its exit keyframes) and inert, then calls `done` once the
+ * animations end. With none (motion off, or tests) it calls `done` at once and returns undefined;
+ * otherwise it returns a cancel, for a reopen.
+ */
+function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
+  let live = true;
+  const clear = () => {
+    el.removeAttribute('data-closing');
+    el.inert = false;
+  };
+  el.setAttribute('data-closing', '');
+  el.inert = true;
+  const running = el.getAnimations?.() ?? [];
+  if (!running.length) {
+    done();
+    clear();
+    return undefined;
+  }
+  void Promise.allSettled(running.map((a) => a.finished)).then(() => {
+    if (!live) return;
+    live = false;
+    done();
+    clear();
+  });
+  return () => {
+    live = false;
+    clear();
+  };
+}
+
+/**
  * The menu panel. Aria decides when it is visible; this directive moves its own element into a
  * CDK overlay anchored to the trigger (or to the parent item for a submenu) while it is open.
  * Pass `ref.menu` to `[fzMenuTrigger]` / `[submenu]`, with `#ref="fzMenu"`.
@@ -32,7 +63,7 @@ const SUBMENU: ConnectedPosition[] = [
   host: {
     class:
       'flex min-w-40 flex-col rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none ' +
-      'data-[visible=false]:hidden animate-fz-popup data-submenu:animate-none',
+      'data-[visible=false]:not-data-closing:hidden animate-fz-popup data-closing:animate-fz-fade-out data-submenu:animate-none',
     // Submenus (and menubar menus, which switch as you move along the bar) open instantly: frequent.
     '[attr.data-submenu]': 'submenu() || null',
   },
@@ -43,6 +74,7 @@ export class FzMenu {
   private readonly el = inject(ElementRef<HTMLElement>);
   private readonly injector = inject(Injector);
   private overlay?: OverlayRef;
+  private leaving?: () => void;
 
   constructor() {
     effect(() => {
@@ -52,7 +84,20 @@ export class FzMenu {
       // parent if focus lands outside it.
       const grandparent = parent instanceof MenuItem ? parent.parent : undefined;
       const open = grandparent instanceof Menu ? grandparent.visible() : !!grandparent || this.menu.visible();
-      untracked(() => (parent && open ? this.attach(parent.element) : this.overlay?.detach()));
+      untracked(() => {
+        if (parent && open) {
+          this.leaving?.();
+          this.leaving = undefined;
+          this.attach(parent.element);
+        } else if (this.overlay?.hasAttached() && !this.submenu()) {
+          this.leaving ??= leave(this.el.nativeElement, () => {
+            this.leaving = undefined;
+            this.overlay?.detach();
+          });
+        } else {
+          this.overlay?.detach();
+        }
+      });
     });
     inject(DestroyRef).onDestroy(() => this.overlay?.dispose());
   }

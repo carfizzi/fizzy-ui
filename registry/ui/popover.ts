@@ -16,6 +16,37 @@ const FOCUSABLE = 'input:not([disabled]),select:not([disabled]),textarea:not([di
 let nextId = 0;
 
 /**
+ * Exit animation: marks `el` data-closing (its exit keyframes) and inert, then calls `done` once the
+ * animations end. With none (motion off, or tests) it calls `done` at once and returns undefined;
+ * otherwise it returns a cancel, for a reopen.
+ */
+function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
+  let live = true;
+  const clear = () => {
+    el.removeAttribute('data-closing');
+    el.inert = false;
+  };
+  el.setAttribute('data-closing', '');
+  el.inert = true;
+  const running = el.getAnimations?.() ?? [];
+  if (!running.length) {
+    done();
+    clear();
+    return undefined;
+  }
+  void Promise.allSettled(running.map((a) => a.finished)).then(() => {
+    if (!live) return;
+    live = false;
+    done();
+    clear();
+  });
+  return () => {
+    live = false;
+    clear();
+  };
+}
+
+/**
  * Non-modal popup: `<button fzButton [fzPopoverTrigger]="pop">` + `<div fzPopover #pop="fzPopover" aria-label="…">`.
  * Opening moves focus inside (first focusable, else the panel); Escape closes and gives focus back
  * to the trigger; a click outside or focus leaving closes it. `[(open)]` works too.
@@ -31,7 +62,9 @@ let nextId = 0;
     '(keydown.escape)': 'close()',
     '(focusout)': 'onFocusOut($event)',
     '(document:pointerdown)': 'onOutside($event)',
-    class: 'w-72 rounded-md border bg-background p-4 text-sm text-foreground shadow-md outline-none animate-fz-popup',
+    class:
+      'w-72 rounded-md border bg-background p-4 text-sm text-foreground shadow-md outline-none animate-fz-popup ' +
+      'data-closing:block! data-closing:animate-fz-fade-out',
   },
 })
 export class FzPopover {
@@ -42,11 +75,19 @@ export class FzPopover {
   private readonly el: HTMLElement = inject(ElementRef).nativeElement;
   private readonly injector = inject(Injector);
   private overlay?: OverlayRef;
+  private leaving?: () => void;
 
   constructor() {
     effect(() => {
       const open = this.open();
-      untracked(() => (open ? this.attach() : this.overlay?.detach()));
+      untracked(() => {
+        if (open) this.attach();
+        else if (this.overlay?.hasAttached())
+          this.leaving ??= leave(this.el, () => {
+            this.leaving = undefined;
+            this.overlay?.detach();
+          });
+      });
     });
     inject(DestroyRef).onDestroy(() => this.overlay?.dispose());
   }
@@ -62,7 +103,9 @@ export class FzPopover {
   }
 
   private attach() {
-    if (!this.anchor || this.overlay?.hasAttached()) return;
+    this.leaving?.(); // reopened while closing
+    this.leaving = undefined;
+    if (!this.anchor) return;
     this.overlay ??= createOverlayRef(this.injector, {
       usePopover: true,
       positionStrategy: createFlexibleConnectedPositionStrategy(this.injector, this.anchor)
@@ -71,7 +114,7 @@ export class FzPopover {
         .withPositions(POSITIONS),
       scrollStrategy: createRepositionScrollStrategy(this.injector),
     });
-    this.overlay.attach(new DomPortal(this.el));
+    if (!this.overlay.hasAttached()) this.overlay.attach(new DomPortal(this.el));
     afterNextRender(() => (this.el.querySelector<HTMLElement>(FOCUSABLE) ?? this.el).focus(), { injector: this.injector });
   }
 

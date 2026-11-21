@@ -5,10 +5,14 @@ import {
   booleanAttribute,
   computed,
   contentChildren,
+  effect,
   inject,
   input,
   linkedSignal,
   model,
+  signal,
+  untracked,
+  viewChild,
 } from '@angular/core';
 import { Combobox, ComboboxPopup, ComboboxWidget } from '@angular/aria/combobox';
 import { Listbox, Option } from '@angular/aria/listbox';
@@ -25,13 +29,66 @@ const TRIGGER =
   'text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 const CSS = {
-  list: 'flex max-h-72 w-full flex-col gap-0.5 overflow-y-auto rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none animate-fz-popup origin-top in-[.fz-above]:origin-bottom',
+  list: 'flex max-h-72 w-full flex-col gap-0.5 overflow-y-auto rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none animate-fz-popup origin-top in-[.fz-above]:origin-bottom data-closing:animate-fz-fade-out',
   option:
     'flex cursor-default select-none items-center justify-between rounded-sm px-2 py-1.5 outline-none ' +
     'data-[active=true]:bg-accent data-[active=true]:text-accent-foreground aria-disabled:opacity-50 ' +
     "aria-selected:font-medium aria-selected:after:content-['✓']",
 };
 const CHEVRON = `<svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 shrink-0 text-muted-foreground" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6" /></svg>`;
+
+/**
+ * Exit animation: marks `el` data-closing (its exit keyframes) and inert, then calls `done` once the
+ * animations end. With none (motion off, or tests) it calls `done` at once and returns undefined;
+ * otherwise it returns a cancel, for a reopen.
+ */
+function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
+  let live = true;
+  const clear = () => {
+    el.removeAttribute('data-closing');
+    el.inert = false;
+  };
+  el.setAttribute('data-closing', '');
+  el.inert = true;
+  const running = el.getAnimations?.() ?? [];
+  if (!running.length) {
+    done();
+    clear();
+    return undefined;
+  }
+  void Promise.allSettled(running.map((a) => a.finished)).then(() => {
+    if (!live) return;
+    live = false;
+    done();
+    clear();
+  });
+  return () => {
+    live = false;
+    clear();
+  };
+}
+
+/**
+ * Keeps a combobox popup on screen while it plays its exit animation: open the overlay on
+ * `expanded() || leaving()`. The popup content must outlive `expanded`, hence preserveContent.
+ */
+function closingPopup(combobox: () => Combobox, popup: () => ElementRef<HTMLElement> | undefined) {
+  const leaving = signal(false);
+  let cancel: (() => void) | undefined;
+  effect(() => {
+    const open = combobox().expanded();
+    untracked(() => {
+      combobox().preserveContent.set(true);
+      cancel?.();
+      cancel = undefined;
+      const el = popup()?.nativeElement;
+      if (open || !el) return leaving.set(false);
+      leaving.set(true);
+      cancel = leave(el, () => leaving.set(false));
+    });
+  });
+  return leaving;
+}
 
 /** One choice of a `fz-select` or `fz-multiselect`. Renders nothing itself; `label` defaults to the value. */
 @Directive({ selector: 'fz-select-item' })
@@ -60,13 +117,14 @@ export class FzSelectItem<V = unknown> {
     <ng-template
       [cdkConnectedOverlay]="{ origin: host, usePopover: 'inline', matchWidth: true }"
       [cdkConnectedOverlayPositions]="positions"
-      [cdkConnectedOverlayOpen]="combobox.expanded()"
+      [cdkConnectedOverlayOpen]="combobox.expanded() || leaving()"
     >
       <ng-template ngComboboxPopup [combobox]="combobox">
         <div
           ngListbox
           ngComboboxWidget
           #listbox="ngListbox"
+          #popup
           tabindex="-1"
           focusMode="activedescendant"
           selectionMode="explicit"
@@ -101,6 +159,8 @@ export class FzSelect<V = unknown> {
 
   protected readonly items = contentChildren(FzSelectItem<V>);
   protected readonly combobox = inject(Combobox);
+  private readonly popup = viewChild<ElementRef<HTMLElement>>('popup');
+  protected readonly leaving = closingPopup(() => this.combobox, this.popup);
   protected readonly host = inject(ElementRef);
   protected readonly positions = POSITIONS;
   protected readonly css = CSS;
@@ -141,13 +201,14 @@ export class FzSelect<V = unknown> {
     <ng-template
       [cdkConnectedOverlay]="{ origin: host, usePopover: 'inline', matchWidth: true }"
       [cdkConnectedOverlayPositions]="positions"
-      [cdkConnectedOverlayOpen]="combobox.expanded()"
+      [cdkConnectedOverlayOpen]="combobox.expanded() || leaving()"
     >
       <ng-template ngComboboxPopup [combobox]="combobox">
         <div
           ngListbox
           ngComboboxWidget
           #listbox="ngListbox"
+          #popup
           multi
           tabindex="-1"
           focusMode="activedescendant"
@@ -173,6 +234,8 @@ export class FzMultiselect<V = unknown> {
 
   protected readonly items = contentChildren(FzSelectItem<V>);
   protected readonly combobox = inject(Combobox);
+  private readonly popup = viewChild<ElementRef<HTMLElement>>('popup');
+  protected readonly leaving = closingPopup(() => this.combobox, this.popup);
   protected readonly host = inject(ElementRef);
   protected readonly positions = POSITIONS;
   protected readonly css = CSS;

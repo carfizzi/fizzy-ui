@@ -26,7 +26,7 @@
   --fz-duration-panel: 650ms; /* dialog, sheet */
   --fz-duration-popup: 400ms; /* popover, menu, select, combobox, accordion */
   --fz-duration-control: 330ms; /* switch */
-  --fz-duration-fade: 150ms; /* tooltip */
+  --fz-duration-fade: 150ms; /* tooltip; popups closing */
   --fz-duration-exit: 260ms; /* dialog, sheet closing: a 0.2s spring, leaving is quicker than arriving */
 }
 
@@ -34,6 +34,7 @@
    @starting-style would come too late. */
 @keyframes fz-pop-in { from { opacity: 0; scale: 0.96; } }
 @keyframes fz-fade-in { from { opacity: 0; } }
+@keyframes fz-fade-out { to { opacity: 0; } }
 @keyframes fz-slide-in-right { from { translate: 100% 0; } }
 @keyframes fz-slide-in-left { from { translate: -100% 0; } }
 @keyframes fz-slide-in-top { from { translate: 0 -100%; } }
@@ -101,6 +102,7 @@
   --animate-fz-popup: fz-pop-in var(--fz-duration-popup) var(--fz-spring);
   --animate-fz-dialog: fz-pop-in var(--fz-duration-panel) var(--fz-spring);
   --animate-fz-tooltip: fz-fade-in var(--fz-duration-fade) ease-out;
+  --animate-fz-fade-out: fz-fade-out var(--fz-duration-fade) ease-out forwards;
   --animate-fz-sheet-right: fz-slide-in-right var(--fz-duration-panel) var(--fz-spring);
   --animate-fz-sheet-left: fz-slide-in-left var(--fz-duration-panel) var(--fz-spring);
   --animate-fz-sheet-top: fz-slide-in-top var(--fz-duration-panel) var(--fz-spring);

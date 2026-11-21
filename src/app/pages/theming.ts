@@ -33,7 +33,8 @@ import { CodeBlock } from '../code-block';
       <p>
         Panels open with Apple-style springs: brief, no bounce, never in the way. Dialogs and popups fade in and grow
         slightly from their trigger, sheets slide in from their edge, the accordion grows to its height and the switch
-        thumb settles with a hint of bounce. Dialogs and sheets leave the way they came, a little faster. Submenus, tabs,
+        thumb settles with a hint of bounce. Dialogs and sheets leave the way they came, a little faster;
+        popups and tooltips fade out quickly, with focus already back on their trigger. Submenus, tabs,
         trees and other frequent interactions stay instant.
       </p>
       <ul class="list-disc space-y-1 pl-6 text-sm text-muted-foreground">

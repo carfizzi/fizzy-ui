@@ -11,6 +11,37 @@ const HIDE_DELAY = 100;
 let nextId = 0;
 
 /**
+ * Exit animation: marks `el` data-closing (its exit keyframes) and inert, then calls `done` once the
+ * animations end. With none (motion off, or tests) it calls `done` at once and returns undefined;
+ * otherwise it returns a cancel, for a reopen.
+ */
+function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
+  let live = true;
+  const clear = () => {
+    el.removeAttribute('data-closing');
+    el.inert = false;
+  };
+  el.setAttribute('data-closing', '');
+  el.inert = true;
+  const running = el.getAnimations?.() ?? [];
+  if (!running.length) {
+    done();
+    clear();
+    return undefined;
+  }
+  void Promise.allSettled(running.map((a) => a.finished)).then(() => {
+    if (!live) return;
+    live = false;
+    done();
+    clear();
+  });
+  return () => {
+    live = false;
+    clear();
+  };
+}
+
+/**
  * `<button fzTooltip="Copy to clipboard">`. Shows after a short hover or at once on keyboard
  * focus; hides on leave, blur or Escape. The text is the trigger's `aria-describedby`, so it is
  * announced as a description: give icon-only triggers an `aria-label` as well.
@@ -34,13 +65,14 @@ export class FzTooltip {
   private readonly tip = inject(DOCUMENT).createElement('div');
   private overlay?: OverlayRef;
   private timer?: ReturnType<typeof setTimeout>;
+  private leaving?: () => void;
 
   constructor() {
     const id = `fz-tooltip-${nextId++}`;
     Object.assign(this.tip, { id, role: 'tooltip', hidden: true });
     this.tip.className =
       'w-max max-w-xs rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md ' +
-      'animate-fz-tooltip';
+      'animate-fz-tooltip data-closing:animate-fz-fade-out';
     // Hoverable (WCAG 1.4.13): moving the pointer onto the tooltip keeps it open.
     this.tip.addEventListener('pointerenter', () => clearTimeout(this.timer));
     this.tip.addEventListener('pointerleave', () => this.hide(HIDE_DELAY));
@@ -62,6 +94,8 @@ export class FzTooltip {
   protected show(delay: number) {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
+      this.leaving?.(); // shown again while fading out
+      this.leaving = undefined;
       if (this.overlay?.hasAttached()) return;
       this.overlay ??= createOverlayRef(this.injector, {
         usePopover: true,
@@ -77,8 +111,12 @@ export class FzTooltip {
   protected hide(delay: number) {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
-      this.overlay?.detach();
-      this.tip.hidden = true;
+      if (!this.overlay?.hasAttached()) return;
+      this.leaving ??= leave(this.tip, () => {
+        this.leaving = undefined;
+        this.overlay?.detach();
+        this.tip.hidden = true;
+      });
     }, delay);
   }
 }

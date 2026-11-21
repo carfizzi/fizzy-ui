@@ -15,6 +15,18 @@ import { FZ_POPOVER } from './popover';
 })
 class Host {}
 
+// jsdom has no Web Animations: pretend an element marked data-closing runs an exit animation until finish().
+function fakeExitAnimation() {
+  let finish!: () => void;
+  const finished = new Promise<void>((r) => (finish = r));
+  const proto = HTMLElement.prototype as unknown as { getAnimations?: () => unknown[] };
+  const original = proto.getAnimations;
+  proto.getAnimations = function (this: HTMLElement) {
+    return this.hasAttribute('data-closing') ? [{ finished }] : [];
+  };
+  return { finish: async () => (finish(), await finished), restore: () => (proto.getAnimations = original) };
+}
+
 async function setup() {
   const fixture = TestBed.createComponent(Host);
   document.body.appendChild(fixture.nativeElement);
@@ -84,5 +96,35 @@ describe('FzPopover', () => {
     await stable();
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
     expect(document.activeElement).toBe(trigger);
+  });
+
+  it('closing plays the exit animation: focus returns at once, panel inert until it ends, a reopen cancels it', async () => {
+    const anim = fakeExitAnimation();
+    try {
+      const { trigger, panel, q, stable, open } = await setup();
+      trigger.focus();
+      await open();
+      q('apply').click();
+      await stable();
+      expect(document.activeElement).toBe(trigger);
+      expect(panel.hasAttribute('data-closing')).toBe(true);
+      expect(panel.inert).toBe(true);
+      expect(panel.closest('.cdk-overlay-pane')).not.toBeNull(); // still on screen, fading
+
+      await open(); // reopened while fading: back to normal, focus inside again
+      expect(panel.hasAttribute('data-closing')).toBe(false);
+      expect(panel.inert).toBe(false);
+      expect(panel.contains(document.activeElement)).toBe(true);
+
+      q('apply').click();
+      await stable();
+      await anim.finish();
+      await stable();
+      expect(panel.closest('.cdk-overlay-pane')).toBeNull();
+      expect(panel.classList).toContain('hidden');
+      expect(panel.hasAttribute('data-closing')).toBe(false);
+    } finally {
+      anim.restore();
+    }
   });
 });

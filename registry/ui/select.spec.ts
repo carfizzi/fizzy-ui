@@ -20,6 +20,18 @@ class Host {
 
 const key = (el: HTMLElement, k: string) => el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
 
+// jsdom has no Web Animations: pretend an element marked data-closing runs an exit animation until finish().
+function fakeExitAnimation() {
+  let finish!: () => void;
+  const finished = new Promise<void>((r) => (finish = r));
+  const proto = HTMLElement.prototype as unknown as { getAnimations?: () => unknown[] };
+  const original = proto.getAnimations;
+  proto.getAnimations = function (this: HTMLElement) {
+    return this.hasAttribute('data-closing') ? [{ finished }] : [];
+  };
+  return { finish: async () => (finish(), await finished), restore: () => (proto.getAnimations = original) };
+}
+
 async function setup() {
   const fixture = TestBed.createComponent(Host);
   document.body.appendChild(fixture.nativeElement);
@@ -131,5 +143,25 @@ describe('FzSelect', () => {
     select.click();
     await stable();
     expect(select.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('the list fades out before it goes: still there, inert, until the exit animation ends', async () => {
+    const anim = fakeExitAnimation();
+    try {
+      const { select, listbox, options, stable, value } = await setup();
+      select.click();
+      await stable();
+      options()[1].click();
+      await stable();
+      expect(value()).toBe('banana');
+      expect(select.getAttribute('aria-expanded')).toBe('false');
+      expect(listbox()!.hasAttribute('data-closing')).toBe(true);
+      expect(listbox()!.inert).toBe(true);
+      await anim.finish();
+      await stable();
+      expect(listbox()).toBeNull();
+    } finally {
+      anim.restore();
+    }
   });
 });
