@@ -6,7 +6,7 @@ import { FZ_MULTISELECT } from '../../../registry/ui/select';
   template: `
     <div class="flex flex-col gap-2">
       <span id="toppings-label" class="text-sm font-medium">Toppings</span>
-      <fz-multiselect [(value)]="toppings" placeholder="Pick toppings" aria-labelledby="toppings-label" class="w-56">
+      <fz-multiselect [(value)]="toppings" placeholder="Pick toppings" aria-labelledby="toppings-label" class="w-56!">
         <fz-select-item value="cheese" label="Cheese" />
         <fz-select-item value="mushrooms" label="Mushrooms" />
         <fz-select-item value="olives" label="Olives" />

@@ -37,6 +37,18 @@ import { CodeBlock } from '../code-block';
       <h2 class="mt-4 text-xl font-semibold tracking-tight">3. Use them</h2>
       <app-code-block [code]="usage" label="usage example" />
 
+      <h2 class="mt-4 text-xl font-semibold tracking-tight">Customizing</h2>
+      <p>
+        The files are yours: to change a component everywhere, edit it in <code class="rounded bg-muted px-1">src/app/ui/</code>.
+        For one use, add classes on the element; they join the component's own.
+      </p>
+      <p>
+        To override something the component already sets, such as its width, add <code class="rounded bg-muted px-1">!</code>:
+        <code class="rounded bg-muted px-1">&lt;fz-select class="w-56!"&gt;</code>. Without it, which of two classes for the same
+        property wins depends on Tailwind's CSS order, not on yours (<code class="rounded bg-muted px-1">w-full</code> beats
+        <code class="rounded bg-muted px-1">w-56</code>).
+      </p>
+
       <h2 class="mt-4 text-xl font-semibold tracking-tight">Options</h2>
       <div class="overflow-x-auto rounded-md border">
         <table class="w-full text-sm">

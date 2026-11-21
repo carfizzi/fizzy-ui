@@ -51,6 +51,7 @@ node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another
 - Roving widgets (menubar, grid) keep one item `data-active` at rest: tie the highlight to focus (`focus-within`, `focus-visible`), not to `data-active` alone.
 - CDK's own CSS is unlayered, so it beats Tailwind utilities (which live in `@layer`) on the same property: use `!` there (`max-w-lg!` on an overlay pane, `flex!` on `.cdk-dialog-container`). CDK also sets an inline `maxWidth: 80vw` on dialogs unless `maxWidth: ''`.
 - `@starting-style` does not work on CDK overlay panes: CDK shows the pane before adding `panelClass`, and Chrome computes its style in between. Use keyframe animations for enter.
+- A user class joins a component's host classes; it does not replace them. When both set the same property, Tailwind's CSS order decides (numbers before keywords: `w-full` beats `w-56`). There is no tailwind-merge here: overrides use `!` (`class="w-56!"`), as the docs say (Installation → Customizing) and the demos do.
 - Tailwind finds classes by scanning source text: never build class names at runtime (no `'[&::x]:' + y`).
 - In CDP scripts, `rawKeyDown` Enter does not click a native `<button>`: send `keyDown` with `text: '\r'`.
 - Source shown on the docs comes from `import('…', { with: { loader: 'text' } })` (Angular's import attribute). TypeScript still types it as the module: read `.default` through a cast. Never use a template-literal import path: esbuild then bundles the whole folder, specs included.

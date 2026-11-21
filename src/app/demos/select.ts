@@ -6,7 +6,7 @@ import { FZ_SELECT } from '../../../registry/ui/select';
   template: `
     <div class="flex flex-col gap-2">
       <span id="framework-label" class="text-sm font-medium">Framework</span>
-      <fz-select [(value)]="framework" placeholder="Pick a framework" aria-labelledby="framework-label" class="w-56">
+      <fz-select [(value)]="framework" placeholder="Pick a framework" aria-labelledby="framework-label" class="w-56!">
         <fz-select-item value="angular" label="Angular" />
         <fz-select-item value="react" label="React" />
         <fz-select-item value="vue" label="Vue" />

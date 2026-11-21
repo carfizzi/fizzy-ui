@@ -7,7 +7,7 @@ import { FZ_LABEL } from '../../../registry/ui/label';
   template: `
     <div class="flex flex-col gap-2">
       <label fzLabel for="country">Country</label>
-      <input id="country" fzCombobox [options]="countries" [(value)]="country" placeholder="Type a country" class="w-56" />
+      <input id="country" fzCombobox [options]="countries" [(value)]="country" placeholder="Type a country" class="w-56!" />
       <p class="text-sm text-muted-foreground">Value: {{ country() || '—' }}</p>
     </div>
   `,
