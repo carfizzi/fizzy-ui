@@ -135,8 +135,8 @@ export const DOCS: ComponentDoc[] = [
     description: 'A dropdown menu of actions, with submenus.',
     file: 'menu.ts',
     load: () => all(import('./demos/menu'), import('./demos/menu', { with: { loader: 'text' } }), import('../../registry/ui/menu', { with: { loader: 'text' } })),
-    keyboard: [['Enter / Space / ↓', 'Open from the trigger'], ['↓ / ↑', 'Move through items'], ['→ / ←', 'Open or close a submenu'], ['Escape', 'Close and return focus']],
-    a11y: ['Disabled items stay focusable but cannot be selected.', 'Typeahead needs a searchTerm on each item.'],
+    keyboard: [['Enter / Space / ↓', 'Open from the trigger'], ['↓ / ↑', 'Move through items'], ['→ / ←', 'Open or close a submenu'], ['Type', 'Jump to an item by its text'], ['Escape', 'Close and return focus']],
+    a11y: ['Disabled items stay focusable but cannot be selected.'],
   },
   {
     name: 'menubar',

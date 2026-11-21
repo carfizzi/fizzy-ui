@@ -89,6 +89,16 @@ describe('FzMenu', () => {
     expect(document.activeElement).toBe(trigger);
   });
 
+  it('typeahead finds an item by its text, without a searchTerm', async () => {
+    const { trigger, file, items, stable } = await setup();
+    trigger.click();
+    await stable();
+    key('s');
+    await stable();
+    expect(document.activeElement).toBe(items(file)[1]);
+    expect(file.getAttribute('data-visible')).toBe('true');
+  });
+
   it('ArrowRight opens the submenu, ArrowLeft goes back', async () => {
     const { fixture, trigger, file, share, items, stable } = await setup();
     trigger.click();

@@ -30,8 +30,8 @@ import { CodeBlock } from '../code-block';
       </p>
 
       <h2 class="mt-4 text-xl font-semibold tracking-tight">The file</h2>
-      @if (css.value(); as c) {
-        <app-code-block [code]="c" label="fizzy.css" />
+      @if (css.hasValue()) {
+        <app-code-block [code]="css.value()" label="fizzy.css" />
       }
     </article>
   `,

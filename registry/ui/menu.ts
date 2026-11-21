@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Directive, ElementRef, Injector, effect, inject, input, untracked, viewChild } from '@angular/core';
+import { Component, DestroyRef, Directive, ElementRef, Injector, afterNextRender, effect, inject, input, untracked, viewChild } from '@angular/core';
 import { Menu, MenuBar, MenuItem, MenuTrigger } from '@angular/aria/menu';
 import { DomPortal } from '@angular/cdk/portal';
 import {
@@ -95,7 +95,14 @@ export class FzMenuTrigger {}
       "aria-[haspopup=true]:after:ml-auto aria-[haspopup=true]:after:content-['›']",
   },
 })
-export class FzMenuItem {}
+export class FzMenuItem {
+  constructor() {
+    // Aria's typeahead matches searchTerm, which defaults to '': fall back to the item's text.
+    const item = inject(MenuItem);
+    const el: HTMLElement = inject(ElementRef).nativeElement;
+    afterNextRender(() => item.searchTerm() || item.searchTerm.set(el.textContent!.trim()));
+  }
+}
 
 @Directive({
   selector: '[fzMenuSeparator]',

@@ -9,9 +9,9 @@ import { routes } from './app.routes';
 import { DOCS } from './docs';
 
 // Runs axe on every docs page and example. color-contrast is off: jsdom has no layout or computed colors.
-// region is off: pages and demos are tested outside the shell, which provides the landmarks (tested on its own).
-async function violations(root: Element) {
-  const { violations } = await axe.run(root, { rules: { 'color-contrast': { enabled: false }, region: { enabled: false } } });
+// region is off for pages and demos: they are tested outside the shell, which provides the landmarks.
+async function violations(root: Element, region = false) {
+  const { violations } = await axe.run(root, { rules: { 'color-contrast': { enabled: false }, region: { enabled: region } } });
   return violations.map((v) => `${v.id}: ${v.help}\n  ${v.nodes.map((n) => n.target.join(' ')).join('\n  ')}`);
 }
 
@@ -43,7 +43,7 @@ describe('docs', () => {
   it('shell (header, sidebar) has no violations', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    expect(await violations(fixture.nativeElement)).toEqual([]);
+    expect(await violations(fixture.nativeElement, true)).toEqual([]);
     expect(fixture.nativeElement.querySelectorAll('nav a').length).toBe(DOCS.length + 3);
   });
 
@@ -54,7 +54,7 @@ describe('docs', () => {
   it.each(DOCS.map((d) => d.name))('/components/%s renders its demo and source, no violations', async (name) => {
     const el = await page(`/components/${name}`);
     expect(el.querySelector('h1')!.textContent).toBe(DOCS.find((d) => d.name === name)!.title);
-    expect(el.querySelector('[role=tabpanel] .flex')!.children.length).toBeGreaterThan(0); // the demo, not "Loading…"
+    expect(el.querySelector('[role=tabpanel] ng-component')).not.toBeNull(); // the demo, not "Loading…"
     expect(el.textContent).toContain(`npx fizzy-ui add ${name}`);
     expect(el.querySelector('details code')!.textContent).toContain('export const FZ_');
     expect(await violations(el)).toEqual([]);
@@ -69,6 +69,17 @@ describe('docs', () => {
     const code = el.querySelector('[role=tabpanel]:not([inert]) code')!.textContent!;
     expect(code).toContain("from './ui/tabs'");
     expect(code).not.toContain('registry');
+  });
+
+  it('a demo that fails to load shows a message instead of throwing', async () => {
+    const doc = DOCS.find((d) => d.name === 'badge')!;
+    const load = doc.load;
+    doc.load = () => Promise.reject(new Error('chunk gone'));
+    try {
+      expect((await page('/components/badge')).textContent).toContain('Could not load the example.');
+    } finally {
+      doc.load = load;
+    }
   });
 
   it('an unknown component says so', async () => {

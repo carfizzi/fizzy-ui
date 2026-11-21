@@ -25,8 +25,8 @@ import { DOCS } from '../docs';
           <div fzTabPanel value="preview">
             <ng-template ngTabContent>
               <div class="flex min-h-48 items-center justify-center rounded-md border p-6 sm:p-10">
-                @if (files.value(); as f) {
-                  <ng-container *ngComponentOutlet="f[0]" />
+                @if (files.hasValue()) {
+                  <ng-container *ngComponentOutlet="files.value()[0]" />
                 } @else if (files.error()) {
                   <p class="text-sm text-destructive">Could not load the example.</p>
                 } @else {
@@ -91,8 +91,8 @@ import { DOCS } from '../docs';
               {{ d.file }}
             </summary>
             <div class="border-t p-2">
-              @if (files.value(); as f) {
-                <app-code-block [code]="f[2]" [label]="d.file + ' source'" />
+              @if (files.hasValue()) {
+                <app-code-block [code]="files.value()[2]" [label]="d.file + ' source'" />
               }
             </div>
           </details>
@@ -111,5 +111,5 @@ export class ComponentPage {
   protected readonly tab = linkedSignal<string, string | undefined>({ source: this.name, computation: () => 'preview' });
   protected readonly files = resource({ params: () => this.doc(), loader: ({ params }) => params.load() });
   // Show the demo the way a user writes it: `add` puts the files in ./ui next to their component.
-  protected readonly usage = computed(() => this.files.value()?.[1].replaceAll('../../../registry/ui/', './ui/') ?? '');
+  protected readonly usage = computed(() => this.files.hasValue() ? this.files.value()[1].replaceAll('../../../registry/ui/', './ui/') : '');
 }

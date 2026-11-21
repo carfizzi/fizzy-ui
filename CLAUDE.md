@@ -53,5 +53,7 @@ node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another
 - In CDP scripts, `rawKeyDown` Enter does not click a native `<button>`: send `keyDown` with `text: '\r'`.
 - Source shown on the docs comes from `import('…', { with: { loader: 'text' } })` (Angular's import attribute). TypeScript still types it as the module: read `.default` through a cast. Never use a template-literal import path: esbuild then bundles the whole folder, specs included.
 - Destroying an overlay's DOM (`document.body.innerHTML = ''`) mid-test breaks later CDK overlays in the same test: one opened popup per test.
-- Menu typeahead needs `searchTerm` on each `fzMenuItem` (Aria defaults it to '').
+- Aria `MenuItem.searchTerm` defaults to '', which disables typeahead: `FzMenuItem` falls back to its text.
+- `resource.value()` throws in the error state: check `hasValue()` first.
+- `<base href="/">` makes `href="#x"` mean `/#x`: in-page links (the skip link) need a click handler.
 - Versions: Angular 22, `@angular/aria` 22.3, Node 24.
