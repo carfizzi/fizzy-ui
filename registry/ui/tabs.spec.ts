@@ -59,6 +59,19 @@ describe('FzTabs', () => {
     expect(fixture.componentInstance.tab()).toBe('a');
   });
 
+  it('Home and End jump to the first and last tab', async () => {
+    const { fixture, tabs } = await setup();
+    tabs[0].focus();
+    key(tabs[0], 'End');
+    await fixture.whenStable();
+    // softDisabled (Aria default): focus reaches the disabled last tab, selection does not.
+    expect(document.activeElement).toBe(tabs[2]);
+    expect(fixture.componentInstance.tab()).not.toBe('c');
+    key(document.activeElement as HTMLElement, 'Home');
+    await fixture.whenStable();
+    expect(fixture.componentInstance.tab()).toBe('a');
+  });
+
   it('never selects the disabled tab', async () => {
     const { fixture, tabs } = await setup();
     expect(tabs[2].getAttribute('aria-disabled')).toBe('true');

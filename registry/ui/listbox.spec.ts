@@ -5,7 +5,7 @@ import { FZ_LISTBOX } from './listbox';
 @Component({
   imports: [FZ_LISTBOX],
   template: `
-    <ul fzListbox [multi]="multi()" [selectionMode]="multi() ? 'explicit' : 'follow'" [(value)]="value" aria-label="Fruits">
+    <ul fzListbox [multi]="multi()" [selectionMode]="mode() ?? (multi() ? 'explicit' : 'follow')" [(value)]="value" aria-label="Fruits">
       @for (f of fruits; track f) {
         <li fzOption [value]="f" [label]="f" [disabled]="f === 'durian'">{{ f }}</li>
       }
@@ -15,6 +15,7 @@ import { FZ_LISTBOX } from './listbox';
 class Host {
   fruits = ['apple', 'banana', 'cherry', 'durian'];
   multi = signal(false);
+  mode = signal<'follow' | 'explicit' | undefined>(undefined);
   value = signal<string[]>([]);
 }
 
@@ -69,6 +70,37 @@ describe('FzListbox', () => {
     key(listbox, ' ');
     await fixture.whenStable();
     expect(value()).toContain(['apple', 'banana', 'cherry'][active()]);
+  });
+
+  it('multi (follow): click replaces, Ctrl+click adds', async () => {
+    const { fixture, options, value } = await setup(true);
+    fixture.componentInstance.mode.set('follow');
+    await fixture.whenStable();
+    options[0].click();
+    await fixture.whenStable();
+    options[1].click();
+    await fixture.whenStable();
+    expect(value()).toEqual(['banana']);
+
+    options[2].dispatchEvent(new MouseEvent('click', { bubbles: true, ctrlKey: true }));
+    await fixture.whenStable();
+    expect(value()).toEqual(['banana', 'cherry']);
+  });
+
+  it('Home and End jump to the first and last option', async () => {
+    const { fixture, listbox, active, options, value } = await setup();
+    listbox.focus();
+    key(listbox, 'End');
+    await fixture.whenStable();
+    // softDisabled (Aria default): the disabled last option is focusable but not selected.
+    expect(active()).toBe(3);
+    expect(options[3].getAttribute('aria-selected')).not.toBe('true');
+    expect(value()).not.toContain('durian');
+
+    key(listbox, 'Home');
+    await fixture.whenStable();
+    expect(active()).toBe(0);
+    expect(value()).toEqual(['apple']);
   });
 
   it('typeahead moves to the matching option', async () => {

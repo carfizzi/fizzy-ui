@@ -5,9 +5,9 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 ## Done
 
 - [x] **button**: styles only. Test: variants and sizes apply their classes, `disabled` works
-- [x] **tabs** (`@angular/aria/tabs`). Test: click selects and updates `selectedTab`, panel `inert`, arrow keys, disabled tab never selected
+- [x] **tabs** (`@angular/aria/tabs`). Test: click selects and updates `selectedTab`, panel `inert`, arrow keys, Home/End, disabled tab never selected
 - [x] **accordion** (`@angular/aria/accordion`). Test: click opens and renders content, single vs `multiExpandable`, disabled item, arrows + Enter
-- [x] **listbox** (`@angular/aria/listbox`). Test: single replaces, multi (explicit) toggles, arrows + Space, typeahead, disabled option
+- [x] **listbox** (`@angular/aria/listbox`). Test: single replaces, multi (explicit) toggles, multi (follow) Ctrl+click adds, arrows + Space, Home/End, typeahead, disabled option
 
 ## Phase 1: built on Angular Aria behaviors
 

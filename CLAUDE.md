@@ -35,4 +35,5 @@ node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another
 
 - `ng add tailwind` installs an unrelated package. Tailwind is set up by hand: `tailwindcss`, `@tailwindcss/postcss`, and `.postcssrc.json`.
 - Listbox `multi` with the default `selectionMode` (`follow`): a plain click replaces the selection and Ctrl+click adds. For checkbox-style toggling, use `selectionMode="explicit"`.
+- Aria `softDisabled` is `true` by default: disabled items get focus from the keyboard (arrows, Home/End) but are never selected. Tests rely on this.
 - Versions: Angular 22, `@angular/aria` 22.3, Node 24.
