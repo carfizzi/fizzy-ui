@@ -65,7 +65,8 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": { "include": ["**/*.spec.ts", "../registry/**/*.spec.ts"] }
         }
       }
     }

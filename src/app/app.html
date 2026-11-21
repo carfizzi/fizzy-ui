@@ -42,7 +42,7 @@
 
   <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Listbox</h2>
-    <ul fzListbox multi [(value)]="fruits" aria-label="Fruits" class="w-56">
+    <ul fzListbox multi selectionMode="explicit" [(value)]="fruits" aria-label="Fruits" class="w-56">
       @for (f of ['apple', 'banana', 'cherry', 'durian']; track f) {
         <li fzOption [value]="f" [label]="f">{{ f }}</li>
       }

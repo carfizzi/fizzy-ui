@@ -1,0 +1,38 @@
+# fizzy-ui
+
+shadcn-style Angular components built on `@angular/aria`. Angular Aria provides behavior and accessibility (keyboard, focus, ARIA). fizzy-ui adds the styling (Tailwind v4 + CSS variables) and a CLI that copies component source into the user's project, so the user owns the code. The starting reference was vercel-labs/ui. That project is a headless behavior layer, and for Angular `@angular/aria` already plays that role, so fizzy-ui follows the shadcn model on top of it.
+
+The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work lands.
+
+## Layout
+
+- `registry/` is the source of truth.
+  - `registry.json` maps each component name to its `files` and npm `dependencies`.
+  - `ui/*.ts` holds the components.
+  - `theme/fizzy.css` holds the tokens, with `.dark` for dark mode.
+- `cli/index.mjs` is the `fizzy-ui` CLI (`init`, `add`, `list`). It has zero dependencies. `npm publish` from `cli/` bundles `registry/` through `prepack`.
+- `src/` is the playground app. It imports straight from `../../registry/ui/*`. Tests live next to each component in `registry/ui/<name>.spec.ts` (picked up through `angular.json` test `include` and `tsconfig.spec.json`; `prepack` strips them from the npm package).
+
+## Component conventions
+
+- Compose the Aria directive with `hostDirectives`, forward its inputs and outputs, and put Tailwind classes in `host.class`. See `registry/ui/tabs.ts`.
+- Style state from the attributes Aria sets: `aria-selected:`, `aria-expanded:`, `aria-disabled:`, `data-[active=true]:`, and `[&[inert]]:hidden` for hidden panels.
+- When a template ref is needed, for example the accordion trigger's `[panel]`, use a small component instead. Host directives don't expose `exportAs`. See `registry/ui/accordion.ts`.
+- A file may import only `@angular/*`, because it gets copied as-is into user projects. Each file exports a `FZ_<NAME>` array for `imports`.
+- Use only theme tokens (`bg-primary`, `text-muted-foreground`, `border`, `ring-ring`). No hardcoded colors.
+- A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, an example in `src/app/app.html`, and `registry/ui/<name>.spec.ts`.
+
+## Commands
+
+```sh
+npm start                 # playground at http://localhost:4200
+npm test                  # vitest, jsdom (ng test --watch=false)
+npx ng build
+node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another Angular app
+```
+
+## Gotchas
+
+- `ng add tailwind` installs an unrelated package. Tailwind is set up by hand: `tailwindcss`, `@tailwindcss/postcss`, and `.postcssrc.json`.
+- Listbox `multi` with the default `selectionMode` (`follow`): a plain click replaces the selection and Ctrl+click adds. For checkbox-style toggling, use `selectionMode="explicit"`.
+- Versions: Angular 22, `@angular/aria` 22.3, Node 24.
