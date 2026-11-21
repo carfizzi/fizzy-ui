@@ -86,9 +86,11 @@ export class FzMenu {
       const open = grandparent instanceof Menu ? grandparent.visible() : !!grandparent || this.menu.visible();
       untracked(() => {
         if (parent && open) {
+          const reopened = !!this.leaving;
           this.leaving?.();
           this.leaving = undefined;
           this.attach(parent.element);
+          if (reopened) this.overlay?.updatePosition(); // a context menu's anchor may have moved
         } else if (this.overlay?.hasAttached() && !this.submenu()) {
           this.leaving ??= leave(this.el.nativeElement, () => {
             this.leaving = undefined;

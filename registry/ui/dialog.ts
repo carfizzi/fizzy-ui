@@ -1,4 +1,5 @@
-import { Directive, Injector, TemplateRef, ViewContainerRef, inject, input } from '@angular/core';
+import { DOCUMENT, Directive, Injector, TemplateRef, ViewContainerRef, inject, input } from '@angular/core';
+import { InputModalityDetector } from '@angular/cdk/a11y';
 import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { PositionStrategy, createGlobalPositionStrategy } from '@angular/cdk/overlay';
 
@@ -11,11 +12,11 @@ const CONTENT = 'bg-background text-foreground shadow-lg [&>.cdk-dialog-containe
 // A dialog fades and grows slightly, a sheet slides in from its edge, and they leave the same way
 // (data-closing). Keyframes in fizzy.css; fades under Reduce Motion.
 const PANEL: Record<Side, string> = {
-  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! rounded-lg border p-6 animate-fz-dialog data-closing:animate-fz-dialog-out`,
-  right: `${CONTENT} w-3/4 max-w-sm! border-l p-6 animate-fz-sheet-right data-closing:animate-fz-sheet-right-out`,
-  left: `${CONTENT} w-3/4 max-w-sm! border-r p-6 animate-fz-sheet-left data-closing:animate-fz-sheet-left-out`,
-  top: `${CONTENT} border-b p-6 animate-fz-sheet-top data-closing:animate-fz-sheet-top-out`,
-  bottom: `${CONTENT} border-t p-6 animate-fz-sheet-bottom data-closing:animate-fz-sheet-bottom-out`,
+  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! rounded-lg border p-6 animate-fz-dialog data-closing:animate-fz-dialog-out data-closing:pointer-events-none!`,
+  right: `${CONTENT} w-3/4 max-w-sm! border-l p-6 animate-fz-sheet-right data-closing:animate-fz-sheet-right-out data-closing:pointer-events-none!`,
+  left: `${CONTENT} w-3/4 max-w-sm! border-r p-6 animate-fz-sheet-left data-closing:animate-fz-sheet-left-out data-closing:pointer-events-none!`,
+  top: `${CONTENT} border-b p-6 animate-fz-sheet-top data-closing:animate-fz-sheet-top-out data-closing:pointer-events-none!`,
+  bottom: `${CONTENT} border-t p-6 animate-fz-sheet-bottom data-closing:animate-fz-sheet-bottom-out data-closing:pointer-events-none!`,
 };
 let nextId = 0;
 
@@ -24,7 +25,7 @@ let nextId = 0;
  * `<ng-template fzDialog #dlg="fzDialog">` holding an `<h2 fzDialogTitle>` (required: it names
  * the dialog), content, and `<button fzDialogClose>`. Open with `dlg.open()`. The CDK traps focus,
  * closes on Escape and backdrop click, and gives focus back to the opener. Every close plays the
- * exit animation first; the panel is inert meanwhile.
+ * exit animation first (ignoring clicks meanwhile), so `closed` emits once it has ended.
  */
 @Directive({ selector: 'ng-template[fzDialog]', exportAs: 'fzDialog' })
 export class FzDialog<R = unknown> {
@@ -34,6 +35,8 @@ export class FzDialog<R = unknown> {
   private readonly template = inject(TemplateRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly injector = inject(Injector);
+  private readonly document = inject(DOCUMENT);
+  private readonly modality = inject(InputModalityDetector);
   private ref?: DialogRef<R>;
 
   open(): DialogRef<R> {
@@ -52,12 +55,14 @@ export class FzDialog<R = unknown> {
       // later ones wait for it, then the dialog closes for real with the first result.
       closePredicate: (result: unknown) => {
         if (state !== 'open') return state === 'closed';
+        if (this.document.hidden) return true; // background tab: animations don't run, close now
+        const origin = this.modality.mostRecentModality ?? 'program'; // the deferred close loses CDK's
         const leaving = this.leave(ref);
         if (!leaving.length) return true; // motion off, or no animation support (tests)
         state = 'leaving';
         Promise.allSettled(leaving.map((a) => a.finished)).then(() => {
           state = 'closed';
-          ref.close(result as R | undefined);
+          ref.close(result as R | undefined, { focusOrigin: origin });
         });
         return false;
       },
@@ -72,7 +77,8 @@ export class FzDialog<R = unknown> {
   /** Starts the exit animation and returns what is running. */
   private leave(ref: DialogRef<R>): Animation[] {
     const pane = ref.overlayRef.overlayElement;
-    pane.inert = true; // no clicks or focus while it leaves; the CDK gives focus back when it closes
+    // Clicks are ignored (pointer-events-none) but focus stays inside: inert would drop it to the
+    // aria-hidden page, where a Tab could leave it and the CDK would no longer give it back.
     pane.dataset['closing'] = '';
     ref.overlayRef.backdropElement?.classList.remove('cdk-overlay-backdrop-showing'); // fade it out alongside
     return pane.getAnimations?.() ?? [];

@@ -31,8 +31,9 @@ export class FzAccordion {}
       [preserveContent]="true"
       class="grid grid-rows-[1fr] text-sm transition-[grid-template-rows] duration-(--fz-duration-popup) ease-spring motion-reduce:transition-none [&[inert]]:grid-rows-[0fr]"
     >
-      <div class="min-h-0 overflow-hidden">
-        <div class="pb-4"><ng-template ngAccordionContent><ng-content /></ng-template></div>
+      <!-- overflow-hidden clips during the animation: -mx-1 px-1 and pt-1 leave room for focus rings. -->
+      <div class="-mx-1 min-h-0 overflow-hidden px-1">
+        <div class="pt-1 pb-4"><ng-template ngAccordionContent><ng-content /></ng-template></div>
       </div>
     </div>
   `,

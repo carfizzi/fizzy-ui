@@ -69,7 +69,7 @@ describe('FzDialog', () => {
     expect(result).toBe('saved');
   });
 
-  it('plays the exit animation before closing: inert meanwhile, later closes wait, first result wins', async () => {
+  it('plays the exit animation before closing: focus stays inside meanwhile, later closes wait, first result wins', async () => {
     const { q, dialogEl, host, stable } = await setup();
     let finish!: () => void;
     const finished = new Promise<void>((r) => (finish = r));
@@ -90,7 +90,7 @@ describe('FzDialog', () => {
       const pane = document.querySelector<HTMLElement>('.cdk-overlay-pane')!;
       expect(dialogEl()).not.toBeNull();
       expect(pane.hasAttribute('data-closing')).toBe(true);
-      expect(pane.inert).toBe(true);
+      expect(pane.contains(document.activeElement)).toBe(true);
       expect(result).toBe('not closed');
       ref.close('ignored'); // a second close while leaving waits for the first
       finish();
@@ -101,6 +101,24 @@ describe('FzDialog', () => {
       expect(document.activeElement).toBe(q('open'));
     } finally {
       proto.getAnimations = original;
+    }
+  });
+
+  it('in a background tab it closes at once (animations would not run)', async () => {
+    const { q, dialogEl, host, stable } = await setup();
+    const proto = HTMLElement.prototype as unknown as { getAnimations?: () => unknown[] };
+    const original = proto.getAnimations;
+    proto.getAnimations = () => [{ finished: new Promise(() => {}) }]; // would never end
+    Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+    try {
+      host.dialog().open();
+      await stable();
+      q('save').click();
+      await stable();
+      expect(dialogEl()).toBeNull();
+    } finally {
+      proto.getAnimations = original;
+      delete (document as unknown as Record<string, unknown>)['hidden'];
     }
   });
 
