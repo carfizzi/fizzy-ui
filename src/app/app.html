@@ -64,6 +64,13 @@
   </section>
 
   <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Combobox (autocomplete)</h2>
+    <label fzLabel for="country">Country</label>
+    <input id="country" fzCombobox [options]="countries" [(value)]="country" placeholder="Type a country" class="max-w-56" />
+    <p class="text-sm text-muted-foreground">value: {{ country() || '—' }}</p>
+  </section>
+
+  <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Menubar</h2>
     <div fzMenubar aria-label="Editor" (itemSelected)="action.set($event)">
       <div fzMenuItem value="file" [submenu]="mbFile.menu">File</div>

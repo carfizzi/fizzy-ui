@@ -16,7 +16,7 @@ Each component lives in `registry/ui/<name>.ts`, is listed in `registry/registry
 - [x] **context-menu** (`@angular/aria/menu`, in `menu.ts`). Test: right click opens at the pointer (default prevented), a second right click moves it, Esc and Enter close and give focus back, no focus stealing. Checked in headless Chrome, context-menu key included
 - [x] **select** (`@angular/aria/combobox` + listbox, `select.ts`). Test: closed combobox with placeholder, click/keyboard open, `aria-activedescendant`, Enter/click pick and close, focus stays on the select, Escape keeps the value, re-clicking the selected option keeps it, disabled option/select. Checked in headless Chrome. Typeahead not tested yet
 - [ ] **multiselect** (`@angular/aria/combobox` + listbox multi). Test: picks several values, deselects
-- [ ] **autocomplete / combobox** (`@angular/aria/combobox`). Test: filters while typing, `aria-activedescendant`, Enter picks
+- [x] **autocomplete / combobox** (`@angular/aria/combobox`, `combobox.ts`). Test: native label + role on the input, typing opens and filters (case-insensitive contains), `aria-activedescendant`, Enter/click write the option and keep focus, "No results" shown and announced, Escape. Checked in headless Chrome. Options are plain strings for now
 - [ ] **toolbar** (`@angular/aria/toolbar`). Test: roving focus with arrow keys, toggle groups
 - [ ] **tree** (`@angular/aria/tree`). Test: arrow keys expand and collapse, selection
 - [ ] **grid / data-table** (`@angular/aria/grid`). Test: arrow keys move between cells, editable cells

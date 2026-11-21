@@ -22,6 +22,7 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 - Use only theme tokens (`bg-primary`, `text-muted-foreground`, `border`, `ring-ring`). No hardcoded colors.
 - Popups (menu now; later select, combobox, popover, tooltip) follow `registry/ui/menu.ts`. The panel directive is the Aria directive through `hostDirectives`, so the user's items keep DI. An effect moves the panel element into a CDK overlay (`DomPortal`, native popover, `withPopoverLocation('inline')`) while Aria says it is visible. The panel `exportAs`es itself with a `.menu` field for `[fzMenuTrigger]` and `[submenu]`. `menubar` and `context-menu` live in `menu.ts` too (their registry entries point to the same file), because they share `FzMenu` and `FzMenuItem`.
 - `select.ts` is the other popup shape. When the popup lives in the component's own template (items passed as data, `<fz-select-item>` read with `contentChildren`), use `cdkConnectedOverlay` there, as the Aria examples do. With `focusMode="activedescendant"`, the popup cancels `mousedown` so focus never leaves the trigger.
+- `combobox.ts` is the third shape. The trigger is the user's own `<input>`, so labels and attributes stay native. An `<input>` can't host a template, so the directive creates its popup component as a sibling with `ViewContainerRef.createComponent` and passes itself in.
 - A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, an example in `src/app/app.html`, and `registry/ui/<name>.spec.ts`.
 
 ## Commands

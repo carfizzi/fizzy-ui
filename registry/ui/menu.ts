@@ -111,7 +111,9 @@ export class FzMenuSeparator {}
     class:
       'flex h-9 w-fit items-center gap-1 rounded-md border bg-background p-1 text-sm ' +
       // top-level items open downwards: no submenu chevron (more specific than the item's own rule)
-      '[&>[role=menuitem][aria-haspopup=true]]:after:content-none',
+      '[&>[role=menuitem][aria-haspopup=true]]:after:content-none ' +
+      // Aria keeps one item "active" for roving focus: only show it while focus is in the bar
+      '[&:not(:focus-within)>[role=menuitem]]:bg-transparent',
   },
 })
 export class FzMenubar {}
