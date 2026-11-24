@@ -36,6 +36,8 @@
     "progress": { "files": ["ui/progress.ts"], "dependencies": [] },
     "spinner": { "files": ["ui/spinner.ts"], "dependencies": [] },
     "toggle": { "files": ["ui/toggle.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
-    "toggle-group": { "files": ["ui/toggle.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "toggle-group": { "files": ["ui/toggle.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "alert-dialog": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] },
+    "collapsible": { "files": ["ui/collapsible.ts"], "dependencies": [] }
   }
 }

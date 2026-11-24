@@ -12,11 +12,18 @@ import { FZ_DIALOG, FzDialog } from './dialog';
       <button data-d="save" fzDialogClose="saved">Save</button>
     </ng-template>
     <ng-template fzDialog side="right" #sheet="fzDialog"><h2 fzDialogTitle>Settings</h2></ng-template>
+    <ng-template fzDialog role="alertdialog" #confirm="fzDialog">
+      <h2 fzDialogTitle>Delete?</h2>
+      <p fzDialogDescription data-d="desc">This cannot be undone.</p>
+      <button data-d="delete" fzDialogClose="deleted">Delete</button>
+      <button data-d="cancel" fzDialogClose cdkFocusInitial>Cancel</button>
+    </ng-template>
   `,
 })
 class Host {
   readonly dialog = viewChild.required('dlg', { read: FzDialog });
   readonly sheet = viewChild.required('sheet', { read: FzDialog });
+  readonly confirm = viewChild.required('confirm', { read: FzDialog });
 }
 
 async function setup() {
@@ -130,5 +137,35 @@ describe('FzDialog', () => {
     expect(pane.classList).toContain('border-l');
     expect(pane.style.height).toBe('100%');
     expect(pane.textContent).toContain('Settings');
+  });
+
+  it('role="alertdialog": described, focus inside, a backdrop click does not close it, Escape does', async () => {
+    const { q, dialogEl, host, stable } = await setup();
+    const ref = host.confirm().open();
+    let result: unknown = 'none';
+    ref.closed.subscribe((r) => (result = r));
+    await stable();
+    const dialog = dialogEl() ?? document.querySelector<HTMLElement>('[role=alertdialog]')!;
+    expect(dialog.getAttribute('role')).toBe('alertdialog');
+    expect(dialog.getAttribute('aria-describedby')).toBe(q('desc').id);
+    // jsdom has no layout, so the CDK finds nothing visible to focus and falls back to the container;
+    // cdkFocusInitial landing on Cancel is checked in Chrome.
+    expect(dialog.contains(document.activeElement)).toBe(true);
+
+    document.querySelector<HTMLElement>('.cdk-overlay-backdrop')!.click();
+    await stable();
+    expect(document.querySelector('[role=alertdialog]')).not.toBeNull();
+
+    q('cancel').dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true }));
+    await stable();
+    expect(document.querySelector('[role=alertdialog]')).toBeNull();
+    expect(result).toBeUndefined();
+  });
+
+  it('a plain dialog gets aria-describedby only when it has a description', async () => {
+    const { dialogEl, host, stable } = await setup();
+    host.dialog().open();
+    await stable();
+    expect(dialogEl()!.hasAttribute('aria-describedby')).toBe(false);
   });
 });

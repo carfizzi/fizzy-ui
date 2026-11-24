@@ -1,5 +1,6 @@
-import { DOCUMENT, Directive, Injector, TemplateRef, ViewContainerRef, inject, input } from '@angular/core';
+import { DOCUMENT, Directive, ElementRef, Injector, TemplateRef, ViewContainerRef, afterNextRender, inject, input } from '@angular/core';
 import { InputModalityDetector } from '@angular/cdk/a11y';
+import { hasModifierKey } from '@angular/cdk/keycodes';
 import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { PositionStrategy, createGlobalPositionStrategy } from '@angular/cdk/overlay';
 
@@ -26,10 +27,13 @@ let nextId = 0;
  * the dialog), content, and `<button fzDialogClose>`. Open with `dlg.open()`. The CDK traps focus,
  * closes on Escape and backdrop click, and gives focus back to the opener. Every close plays the
  * exit animation first (ignoring clicks meanwhile), so `closed` emits once it has ended.
+ * `role="alertdialog"` asks for a decision: a backdrop click does not close it (Escape still does);
+ * add `fzDialogDescription` and put `cdkFocusInitial` on the least destructive button.
  */
 @Directive({ selector: 'ng-template[fzDialog]', exportAs: 'fzDialog' })
 export class FzDialog<R = unknown> {
   readonly side = input<Side>('center');
+  readonly role = input<'dialog' | 'alertdialog'>('dialog');
   readonly titleId = `fz-dialog-title-${nextId++}`;
   private readonly dialog = inject(Dialog);
   private readonly template = inject(TemplateRef);
@@ -41,10 +45,13 @@ export class FzDialog<R = unknown> {
 
   open(): DialogRef<R> {
     const side = this.side();
+    const alert = this.role() === 'alertdialog';
     let state: 'open' | 'leaving' | 'closed' = 'open';
     const ref = (this.ref = this.dialog.open<R>(this.template, {
       viewContainerRef: this.viewContainerRef,
       ariaLabelledBy: this.titleId,
+      role: this.role(),
+      disableClose: alert, // no backdrop close; Escape is handled below
       panelClass: PANEL[side].split(' '),
       backdropClass: ['bg-background/80', 'backdrop-blur-sm'],
       maxWidth: '', // CDK defaults to an inline 80vw, which would beat the max-w-* classes
@@ -67,6 +74,12 @@ export class FzDialog<R = unknown> {
         return false;
       },
     }));
+    if (alert)
+      ref.keydownEvents.subscribe((event) => {
+        if (event.key !== 'Escape' || hasModifierKey(event)) return;
+        event.preventDefault();
+        ref.close();
+      });
     return ref;
   }
 
@@ -101,6 +114,18 @@ export class FzDialogTitle {
   protected readonly dialog = inject(FzDialog);
 }
 
+/** Describes the dialog (`aria-describedby`): the message of an alert dialog. */
+@Directive({ selector: '[fzDialogDescription]', host: { '[id]': 'id', class: 'text-sm text-muted-foreground' } })
+export class FzDialogDescription {
+  protected readonly id = `fz-dialog-description-${nextId++}`;
+
+  constructor() {
+    const el: HTMLElement = inject(ElementRef).nativeElement;
+    // Set on the CDK container once rendered: an aria-describedby must not point at a missing id.
+    afterNextRender(() => el.closest('[role=dialog],[role=alertdialog]')?.setAttribute('aria-describedby', this.id));
+  }
+}
+
 /** Closes the dialog it is in: `<button fzButton fzDialogClose>` or `[fzDialogClose]="result"`. */
 @Directive({ selector: '[fzDialogClose]', host: { '(click)': 'ref.close(fzDialogClose())' } })
 export class FzDialogClose {
@@ -108,4 +133,4 @@ export class FzDialogClose {
   protected readonly ref = inject(DialogRef);
 }
 
-export const FZ_DIALOG = [FzDialog, FzDialogTitle, FzDialogClose] as const;
+export const FZ_DIALOG = [FzDialog, FzDialogTitle, FzDialogDescription, FzDialogClose] as const;

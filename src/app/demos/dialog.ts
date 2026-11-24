@@ -10,7 +10,7 @@ import { FZ_LABEL } from '../../../registry/ui/label';
     <button fzButton variant="outline" (click)="dlg.open()">Edit profile</button>
     <ng-template fzDialog #dlg="fzDialog">
       <h2 fzDialogTitle>Edit profile</h2>
-      <p class="text-sm text-muted-foreground">Make changes to your profile here.</p>
+      <p fzDialogDescription>Make changes to your profile here.</p>
       <label fzLabel for="dlg-name">Name</label>
       <input fzInput id="dlg-name" value="Ada Lovelace" />
       <div class="flex justify-end gap-2">

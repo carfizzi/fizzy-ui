@@ -37,6 +37,15 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['role="alert" by default: announced at once when it appears. Use role="status" for a message already on the page, or [role]="null".', 'Icons are decorative: mark them aria-hidden.'],
   },
   {
+    name: 'alert-dialog',
+    title: 'Alert dialog',
+    description: 'A modal that asks to confirm an action.',
+    file: 'dialog.ts',
+    load: () => all(import('./demos/alert-dialog'), import('./demos/alert-dialog', { with: { loader: 'text' } }), import('../../registry/ui/dialog', { with: { loader: 'text' } })),
+    keyboard: [['Tab / Shift+Tab', 'Move between the buttons (focus stays inside)'], ['Enter / Space', 'Press the focused button'], ['Escape', 'Cancel']],
+    a11y: ['role="alertdialog", named by its title and described by fzDialogDescription.', 'A click outside does not close it: it waits for an answer. Escape cancels.', 'Put cdkFocusInitial on the least destructive button (Cancel), so Enter never confirms by accident.'],
+  },
+  {
     name: 'avatar',
     title: 'Avatar',
     description: 'An image with a text fallback while it loads or when it fails.',
@@ -76,6 +85,15 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/checkbox'), import('./demos/checkbox', { with: { loader: 'text' } }), import('../../registry/ui/checkbox', { with: { loader: 'text' } })),
     keyboard: [['Space', 'Toggle']],
     a11y: ['A native <input type="checkbox">: labels, forms and [indeterminate] work as usual.'],
+  },
+  {
+    name: 'collapsible',
+    title: 'Collapsible',
+    description: 'Shows and hides one section of content.',
+    file: 'collapsible.ts',
+    load: () => all(import('./demos/collapsible'), import('./demos/collapsible', { with: { loader: 'text' } }), import('../../registry/ui/collapsible', { with: { loader: 'text' } })),
+    keyboard: [['Enter / Space', 'Open or close']],
+    a11y: ['A disclosure: the trigger is a button with aria-expanded and aria-controls.', 'Closed content is inert, so it is out of the tab order and hidden from screen readers.', 'An icon-only trigger needs an aria-label.'],
   },
   {
     name: 'combobox',
