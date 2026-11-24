@@ -1,7 +1,9 @@
 import { Directive, computed, input } from '@angular/core';
 
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
+
 const base =
-  'inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5 text-xs font-medium ' +
+  'inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5 text-(length:--fz-badge-text) font-medium ' +
   'outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
 const variants = {
@@ -13,10 +15,12 @@ const variants = {
 
 @Directive({
   selector: '[fzBadge]',
-  host: { '[class]': 'classes()' },
+  host: { '[class]': 'classes()', '[attr.data-size]': 'size() ?? null' },
 })
 export class FzBadge {
   readonly variant = input<keyof typeof variants>('default');
+  /** xs, sm, md, lg (its own scale in fizzy.css). Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
   protected readonly classes = computed(() => `${base} ${variants[this.variant()]}`);
 }
 

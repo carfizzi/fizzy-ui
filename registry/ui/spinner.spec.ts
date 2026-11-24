@@ -4,7 +4,7 @@ import { FZ_SPINNER } from './spinner';
 
 @Component({
   imports: [FZ_SPINNER],
-  template: `<fz-spinner /><fz-spinner label="Saving" />`,
+  template: `<fz-spinner /><fz-spinner label="Saving" size="lg" />`,
 })
 class Host {}
 
@@ -16,6 +16,9 @@ describe('FzSpinner', () => {
     expect(loading.getAttribute('role')).toBe('status');
     expect(loading.querySelector('.sr-only')!.textContent).toBe('Loading');
     expect(saving.querySelector('.sr-only')!.textContent).toBe('Saving');
+    expect(loading.hasAttribute('data-size')).toBe(false); // follows its container (a button's size)
+    expect(saving.getAttribute('data-size')).toBe('lg');
+    expect(loading.classList).toContain('size-(--fz-spinner)');
     const svg = loading.querySelector('svg')!;
     expect(svg.getAttribute('aria-hidden')).toBe('true');
     expect(svg.classList).toContain('animate-spin');

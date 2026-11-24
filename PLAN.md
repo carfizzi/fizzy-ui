@@ -77,13 +77,7 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
   - [x] C: exit animations for popover, menu, select, combobox, tooltip: a 150ms fade (`leave()`: data-closing + inert, detach when the animation ends, cancel on reopen; select/combobox keep the overlay open meanwhile with Aria `preserveContent`). Focus returns at once. Checked in Chrome: no flash, reopen while fading, Reduce Motion
 - [x] Checkbox animation: the check mark (and indeterminate bar) springs in, a fade under Reduce Motion. Checked in Chrome
 - [x] Tabs: the active-tab indicator slides to the new tab instead of jumping (one indicator element positioned from the selected tab, `ease-spring`; instant under Reduce Motion). Checked in Chrome, both tab lists of the docs page
-- [ ] Analyze sizes (xs, sm, md, lg) for the components that need them. Today only `button` and `toggle` have a `size` input (`default`, `sm`, `lg`, plus `icon` on button), and everything else is one size (h-9 controls). To decide:
-  - which components get sizes: form controls that sit next to a button (input, select, multiselect, combobox, input-group, textarea), toggle-group, tabs, badge, avatar, chips, pagination, spinner; and which stay one size (dialog, menu items, table)
-  - names: `xs`/`sm`/`md`/`lg` everywhere, `md` the default; rename button's `default` (breaking for copied code, or keep it as an alias)
-  - mechanism: a `size` input per component, or a `data-size` / CSS variable on a container (a whole form or toolbar at once, like a density setting), or both
-  - one scale shared by all (height, padding, text, radius, icon size) as theme tokens in `fizzy.css`, so a `sm` input lines up with a `sm` button
-  - limits: `xs` must keep a 24×24px pointer target (WCAG 2.5.8) and readable text; checkbox, radio and switch hit areas
-  - docs: a sizes example on the pages that get them
+- [x] Sizes xs, sm, md (default), lg. One scale in `fizzy.css` read through CSS variables; `data-size` on a component (its optional `size` input) or on any container, nearest wins. Controls 28/32/36/40px (button, toggle, toggle-group, input, textarea, select, multiselect, combobox, input-group, chips, pagination, tabs, toolbar), own scales for avatar (24–40px), spinner (12–20px), badge (text). md keeps the old sizes. Button and toggle `default` renamed `md`; `size="icon"` became the `icon` attribute. Theming documents it with a live example; measured in Chrome
 
 ## Phase 5: more components (from shadcn, Angular Material, Bootstrap)
 

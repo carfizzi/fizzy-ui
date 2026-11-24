@@ -7,7 +7,7 @@ import { FZ_BUTTON } from '../../../registry/ui/button';
   template: `
     <div class="flex items-center gap-6">
       <fz-spinner />
-      <fz-spinner class="size-8 text-foreground" />
+      <fz-spinner size="lg" class="text-foreground" />
       <button fzButton disabled><fz-spinner label="Saving" class="text-current" /> Saving</button>
     </div>
   `,

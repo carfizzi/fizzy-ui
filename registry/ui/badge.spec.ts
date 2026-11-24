@@ -18,6 +18,6 @@ describe('FzBadge', () => {
     expect(outline.classList).not.toContain('bg-primary');
     expect(destructive.classList).toContain('bg-destructive');
     expect(destructive.classList).toContain('text-destructive-foreground');
-    expect(destructive.classList).toContain('text-xs');
+    expect(destructive.classList).toContain('text-(length:--fz-badge-text)');
   });
 });
