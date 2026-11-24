@@ -16,6 +16,19 @@ class Host {
 
 const key = (el: HTMLElement, k: string) => el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
 
+
+// jsdom has no Web Animations: pretend an element marked data-closing runs an exit animation until finish().
+function fakeExitAnimation() {
+  let finish!: () => void;
+  const finished = new Promise<void>((r) => (finish = r));
+  const proto = HTMLElement.prototype as unknown as { getAnimations?: () => unknown[] };
+  const original = proto.getAnimations;
+  proto.getAnimations = function (this: HTMLElement) {
+    return this.hasAttribute('data-closing') ? [{ finished }] : [];
+  };
+  return { finish: async () => (finish(), await finished), restore: () => (proto.getAnimations = original) };
+}
+
 async function setup() {
   const fixture = TestBed.createComponent(Host);
   document.body.appendChild(fixture.nativeElement);
@@ -100,5 +113,36 @@ describe('FzCombobox', () => {
     key(input, 'Escape');
     await stable();
     expect(input.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('the list fades out before it goes: still there, inert, until the exit animation ends; a reopen cancels it', async () => {
+    const anim = fakeExitAnimation();
+    try {
+      const { input, options, stable } = await setup();
+      const popup = () => document.querySelector<HTMLElement>('[role=listbox]')?.parentElement;
+      input.focus();
+      input.click();
+      await stable();
+      key(input, 'Escape');
+      await stable();
+      expect(input.getAttribute('aria-expanded')).toBe('false');
+      expect(popup()!.hasAttribute('data-closing')).toBe(true);
+      expect(popup()!.inert).toBe(true);
+      expect(options()).toHaveLength(5);
+
+      input.click(); // reopened while fading
+      await stable();
+      expect(popup()!.hasAttribute('data-closing')).toBe(false);
+      expect(popup()!.inert).toBe(false);
+
+      key(input, 'Escape');
+      await stable();
+      await anim.finish();
+      await stable();
+      expect(options()).toHaveLength(0);
+      expect(document.activeElement).toBe(input);
+    } finally {
+      anim.restore();
+    }
   });
 });

@@ -10,6 +10,19 @@ class Host {
   text = signal('Save the file');
 }
 
+
+// jsdom has no Web Animations: pretend an element marked data-closing runs an exit animation until finish().
+function fakeExitAnimation() {
+  let finish!: () => void;
+  const finished = new Promise<void>((r) => (finish = r));
+  const proto = HTMLElement.prototype as unknown as { getAnimations?: () => unknown[] };
+  const original = proto.getAnimations;
+  proto.getAnimations = function (this: HTMLElement) {
+    return this.hasAttribute('data-closing') ? [{ finished }] : [];
+  };
+  return { finish: async () => (finish(), await finished), restore: () => (proto.getAnimations = original) };
+}
+
 async function setup() {
   const fixture = TestBed.createComponent(Host);
   document.body.appendChild(fixture.nativeElement);
@@ -84,5 +97,37 @@ describe('FzTooltip', () => {
     button.blur();
     vi.advanceTimersByTime(0);
     expect(tip.hidden).toBe(true);
+  });
+
+  it('hiding fades out: inert and still shown until the animation ends; showing again cancels it', async () => {
+    const anim = fakeExitAnimation();
+    try {
+      const { button, tip } = await setup();
+      vi.useFakeTimers();
+      vi.spyOn(button, 'matches').mockImplementation((s) => s === ':focus-visible');
+      button.focus();
+      vi.advanceTimersByTime(0);
+      button.blur();
+      vi.advanceTimersByTime(0);
+      expect(tip.hasAttribute('data-closing')).toBe(true);
+      expect(tip.inert).toBe(true);
+      expect(tip.hidden).toBe(false);
+
+      button.focus(); // shown again while fading
+      vi.advanceTimersByTime(0);
+      expect(tip.hasAttribute('data-closing')).toBe(false);
+      expect(tip.inert).toBe(false);
+
+      button.blur();
+      vi.advanceTimersByTime(0);
+      vi.useRealTimers();
+      await anim.finish();
+      await new Promise((r) => setTimeout(r));
+      expect(tip.hidden).toBe(true);
+      expect(tip.hasAttribute('data-closing')).toBe(false);
+      expect(tip.closest('.cdk-overlay-pane')).toBeNull();
+    } finally {
+      anim.restore();
+    }
   });
 });

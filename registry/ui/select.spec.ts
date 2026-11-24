@@ -164,4 +164,18 @@ describe('FzSelect', () => {
       anim.restore();
     }
   });
+
+  it('typeahead: typing a letter moves to the matching option, Enter picks it', async () => {
+    const { select, options, stable, value } = await setup();
+    select.focus();
+    key(select, 'ArrowDown');
+    await stable();
+    key(select, 'k');
+    await stable();
+    const kiwi = options().find((o) => o.textContent!.trim() === 'kiwi')!;
+    expect(select.getAttribute('aria-activedescendant')).toBe(kiwi.id);
+    key(select, 'Enter');
+    await stable();
+    expect(value()).toBe('kiwi');
+  });
 });

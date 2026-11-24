@@ -33,6 +33,7 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 ```sh
 npm start                 # docs site at http://localhost:4200
 npm test                  # vitest, jsdom (ng test --watch=false)
+npm run test:cli          # CLI tests (node:test), each in a temp project
 npx ng build
 node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another Angular app
 ```
