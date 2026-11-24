@@ -36,4 +36,4 @@ npm run release patch      # 22.1.0 -> 22.1.1
 npm run release -- --dry-run   # only print the next version
 ```
 
-The script runs the tests, bumps `cli/package.json`, commits, tags `v<version>` and pushes. The tag starts the Release workflow, which publishes to npm (trusted publishing, no token). After an Angular upgrade the next release is `<new major>.0.0`, whatever you pass.
+The script runs the tests, bumps `cli/package.json`, commits, tags `v<version>` and pushes. The tag starts the Release workflow, which stages the version on npm (trusted publishing, no token); approve it on npmjs.com (Staged Packages) or with `npm stage approve`, which asks for 2FA. After an Angular upgrade the next release is `<new major>.0.0`, whatever you pass.

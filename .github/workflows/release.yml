@@ -1,5 +1,6 @@
-# Publishes the CLI to npm when a tag v<version> is pushed. No token: npm trusted publishing (OIDC),
-# configured on npmjs.com for this repo and this file name. Provenance is added automatically.
+# Stages the CLI on npm when a tag v<version> is pushed; a maintainer approves it on npmjs.com (2FA).
+# No token: npm trusted publishing (OIDC), configured on npmjs.com for this repo and this file name.
+# Provenance is added automatically. Trusted publishers allow only `npm stage publish` by default.
 name: Release
 on:
   push:
@@ -21,5 +22,6 @@ jobs:
       - run: npm run test:cli
       - name: Tag matches cli/package.json
         run: test "v$(node -p "require('./cli/package.json').version")" = "$GITHUB_REF_NAME"
-      - run: npm publish
+      - run: npm --version
+      - run: npm stage publish
         working-directory: cli
