@@ -22,9 +22,9 @@ import { CopyButton } from '../copy-button';
       <div class="mt-8 flex flex-wrap items-center gap-3">
         <a fzButton routerLink="/installation">Get started</a>
         <a fzButton variant="outline" routerLink="/components/button">Browse components</a>
-        <div class="flex items-center gap-1 pl-2 font-mono text-sm text-muted-foreground">
-          <code>npx fizzy-ui init</code>
-          <app-copy-button text="npx fizzy-ui init" label="Copy install command" />
+        <div class="flex h-(--fz-h) items-center gap-3 rounded-md border bg-muted/50 pl-3.5 pr-0.5 font-mono text-sm">
+          <code><span aria-hidden="true" class="select-none text-muted-foreground">$ </span>npx fizzy-ui init</code>
+          <app-copy-button icon text="npx fizzy-ui init" label="Copy install command" />
         </div>
       </div>
     </section>
