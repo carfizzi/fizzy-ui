@@ -9,17 +9,26 @@ import { CopyButton } from '../copy-button';
 
 @Component({
   imports: [RouterLink, FZ_BUTTON, FZ_CARD, FZ_SWITCH, FZ_SLIDER, FZ_TABS, CopyButton],
+  styles: `
+    /* Apple-style entrance: rise out of a slight blur on the theme spring, one element after the other. */
+    @keyframes reveal { from { opacity: 0; translate: 0 0.75rem; filter: blur(6px); } }
+    @media (prefers-reduced-motion: reduce) {
+      @keyframes reveal { from { opacity: 0; } }
+    }
+    .reveal { animation: reveal var(--fz-duration-panel) var(--fz-spring) calc(var(--i) * 70ms) backwards; }
+  `,
   template: `
     <section class="pb-14 pt-4 md:pt-10">
       <h1 class="text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-balance sm:text-6xl">
-        Accessible Angular components.
-        <span class="block text-muted-foreground">Yours to own.</span>
+        <!-- The space stays inside the text: Angular drops whitespace-only nodes. -->
+        <span class="reveal block" style="--i: 0">Accessible Angular components. </span>
+        <span class="reveal block text-muted-foreground" style="--i: 1">Yours to own.</span>
       </h1>
-      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty sm:text-xl">
+      <p class="reveal mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty sm:text-xl" style="--i: 2">
         Behavior from &#64;angular/aria, styles from Tailwind v4. The CLI copies each component's source into your app, and from
         then on it is your code.
       </p>
-      <div class="mt-8 flex flex-wrap items-center gap-3">
+      <div class="reveal mt-8 flex flex-wrap items-center gap-3" style="--i: 3">
         <a fzButton routerLink="/installation">Get started</a>
         <a fzButton variant="outline" routerLink="/components/button">Browse components</a>
         <div class="flex h-(--fz-h) items-center gap-3 rounded-md border bg-muted/50 pl-3.5 pr-0.5 font-mono text-sm">
@@ -30,7 +39,7 @@ import { CopyButton } from '../copy-button';
     </section>
 
     <section aria-label="Live example" class="mb-16 grid gap-4 md:grid-cols-5">
-      <div fzCard class="md:col-span-3">
+      <div fzCard class="reveal md:col-span-3" style="--i: 5">
         <div fzCardHeader>
           <h2 fzCardTitle>Notifications</h2>
           <p fzCardDescription>Choose what reaches you, and how loud.</p>
@@ -44,7 +53,7 @@ import { CopyButton } from '../copy-button';
           </div>
         </div>
       </div>
-      <div fzCard class="md:col-span-2">
+      <div fzCard class="reveal md:col-span-2" style="--i: 6">
         <div fzCardHeader>
           <h2 fzCardTitle>Appearance</h2>
           <p fzCardDescription>Every key and role from &#64;angular/aria.</p>
