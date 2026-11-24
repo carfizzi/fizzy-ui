@@ -1,4 +1,11 @@
-# fizzy-ui
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/logo-dark.svg">
+    <img src=".github/logo-light.svg" width="96" height="96" alt="">
+  </picture>
+</p>
+
+<h1 align="center">fizzy-ui</h1>
 
 shadcn-style components for Angular, built on [`@angular/aria`](https://angular.dev/guide/aria/overview).
 Angular Aria provides behavior and accessibility (keyboard, focus, ARIA). fizzy-ui adds the styling (Tailwind v4 + CSS variables).

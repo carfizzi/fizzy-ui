@@ -6,10 +6,11 @@ import { FZ_DIALOG, FzDialog } from '../../registry/ui/dialog';
 import { FZ_COMMAND } from '../../registry/ui/command';
 import { DialogRef } from '@angular/cdk/dialog';
 import { DOCS } from './docs';
+import { Logo } from './logo';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgTemplateOutlet, FZ_BUTTON, FZ_DIALOG, FZ_COMMAND],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgTemplateOutlet, FZ_BUTTON, FZ_DIALOG, FZ_COMMAND, Logo],
   templateUrl: './app.html',
   host: { '(document:keydown)': 'onKeydown($event)' },
 })
