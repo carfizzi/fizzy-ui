@@ -131,6 +131,19 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['The input keeps focus; the active option is announced through aria-activedescendant.', 'The input is yours, so a <label for> labels it.'],
   },
   {
+    name: 'command',
+    title: 'Command',
+    description: 'A searchable list of commands, the core of a ⌘K palette.',
+    file: 'command.ts',
+    load: () => all(import('./demos/command'), import('./demos/command', { with: { loader: 'text' } }), import('../../registry/ui/command', { with: { loader: 'text' } })),
+    keyboard: [['Type', 'Filter by label and keywords; the first match is highlighted'], ['↓ / ↑', 'Move through the results'], ['Home / End', 'First or last result'], ['Enter', 'Run the highlighted command']],
+    a11y: [
+      'The field is a combobox whose listbox is always shown; focus stays in the field and aria-activedescendant points at the highlighted command.',
+      'Groups are role="group", named by their heading. "No results" is announced.',
+      'Inside a dialog, give the dialog a title (fzDialogTitle): it names the palette.',
+    ],
+  },
+  {
     name: 'context-menu',
     title: 'Context menu',
     description: 'A menu that opens on right click or the keyboard context-menu shortcut.',

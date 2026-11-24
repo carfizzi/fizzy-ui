@@ -6,7 +6,12 @@
       <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
     </button>
     <a routerLink="/" class="font-semibold tracking-tight">fizzy-ui</a>
-    <button fzButton variant="ghost" size="sm" class="ml-auto aria-pressed:bg-accent" [attr.aria-pressed]="dark()" (click)="toggleDark()">Dark mode</button>
+    <button fzButton variant="outline" size="sm" class="ml-auto gap-2 text-muted-foreground" aria-keyshortcuts="Meta+K Control+K" (click)="openSearch()">
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+      Search<span class="hidden sm:inline">…</span>
+      <kbd class="hidden rounded-sm border bg-muted px-1.5 font-sans text-xs sm:inline" aria-hidden="true">⌘K</kbd>
+    </button>
+    <button fzButton variant="ghost" size="sm" class="aria-pressed:bg-accent" [attr.aria-pressed]="dark()" (click)="toggleDark()">Dark mode</button>
   </div>
 </header>
 
@@ -41,4 +46,20 @@
   <nav aria-label="Documentation" class="-mx-2 overflow-y-auto" (click)="closeOnLink($event, mobileNav)">
     <ng-container *ngTemplateOutlet="links" />
   </nav>
+</ng-template>
+
+<ng-template fzDialog #search="fzDialog">
+  <h2 fzDialogTitle class="sr-only">Search documentation</h2>
+  <fz-command label="Search components and guides" placeholder="Search components and guides…" (itemSelected)="go($any($event))">
+    <fz-command-group heading="Getting started">
+      @for (g of guides; track g.path) {
+        <fz-command-item [value]="g.path" [label]="g.title" />
+      }
+    </fz-command-group>
+    <fz-command-group heading="Components">
+      @for (d of docs; track d.name) {
+        <fz-command-item [value]="'/components/' + d.name" [label]="d.title" [keywords]="[d.name, d.description]" />
+      }
+    </fz-command-group>
+  </fz-command>
 </ng-template>

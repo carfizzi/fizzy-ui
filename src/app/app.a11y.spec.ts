@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import axe from 'axe-core';
 import registry from '../../registry/registry.json';
@@ -45,6 +45,29 @@ describe('docs', () => {
     await fixture.whenStable();
     expect(await violations(fixture.nativeElement, true)).toEqual([]);
     expect(fixture.nativeElement.querySelectorAll('nav a').length).toBe(DOCS.length + 3);
+  });
+
+  it('⌘K opens the search (no violations); Enter on a result navigates and closes it', async () => {
+    const fixture = TestBed.createComponent(App);
+    document.body.appendChild(fixture.nativeElement);
+    await fixture.whenStable();
+    const cmdK = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true, cancelable: true }));
+    cmdK();
+    await fixture.whenStable();
+    cmdK(); // already open: no second dialog
+    await fixture.whenStable();
+    expect(document.querySelectorAll('[role=dialog]').length).toBe(1);
+    const input = document.querySelector<HTMLInputElement>('[role=dialog] input[role=combobox]')!;
+    expect(document.querySelectorAll('[role=dialog] [role=option]').length).toBe(DOCS.length + 3);
+    expect(await violations(document.body)).toEqual([]);
+
+    input.value = 'toggle gr';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await fixture.whenStable();
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    await fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe('/components/toggle-group');
+    expect(document.querySelector('[role=dialog]')).toBeNull();
   });
 
   it.each(['/introduction', '/installation', '/theming'])('%s has no violations', async (url) => {

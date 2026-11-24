@@ -1,14 +1,17 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { FZ_BUTTON } from '../../registry/ui/button';
 import { FZ_DIALOG, FzDialog } from '../../registry/ui/dialog';
+import { FZ_COMMAND } from '../../registry/ui/command';
+import { DialogRef } from '@angular/cdk/dialog';
 import { DOCS } from './docs';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgTemplateOutlet, FZ_BUTTON, FZ_DIALOG],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgTemplateOutlet, FZ_BUTTON, FZ_DIALOG, FZ_COMMAND],
   templateUrl: './app.html',
+  host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class App {
   protected readonly docs = DOCS;
@@ -18,6 +21,27 @@ export class App {
     { path: '/theming', title: 'Theming' },
   ];
   protected readonly dark = signal(document.documentElement.classList.contains('dark'));
+  private readonly router = inject(Router);
+  private readonly search = viewChild.required('search', { read: FzDialog });
+  private searchRef?: DialogRef;
+
+  // ⌘K / Ctrl+K opens the search from anywhere.
+  protected onKeydown(event: KeyboardEvent) {
+    if (event.key.toLowerCase() !== 'k' || !(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey) return;
+    event.preventDefault();
+    this.openSearch();
+  }
+
+  protected openSearch() {
+    if (this.searchRef) return; // already open
+    const ref = (this.searchRef = this.search().open());
+    ref.closed.subscribe(() => (this.searchRef = undefined));
+  }
+
+  protected go(path: string) {
+    void this.router.navigateByUrl(path);
+    this.searchRef?.close();
+  }
 
   protected closeOnLink(event: Event, nav: FzDialog) {
     if ((event.target as Element).closest('a')) nav.close();

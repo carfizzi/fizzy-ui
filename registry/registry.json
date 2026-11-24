@@ -44,6 +44,7 @@
     "input-group": { "files": ["ui/input-group.ts"], "dependencies": [] },
     "table": { "files": ["ui/table.ts"], "dependencies": [] },
     "pagination": { "files": ["ui/pagination.ts"], "dependencies": [] },
-    "breadcrumb": { "files": ["ui/breadcrumb.ts"], "dependencies": [] }
+    "breadcrumb": { "files": ["ui/breadcrumb.ts"], "dependencies": [] },
+    "command": { "files": ["ui/command.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
   }
 }
