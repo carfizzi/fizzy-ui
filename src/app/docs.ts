@@ -183,6 +183,19 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['One Tab stop for the whole grid.', 'Give the table an aria-label and each editable input its own label.'],
   },
   {
+    name: 'hover-card',
+    title: 'Hover card',
+    description: 'A preview of what a link leads to, on hover or keyboard focus.',
+    file: 'hover-card.ts',
+    load: () => all(import('./demos/hover-card'), import('./demos/hover-card', { with: { loader: 'text' } }), import('../../registry/ui/hover-card', { with: { loader: 'text' } })),
+    keyboard: [['Tab', 'Focus the link to open it, then Tab into the card'], ['Escape', 'Close it']],
+    a11y: [
+      'Opens on hover (after a delay) and at once on keyboard focus; the pointer can move onto it, and Escape closes it without moving pointer or focus (WCAG 1.4.13).',
+      'Its DOM sits right after the link, so Tab reaches links inside it while it is open.',
+      'Screen readers are not told about it and touch does not open it: it must only preview what the link leads to.',
+    ],
+  },
+  {
     name: 'input',
     title: 'Input',
     description: 'A styled native text input.',
@@ -204,6 +217,18 @@ export const DOCS: ComponentDoc[] = [
     description: 'A styled native label.',
     file: 'label.ts',
     load: () => all(import('./demos/label'), import('./demos/label', { with: { loader: 'text' } }), import('../../registry/ui/label', { with: { loader: 'text' } })),
+  },
+  {
+    name: 'list-group',
+    title: 'List group',
+    description: 'A bordered list of rows, static or actionable.',
+    file: 'list-group.ts',
+    load: () => all(import('./demos/list-group'), import('./demos/list-group', { with: { loader: 'text' } }), import('../../registry/ui/list-group', { with: { loader: 'text' } })),
+    a11y: [
+      'Use a <ul> for static rows; links and buttons for rows you can act on (each its own Tab stop).',
+      'Mark the current row with aria-current; it is styled from that attribute.',
+      'Not a listbox: for picking options with the arrow keys, use listbox.',
+    ],
   },
   {
     name: 'listbox',
