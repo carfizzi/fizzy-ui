@@ -90,7 +90,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 - [x] **alert-dialog** (shadcn): `dialog.ts` with `role="alertdialog"`: no backdrop close (Escape still cancels), `fzDialogDescription` → `aria-describedby` (plain dialogs too), first focus via `cdkFocusInitial` on Cancel. Checked in Chrome
 - [x] **collapsible** (shadcn, Bootstrap collapse, Material expansion panel): a disclosure (`aria-expanded`, `aria-controls`, inert content) with the accordion's height transition; no Aria directive needed. Checked in Chrome
 - [ ] **chips** (Material): a chip listbox to pick from options (Aria listbox) and a chip input for free tags (remove with Backspace / a button)
-- [ ] **field** (shadcn field, Material form-field): label + hint + error wired with `aria-describedby` / `aria-invalid`, around any control
+- [x] **field** (shadcn field, Material form-field): `<div fzField>` wires label (`for`, or `aria-labelledby` for non-inputs like `fz-select`), `fzFieldDescription`, `fzFieldError` (`role="alert"`) with `aria-describedby` / `aria-invalid`, keeping the user's own ids; `orientation="horizontal"`. Checked in Chrome
 - [ ] **input-group** (shadcn, Bootstrap) and floating label (Bootstrap): prefix/suffix text or buttons, styles only
 - [ ] **table** (shadcn, Bootstrap): styled `<table>`, sort headers with `aria-sort` (Material sort header). Sorting also for `grid.ts`
 - [ ] **pagination** (shadcn, Bootstrap, Material paginator): `nav` with `aria-current="page"`, page-size select

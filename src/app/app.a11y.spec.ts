@@ -100,12 +100,14 @@ describe('docs', () => {
     ['sheet', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
     ['alert-dialog', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
     ['collapsible', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
+    ['field', (el: HTMLElement) => el.querySelector<HTMLElement>('input')!.dispatchEvent(new FocusEvent('blur'))], // shows the error
     ['toast', (el: HTMLElement) => el.querySelectorAll<HTMLElement>('button')[1].click()], // with description and action
   ] as const)('%s opened has no violations', async (name, open) => {
     const { el, stable } = await demo(name);
     open(el);
     await stable();
     if (name === 'dialog' || name === 'sheet' || name === 'alert-dialog') expect(document.querySelector('.cdk-dialog-container')).not.toBeNull();
+    if (name === 'field') expect(document.querySelector('[fzFieldError]')).not.toBeNull();
     if (name === 'toast') expect(document.querySelector('fz-toast-region button')!.textContent).toContain('Undo');
     expect(await violations(document.body)).toEqual([]);
   });

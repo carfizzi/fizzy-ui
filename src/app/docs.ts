@@ -123,6 +123,18 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['fzDialogTitle is required: it names the dialog (aria-labelledby).', 'The rest of the page gets aria-hidden while the dialog is open.'],
   },
   {
+    name: 'field',
+    title: 'Field',
+    description: 'A label, a control, a hint and an error, wired together.',
+    file: 'field.ts',
+    load: () => all(import('./demos/field'), import('./demos/field', { with: { loader: 'text' } }), import('../../registry/ui/field', { with: { loader: 'text' } })),
+    a11y: [
+      'The label names the control (for, or aria-labelledby for controls like select), and the hint and error describe it with aria-describedby.',
+      'While an error is shown the control is aria-invalid, and the error (role="alert") is read when it appears.',
+      'Show errors after the user leaves the field or submits, not on every keystroke.',
+    ],
+  },
+  {
     name: 'grid',
     title: 'Grid',
     description: 'A data table with cell navigation, selection and editable cells.',

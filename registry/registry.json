@@ -38,6 +38,7 @@
     "toggle": { "files": ["ui/toggle.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "toggle-group": { "files": ["ui/toggle.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "alert-dialog": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] },
-    "collapsible": { "files": ["ui/collapsible.ts"], "dependencies": [] }
+    "collapsible": { "files": ["ui/collapsible.ts"], "dependencies": [] },
+    "field": { "files": ["ui/field.ts"], "dependencies": [] }
   }
 }
