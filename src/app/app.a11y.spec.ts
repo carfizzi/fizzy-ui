@@ -4,6 +4,7 @@ import { Router, provideRouter, withComponentInputBinding } from '@angular/route
 import { RouterTestingHarness } from '@angular/router/testing';
 import axe from 'axe-core';
 import registry from '../../registry/registry.json';
+import cli from '../../cli/package.json';
 import { App } from './app';
 import { routes } from './app.routes';
 import { DOCS } from './docs';
@@ -45,6 +46,8 @@ describe('docs', () => {
     await fixture.whenStable();
     expect(await violations(fixture.nativeElement, true)).toEqual([]);
     expect(fixture.nativeElement.querySelectorAll('nav a').length).toBe(DOCS.length + 3);
+    const version = fixture.nativeElement.querySelector('header a[href*="npmjs.com"]');
+    expect(version.textContent).toBe(`v${cli.version} on npm`);
   });
 
   it('⌘K opens the search (no violations); Enter on a result navigates and closes it', async () => {
