@@ -12,7 +12,7 @@ import { FZ_TOGGLE, FZ_TOGGLE_GROUP } from './toggle';
       <button fzToggleGroupItem value="center">Center</button>
       <button fzToggleGroupItem value="right" [disabled]="true">Right</button>
     </div>
-    <div fzToggleGroup multiple [(value)]="style" aria-label="Style" data-t="multi">
+    <div fzToggleGroup multiple size="sm" [(value)]="style" aria-label="Style" data-t="multi">
       <button fzToggleGroupItem value="b">B</button>
       <button fzToggleGroupItem value="i">I</button>
     </div>
@@ -106,5 +106,12 @@ describe('FzToggleGroup', () => {
     await stable();
     expect(document.activeElement).toBe(items('single')[0]);
     expect(host.align()).toBe('left');
+  });
+
+  it('sizes: a toggle sets its own data-size; a group sets it once for all its items', async () => {
+    const { el, items } = await setup();
+    expect(el.querySelector('button[fzToggle]')!.hasAttribute('data-size')).toBe(false);
+    expect(el.querySelector('[data-t=multi]')!.getAttribute('data-size')).toBe('sm');
+    expect(items('multi').every((b) => !b.hasAttribute('data-size') && b.classList.contains('h-(--fz-h)'))).toBe(true);
   });
 });

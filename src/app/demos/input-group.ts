@@ -29,7 +29,7 @@ import { FZ_BUTTON } from '../../../registry/ui/button';
         </span>
         <input fzInputGroupInput type="search" aria-label="Search" placeholder="Search…" [value]="query()" (input)="query.set($any($event.target).value)" />
         @if (query()) {
-          <span fzInputGroupAddon><button fzButton variant="ghost" size="sm" class="h-7! px-2!" (click)="query.set('')">Clear</button></span>
+          <span fzInputGroupAddon><button fzButton variant="ghost" size="xs" (click)="query.set('')">Clear</button></span>
         }
       </div>
     </div>

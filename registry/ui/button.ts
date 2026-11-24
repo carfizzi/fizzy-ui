@@ -1,7 +1,7 @@
-import { Directive, computed, input } from '@angular/core';
+import { Directive, booleanAttribute, computed, input } from '@angular/core';
 
 const base =
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors ' +
+  'inline-flex h-(--fz-h) items-center justify-center gap-2 whitespace-nowrap rounded-md text-(length:--fz-text) font-medium transition-colors ' +
   'outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
@@ -13,16 +13,19 @@ const variants = {
   destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
 };
 
-const sizes = { default: 'h-9 px-4', sm: 'h-8 px-3', lg: 'h-10 px-6', icon: 'size-9' };
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
 
 @Directive({
   selector: 'button[fzButton], a[fzButton]',
-  host: { '[class]': 'classes()' },
+  host: { '[class]': 'classes()', '[attr.data-size]': 'size() ?? null' },
 })
 export class FzButton {
   readonly variant = input<keyof typeof variants>('default');
-  readonly size = input<keyof typeof sizes>('default');
-  protected readonly classes = computed(() => `${base} ${variants[this.variant()]} ${sizes[this.size()]}`);
+  /** xs, sm, md, lg (the scale in fizzy.css). Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
+  /** Square, for an icon-only button (give it an aria-label). */
+  readonly icon = input(false, { transform: booleanAttribute });
+  protected readonly classes = computed(() => `${base} ${variants[this.variant()]}${this.icon() ? ' w-(--fz-h)' : ' px-(--fz-px)'}`);
 }
 
 export const FZ_BUTTON = [FzButton] as const;

@@ -66,6 +66,48 @@
   @keyframes fz-slide-out-bottom { to { opacity: 0; } }
 }
 
+/* Sizes: data-size="xs|sm|md|lg" on a component (its size input sets it) or on any container, which
+   sizes everything inside it like a density setting; the nearest one wins. md is the default.
+   Controls of the same size line up: an sm input is as tall as an sm button. xs stays above the
+   24px minimum pointer target (WCAG 2.5.8). */
+:root,
+[data-size='md'] {
+  --fz-h: 2.25rem; /* control height */
+  --fz-px: 1rem; /* button padding */
+  --fz-field-px: 0.75rem; /* input padding */
+  --fz-text: 0.875rem;
+  --fz-avatar: 2rem;
+  --fz-spinner: 1rem;
+  --fz-badge-text: 0.75rem;
+}
+[data-size='xs'] {
+  --fz-h: 1.75rem;
+  --fz-px: 0.5rem;
+  --fz-field-px: 0.5rem;
+  --fz-text: 0.75rem;
+  --fz-avatar: 1.5rem;
+  --fz-spinner: 0.75rem;
+  --fz-badge-text: 0.625rem;
+}
+[data-size='sm'] {
+  --fz-h: 2rem;
+  --fz-px: 0.75rem;
+  --fz-field-px: 0.625rem;
+  --fz-text: 0.875rem;
+  --fz-avatar: 1.75rem;
+  --fz-spinner: 0.875rem;
+  --fz-badge-text: 0.6875rem;
+}
+[data-size='lg'] {
+  --fz-h: 2.5rem;
+  --fz-px: 1.5rem;
+  --fz-field-px: 0.875rem;
+  --fz-text: 1rem;
+  --fz-avatar: 2.5rem;
+  --fz-spinner: 1.25rem;
+  --fz-badge-text: 0.875rem;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

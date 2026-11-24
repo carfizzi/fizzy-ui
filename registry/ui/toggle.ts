@@ -2,25 +2,25 @@ import { Directive, ElementRef, booleanAttribute, computed, inject, input, model
 import { Toolbar, ToolbarWidget } from '@angular/aria/toolbar';
 
 const base =
-  'inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors ' +
+  'inline-flex h-(--fz-h) min-w-(--fz-h) cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md px-[calc(var(--fz-px)/2)] text-(length:--fz-text) font-medium transition-colors ' +
   'outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-muted hover:text-muted-foreground ' +
   'aria-pressed:bg-accent aria-pressed:text-accent-foreground ' +
   'disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50';
 const variants = { default: 'bg-transparent', outline: 'border bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground' };
-const sizes = { default: 'h-9 min-w-9 px-2', sm: 'h-8 min-w-8 px-1.5', lg: 'h-10 min-w-10 px-2.5' };
 type Variant = keyof typeof variants;
-type Size = keyof typeof sizes;
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
 
 /** An on/off button: `<button fzToggle [(pressed)]="bold" aria-label="Bold">`. A native button with `aria-pressed`. */
 @Directive({
   selector: 'button[fzToggle]',
-  host: { type: 'button', '[attr.aria-pressed]': 'pressed()', '(click)': 'pressed.set(!pressed())', '[class]': 'classes()' },
+  host: { type: 'button', '[attr.aria-pressed]': 'pressed()', '(click)': 'pressed.set(!pressed())', '[class]': 'classes()', '[attr.data-size]': 'size() ?? null' },
 })
 export class FzToggle {
   readonly pressed = model(false);
   readonly variant = input<Variant>('default');
-  readonly size = input<Size>('default');
-  protected readonly classes = computed(() => `${base} ${variants[this.variant()]} ${sizes[this.size()]}`);
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
+  protected readonly classes = computed(() => `${base} ${variants[this.variant()]}`);
 }
 
 /**
@@ -32,13 +32,14 @@ export class FzToggle {
 @Directive({
   selector: '[fzToggleGroup]',
   hostDirectives: [{ directive: Toolbar, inputs: ['orientation', 'disabled'] }],
-  host: { class: 'inline-flex w-fit items-center gap-1 aria-[orientation=vertical]:flex-col' },
+  host: { class: 'inline-flex w-fit items-center gap-1 aria-[orientation=vertical]:flex-col', '[attr.data-size]': 'size() ?? null' },
 })
 export class FzToggleGroup<V = unknown> {
   readonly value = model<V | V[] | undefined>();
   readonly multiple = input(false, { transform: booleanAttribute });
   readonly variant = input<Variant>('default');
-  readonly size = input<Size>('default');
+  /** Sizes every item (they inherit it through data-size). */
+  readonly size = input<FzSize>();
 
   isPressed(v: V) {
     const value = this.value();
@@ -61,7 +62,7 @@ export class FzToggleGroupItem<V = unknown> {
   readonly value = input.required<V>();
   protected readonly group = inject<FzToggleGroup<V>>(FzToggleGroup);
   private readonly el: HTMLElement = inject(ElementRef).nativeElement;
-  protected readonly classes = computed(() => `${base} ${variants[this.group.variant()]} ${sizes[this.group.size()]}`);
+  protected readonly classes = computed(() => `${base} ${variants[this.group.variant()]}`);
 
   protected toggle() {
     // Soft-disabled items stay focusable and get Space/Enter clicks: ignore them (own or group).
