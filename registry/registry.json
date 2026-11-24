@@ -40,6 +40,10 @@
     "alert-dialog": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] },
     "collapsible": { "files": ["ui/collapsible.ts"], "dependencies": [] },
     "field": { "files": ["ui/field.ts"], "dependencies": [] },
-    "chips": { "files": ["ui/chips.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "chips": { "files": ["ui/chips.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "input-group": { "files": ["ui/input-group.ts"], "dependencies": [] },
+    "table": { "files": ["ui/table.ts"], "dependencies": [] },
+    "pagination": { "files": ["ui/pagination.ts"], "dependencies": [] },
+    "breadcrumb": { "files": ["ui/breadcrumb.ts"], "dependencies": [] }
   }
 }

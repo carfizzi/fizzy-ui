@@ -61,6 +61,14 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/badge'), import('./demos/badge', { with: { loader: 'text' } }), import('../../registry/ui/badge', { with: { loader: 'text' } })),
   },
   {
+    name: 'breadcrumb',
+    title: 'Breadcrumb',
+    description: 'Shows where the page sits in the site.',
+    file: 'breadcrumb.ts',
+    load: () => all(import('./demos/breadcrumb'), import('./demos/breadcrumb', { with: { loader: 'text' } }), import('../../registry/ui/breadcrumb', { with: { loader: 'text' } })),
+    a11y: ['A nav labelled "Breadcrumb" around an ordered list.', 'Separators are drawn with CSS borders, so screen readers do not read them.', 'Mark the current page with aria-current="page".'],
+  },
+  {
     name: 'button',
     title: 'Button',
     description: 'A native button or link with variants and sizes.',
@@ -170,6 +178,14 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['Set aria-invalid="true" to show the error style; pair it with a visible message.'],
   },
   {
+    name: 'input-group',
+    title: 'Input group',
+    description: 'An input with text, icons or buttons inside its border.',
+    file: 'input-group.ts',
+    load: () => all(import('./demos/input-group'), import('./demos/input-group', { with: { loader: 'text' } }), import('../../registry/ui/input-group', { with: { loader: 'text' } })),
+    a11y: ['The inner input is the control: label it with fzField, a <label for>, or aria-label.', 'Addon text is not read with the input: repeat units or prefixes that matter in the label.'],
+  },
+  {
     name: 'label',
     title: 'Label',
     description: 'A styled native label.',
@@ -211,6 +227,15 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/multiselect'), import('./demos/multiselect', { with: { loader: 'text' } }), import('../../registry/ui/select', { with: { loader: 'text' } })),
     keyboard: [['Enter / Space / ↓', 'Open'], ['↓ / ↑', 'Move through options'], ['Space / Enter', 'Toggle the option, the list stays open'], ['Escape', 'Close']],
     a11y: ['Label it with aria-labelledby.'],
+  },
+  {
+    name: 'pagination',
+    title: 'Pagination',
+    description: 'Moves between pages of results.',
+    file: 'pagination.ts',
+    load: () => all(import('./demos/pagination'), import('./demos/pagination', { with: { loader: 'text' } }), import('../../registry/ui/pagination', { with: { loader: 'text' } })),
+    keyboard: [['Tab', 'Move between the page buttons'], ['Enter / Space', 'Go to that page']],
+    a11y: ['A nav labelled "Pagination"; each page button is named "Page n" and the current one has aria-current="page".', 'Previous and Next use aria-disabled at the ends, so they keep focus.'],
   },
   {
     name: 'popover',
@@ -296,6 +321,15 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/switch'), import('./demos/switch', { with: { loader: 'text' } }), import('../../registry/ui/switch', { with: { loader: 'text' } })),
     keyboard: [['Space', 'Toggle']],
     a11y: ['A checkbox with role="switch", announced as on/off.'],
+  },
+  {
+    name: 'table',
+    title: 'Table',
+    description: 'A styled table, with sortable columns.',
+    file: 'table.ts',
+    load: () => all(import('./demos/table'), import('./demos/table', { with: { loader: 'text' } }), import('../../registry/ui/table', { with: { loader: 'text' } })),
+    keyboard: [['Tab', 'Move between sortable headers'], ['Enter / Space', 'Sort by that column']],
+    a11y: ['A plain <table>: give it a <caption> or an aria-label.', 'Each sortable header holds a button; the sorted column has aria-sort.', 'Wrap wide tables in a scrollable container rather than shrinking the text.'],
   },
   {
     name: 'tabs',

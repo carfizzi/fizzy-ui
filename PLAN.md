@@ -91,10 +91,11 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 - [x] **collapsible** (shadcn, Bootstrap collapse, Material expansion panel): a disclosure (`aria-expanded`, `aria-controls`, inert content) with the accordion's height transition; no Aria directive needed. Checked in Chrome
 - [x] **chips** (Material, `chips.ts`): `<fz-chip-listbox>` with `<fz-chip>` data (Aria listbox in its own template: horizontal, `explicit`, single or `multiple`) and `<fz-chip-input>` for free tags (Enter or comma adds, Backspace or a remove button deletes, announced; a real `<input>`, so `fzField` labels it). Checked in Chrome with real keys
 - [x] **field** (shadcn field, Material form-field): `<div fzField>` wires label (`for`, or `aria-labelledby` for non-inputs like `fz-select`), `fzFieldDescription`, `fzFieldError` (`role="alert"`) with `aria-describedby` / `aria-invalid`, keeping the user's own ids; `orientation="horizontal"`. Checked in Chrome
-- [ ] **input-group** (shadcn, Bootstrap) and floating label (Bootstrap): prefix/suffix text or buttons, styles only
-- [ ] **table** (shadcn, Bootstrap): styled `<table>`, sort headers with `aria-sort` (Material sort header). Sorting also for `grid.ts`
-- [ ] **pagination** (shadcn, Bootstrap, Material paginator): `nav` with `aria-current="page"`, page-size select
-- [ ] **breadcrumb** (shadcn, Bootstrap): `nav` + `ol`, `aria-current="page"` on the last item
+- [x] **input-group** (shadcn, Bootstrap): `fzInputGroup` + `fzInputGroupAddon` (text, icons, buttons) + `fzInputGroupInput`, styles only, works in `fzField`. Floating label (Bootstrap) not done
+- [x] **table** (shadcn, Bootstrap): `table[fzTable]` styles the whole table, `[(sort)]` + `th[fzSortHeader]` (a button inside, `aria-sort` on the sorted column, asc → desc → none; the user sorts rows)
+- [ ] Sorting for `grid.ts` (the button would be a grid cell widget)
+- [x] **pagination** (shadcn, Bootstrap, Material paginator): `<fz-pagination [(page)] [pageCount]>`, first/last/neighbours/gaps, `aria-current="page"`, Previous/Next `aria-disabled` at the ends, focus kept when the list shifts. Buttons, not links; no page-size select (use `fz-select`)
+- [x] **breadcrumb** (shadcn, Bootstrap): `nav[fzBreadcrumb]` + `ol`, CSS-border chevrons (nothing to read), `aria-current="page"` set by the user
 - [ ] **list-group** (Bootstrap list group, Material list): static or actionable lists of items
 - [ ] **stepper** (Material): horizontal / vertical steps on Aria tabs, linear mode
 - [ ] **command** (shadcn): combobox + listbox filter in a dialog (⌘K palette)
