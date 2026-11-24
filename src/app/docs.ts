@@ -78,6 +78,25 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['Styles a native <button> or <a>, so focus, disabled and form behavior are the browser\'s own.', 'An icon-only button needs an aria-label.'],
   },
   {
+    name: 'calendar',
+    title: 'Calendar',
+    description: 'A month grid to pick a day.',
+    file: 'calendar.ts',
+    load: () => all(import('./demos/calendar'), import('./demos/calendar', { with: { loader: 'text' } }), import('../../registry/ui/calendar', { with: { loader: 'text' } })),
+    keyboard: [
+      ['← / →', 'Previous or next day'],
+      ['↑ / ↓', 'Same day of the previous or next week'],
+      ['Home / End', 'Start or end of the week'],
+      ['Page Up / Page Down', 'Previous or next month (with Shift: year)'],
+      ['Enter / Space', 'Pick the day'],
+    ],
+    a11y: [
+      'The APG date grid: one Tab stop on the focused day, a grid labelled by the month heading, which is announced when it changes.',
+      'Each day is named in full ("Sunday, March 15, 2026"); today has aria-current="date"; unavailable days are aria-disabled but still reachable.',
+      'Month, weekday names and the first day of the week follow the app LOCALE_ID.',
+    ],
+  },
+  {
     name: 'card',
     title: 'Card',
     description: 'A bordered container with header, content and footer slots.',
@@ -151,6 +170,19 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/context-menu'), import('./demos/context-menu', { with: { loader: 'text' } }), import('../../registry/ui/menu', { with: { loader: 'text' } })),
     keyboard: [['Menu key / Shift+F10', 'Open on the focused area (the browser\'s contextmenu event)'], ['↓ / ↑', 'Move through items'], ['Enter / Space', 'Select'], ['Escape', 'Close and return focus']],
     a11y: ['Make the area focusable (tabindex="0") so keyboard users can open the menu too.'],
+  },
+  {
+    name: 'date-picker',
+    title: 'Date picker',
+    description: 'A button that opens a calendar.',
+    file: 'calendar.ts',
+    load: () => all(import('./demos/date-picker'), import('./demos/date-picker', { with: { loader: 'text' } }), import('../../registry/ui/calendar', { with: { loader: 'text' } })),
+    keyboard: [['Enter / Space', 'Open the calendar (focus goes to the picked day, or today)'], ['Arrows, Page Up / Down', 'Move in the calendar'], ['Enter', 'Pick and close'], ['Escape', 'Close, focus back on the button']],
+    a11y: [
+      'In fzField the button is named "label, date" (aria-labelledby on the label and itself), so the value is read with the label.',
+      'The calendar opens in a dialog labelled "Choose date"; picking or Escape closes it and focus returns to the button.',
+      'No typing a date in: where that matters most, a native <input type="date"> is the better choice.',
+    ],
   },
   {
     name: 'dialog',

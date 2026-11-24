@@ -18,6 +18,10 @@ import { FZ_FIELD } from './field';
       <label>Plan</label>
       <div role="combobox" tabindex="0"></div>
     </div>
+    <div fzField data-t="picker">
+      <label>Birth date</label>
+      <button aria-haspopup="dialog">3 Mar 2026</button>
+    </div>
     <div fzField orientation="horizontal" data-t="check">
       <label><input type="checkbox" /> News</label>
     </div>
@@ -66,5 +70,15 @@ describe('FzField', () => {
     const check = el.querySelector<HTMLElement>('[data-t=check]')!;
     expect(check.getAttribute('data-orientation')).toBe('horizontal');
     expect(check.querySelector('label')!.htmlFor).toBe('');
+  });
+
+  it('a popup button (a date picker) is named "label, its own text", not through label[for]', async () => {
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+    const field = fixture.nativeElement.querySelector('[data-t=picker]') as HTMLElement;
+    const label = field.querySelector('label')!;
+    const button = field.querySelector('button')!;
+    expect(button.getAttribute('aria-labelledby')).toBe(`${label.id} ${button.id}`);
+    expect(label.htmlFor).toBe('');
   });
 });

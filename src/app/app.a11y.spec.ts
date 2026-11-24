@@ -123,6 +123,7 @@ describe('docs', () => {
     ['sheet', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
     ['alert-dialog', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
     ['collapsible', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
+    ['date-picker', (el: HTMLElement) => el.querySelector<HTMLElement>('button[aria-haspopup]')!.click()],
     ['chips', (el: HTMLElement) => el.querySelector<HTMLElement>('[role=option]')!.click()],
     ['field', (el: HTMLElement) => el.querySelector<HTMLElement>('input')!.dispatchEvent(new FocusEvent('blur'))], // shows the error
     ['toast', (el: HTMLElement) => el.querySelectorAll<HTMLElement>('button')[1].click()], // with description and action

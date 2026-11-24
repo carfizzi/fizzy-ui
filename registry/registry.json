@@ -50,6 +50,8 @@
     "hover-card": { "files": ["ui/hover-card.ts"], "dependencies": ["@angular/cdk"] },
     "list-group": { "files": ["ui/list-group.ts"], "dependencies": [] },
     "navigation-menu": { "files": ["ui/navigation-menu.ts"], "dependencies": [] },
-    "sidebar": { "files": ["ui/sidebar.ts"], "dependencies": [] }
+    "sidebar": { "files": ["ui/sidebar.ts"], "dependencies": [] },
+    "calendar": { "files": ["ui/calendar.ts"], "dependencies": [] },
+    "date-picker": { "files": ["ui/calendar.ts"], "dependencies": ["@angular/cdk"] }
   }
 }

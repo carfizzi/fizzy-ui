@@ -1,13 +1,14 @@
 import { Directive, ElementRef, afterEveryRender, inject, input } from '@angular/core';
 
 // What counts as the field's control: the first one inside it.
-const CONTROL = 'input:not([type=hidden]), textarea, select, [role=combobox], [role=listbox], [role=radiogroup], [role=switch], [role=slider]';
+const CONTROL = 'input:not([type=hidden]), textarea, select, [role=combobox], [role=listbox], [role=radiogroup], [role=switch], [role=slider], button[aria-haspopup]';
 let nextId = 0;
 
 /**
  * Wires a label, a control, a hint and an error together:
  * `<div fzField>` + `<label fzLabel>` + any control + `<p fzFieldDescription>` + `<p fzFieldError>`.
- * The label points at the control (`for`, or `aria-labelledby` when the control is not an input),
+ * The label points at the control (`for`, or `aria-labelledby` when the control is not an input; a popup
+ * button such as a date picker keeps its own text after the label),
  * the hint and the error describe it (`aria-describedby`), and while an error is shown the control
  * is `aria-invalid`. Show the error with `@if`; it is announced when it appears.
  * `orientation="horizontal"` puts the control beside the label (checkbox, switch).
@@ -42,7 +43,11 @@ export class FzField {
 
     control.id ||= `${this.id}-control`;
     if (label && !label.contains(control)) {
-      if ('labels' in control) label.htmlFor ||= control.id;
+      // A button (a date picker) keeps its text in the name, after the label: "Birth date, 3 Mar 2026".
+      // Not label[for]: clicking the label would press the button.
+      if (control instanceof HTMLButtonElement) {
+        if (!control.hasAttribute('aria-labelledby')) control.setAttribute('aria-labelledby', `${(label.id ||= `${this.id}-label`)} ${control.id}`);
+      } else if ('labels' in control) label.htmlFor ||= control.id;
       else if (!control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby'))
         control.setAttribute('aria-labelledby', (label.id ||= `${this.id}-label`));
     }

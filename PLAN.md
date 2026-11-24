@@ -110,7 +110,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 - [ ] **input-otp** (shadcn): one native input per box or one input with box styling, paste fills all
 - [ ] Small ones: **kbd**, **button-group** (Bootstrap, shadcn), **close-button** (Bootstrap), **aspect-ratio**, **empty** (empty state)
 - [ ] **carousel** (shadcn, Bootstrap): scroll-snap with prev/next buttons, `aria-roledescription="carousel"`
-- [ ] **calendar** and **date-picker** (shadcn, Material datepicker): on the Aria grid, `Intl` for locale, a popover for the picker
+- [x] **calendar** and **date-picker** (shadcn, Material datepicker; both in `calendar.ts`): the APG date grid (own roving tabindex, not Aria's grid, whose cells are fixed while arrows cross months): arrows, Home/End, PageUp/Down (Shift: year), full day names, `aria-current="date"`, `min`/`max`/`disabled`, `Intl` + `LOCALE_ID` for names and first weekday. The picker: a button + `cdkConnectedOverlay` dialog, focus on the day, pick/Escape refocus the button; in `fzField` named "label, date". Checked in Chrome (real keys, accessibility tree). Not yet: typing a date, ranges
 - [ ] **timepicker** (Material)
 
 Not planned: `chart` and `form` (shadcn builds them on Recharts and react-hook-form, and registry files may import only `@angular/*`; Angular forms already cover `form`), Material `ripple`, `icon`, `grid-list`.
