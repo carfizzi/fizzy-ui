@@ -46,6 +46,14 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['role="alertdialog", named by its title and described by fzDialogDescription.', 'A click outside does not close it: it waits for an answer. Escape cancels.', 'Put cdkFocusInitial on the least destructive button (Cancel), so Enter never confirms by accident.'],
   },
   {
+    name: 'aspect-ratio',
+    title: 'Aspect ratio',
+    description: 'Keeps content at a width-to-height ratio.',
+    file: 'aspect-ratio.ts',
+    load: () => all(import('./demos/aspect-ratio'), import('./demos/aspect-ratio', { with: { loader: 'text' } }), import('../../registry/ui/aspect-ratio', { with: { loader: 'text' } })),
+    a11y: ['Only layout: CSS aspect-ratio, nothing for assistive technology to read.', 'An image inside still needs its alt text.'],
+  },
+  {
     name: 'avatar',
     title: 'Avatar',
     description: 'An image with a text fallback while it loads or when it fails.',
@@ -76,6 +84,15 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/button'), import('./demos/button', { with: { loader: 'text' } }), import('../../registry/ui/button', { with: { loader: 'text' } })),
     keyboard: [['Enter / Space', 'Activate']],
     a11y: ['Styles a native <button> or <a>, so focus, disabled and form behavior are the browser\'s own.', 'An icon-only button needs an aria-label.'],
+  },
+  {
+    name: 'button-group',
+    title: 'Button group',
+    description: 'Related buttons joined into one bar.',
+    file: 'button-group.ts',
+    load: () => all(import('./demos/button-group'), import('./demos/button-group', { with: { loader: 'text' } }), import('../../registry/ui/button-group', { with: { loader: 'text' } })),
+    keyboard: [['Tab', 'Move to the next button (each one is a Tab stop)']],
+    a11y: ['A role="group": give it an aria-label so screen readers announce what the buttons are for.', 'For arrow keys between the buttons and one Tab stop, use a toolbar.'],
   },
   {
     name: 'calendar',
@@ -130,6 +147,15 @@ export const DOCS: ComponentDoc[] = [
       'A chip input is a real <input>: label it with fzField or aria-label. Each tag has a "Remove …" button.',
       'Added and removed tags are announced, since the input itself does not change.',
     ],
+  },
+  {
+    name: 'close-button',
+    title: 'Close button',
+    description: 'An icon button for dismissing a panel or message.',
+    file: 'close-button.ts',
+    load: () => all(import('./demos/close-button'), import('./demos/close-button', { with: { loader: 'text' } }), import('../../registry/ui/close-button', { with: { loader: 'text' } })),
+    keyboard: [['Enter / Space', 'Activate']],
+    a11y: ['A native button named "Close"; the icon is aria-hidden.', 'With several on a page, name what each closes (aria-label="Dismiss announcement").', 'When what it closes disappears, move focus somewhere sensible: the demo focuses the button that replaces it.'],
   },
   {
     name: 'collapsible',
@@ -194,6 +220,14 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['fzDialogTitle is required: it names the dialog (aria-labelledby).', 'The rest of the page gets aria-hidden while the dialog is open.'],
   },
   {
+    name: 'empty',
+    title: 'Empty',
+    description: 'What to show when there is nothing here yet.',
+    file: 'empty.ts',
+    load: () => all(import('./demos/empty'), import('./demos/empty', { with: { loader: 'text' } }), import('../../registry/ui/empty', { with: { loader: 'text' } })),
+    a11y: ['Use a real heading for fzEmptyTitle, at the level that fits the page.', 'The icon is decorative: mark it aria-hidden.'],
+  },
+  {
     name: 'field',
     title: 'Field',
     description: 'A label, a control, a hint and an error, wired together.',
@@ -242,6 +276,14 @@ export const DOCS: ComponentDoc[] = [
     file: 'input-group.ts',
     load: () => all(import('./demos/input-group'), import('./demos/input-group', { with: { loader: 'text' } }), import('../../registry/ui/input-group', { with: { loader: 'text' } })),
     a11y: ['The inner input is the control: label it with fzField, a <label for>, or aria-label.', 'Addon text is not read with the input: repeat units or prefixes that matter in the label.'],
+  },
+  {
+    name: 'kbd',
+    title: 'Kbd',
+    description: 'A keyboard key, alone or in a combination.',
+    file: 'kbd.ts',
+    load: () => all(import('./demos/kbd'), import('./demos/kbd', { with: { loader: 'text' } }), import('../../registry/ui/kbd', { with: { loader: 'text' } })),
+    a11y: ['A native <kbd>; a combination nests them, as the HTML spec describes.', 'Screen readers read symbols literally (⌘ is "place of interest"): use words, or add visually hidden text.'],
   },
   {
     name: 'label',

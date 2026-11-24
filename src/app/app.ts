@@ -4,13 +4,14 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { FZ_BUTTON } from '../../registry/ui/button';
 import { FZ_DIALOG, FzDialog } from '../../registry/ui/dialog';
 import { FZ_COMMAND } from '../../registry/ui/command';
+import { FZ_KBD } from '../../registry/ui/kbd';
 import { DialogRef } from '@angular/cdk/dialog';
 import { DOCS } from './docs';
 import { Logo } from './logo';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgTemplateOutlet, FZ_BUTTON, FZ_DIALOG, FZ_COMMAND, Logo],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgTemplateOutlet, FZ_BUTTON, FZ_DIALOG, FZ_COMMAND, FZ_KBD, Logo],
   templateUrl: './app.html',
   host: { '(document:keydown)': 'onKeydown($event)' },
 })

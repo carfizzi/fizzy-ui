@@ -71,6 +71,7 @@ After every change run `npm test`; when `cli/` or `registry/registry.json` chang
 - Aria's keyboard managers `stopPropagation` every key they handle, even when the handler does nothing (Escape on an `alwaysExpanded` combobox): a dialog or popover around it never sees it. `command.ts` forwards Escape from its host; the CDK dialog reads `keyCode`, so the forwarded event defines `keyCode: 27`.
 - Angular drops whitespace-only text nodes: a space between an `sr-only` span and the next element disappears from the accessible name ("Step 2 of 3:Payment"). Put the space inside the text.
 - Fake timers: turn them on after the first `whenStable()` and flush with `TestBed.tick()`; with them on earlier, Angular's scheduler never runs and `whenStable()` hangs. jsdom's `:focus-visible` after `focus()` differs by element (a link matched): mock `matches` both ways.
+- jsdom's CSS parser drops some valid values (`aspect-ratio: 1`; Chrome reads it as `1 / 1`): test those in Chrome, not by `style` in jsdom. A property binding (`[fzAspectRatio]="1"`) leaves no attribute to select by.
 - `resource.value()` throws in the error state: check `hasValue()` first.
 - `<base href="/">` makes `href="#x"` mean `/#x`: in-page links (the skip link) need a click handler. The site is deployed under `/fizzy-ui/` (GitHub Pages): links in demos are relative (`href="introduction"`), never root-absolute (`/introduction`).
 - Versions: Angular 22, `@angular/aria` 22.3, Node 24.

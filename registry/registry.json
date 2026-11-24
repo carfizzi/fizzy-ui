@@ -52,6 +52,11 @@
     "navigation-menu": { "files": ["ui/navigation-menu.ts"], "dependencies": [] },
     "sidebar": { "files": ["ui/sidebar.ts"], "dependencies": [] },
     "calendar": { "files": ["ui/calendar.ts"], "dependencies": [] },
-    "date-picker": { "files": ["ui/calendar.ts"], "dependencies": ["@angular/cdk"] }
+    "date-picker": { "files": ["ui/calendar.ts"], "dependencies": ["@angular/cdk"] },
+    "kbd": { "files": ["ui/kbd.ts"], "dependencies": [] },
+    "button-group": { "files": ["ui/button-group.ts"], "dependencies": [] },
+    "close-button": { "files": ["ui/close-button.ts"], "dependencies": [] },
+    "aspect-ratio": { "files": ["ui/aspect-ratio.ts"], "dependencies": [] },
+    "empty": { "files": ["ui/empty.ts"], "dependencies": [] }
   }
 }

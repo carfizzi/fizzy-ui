@@ -1,13 +1,14 @@
 import { Component, computed, input, linkedSignal, resource } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FZ_KBD } from '../../../registry/ui/kbd';
 import { FZ_TABS } from '../../../registry/ui/tabs';
 import { CodeBlock } from '../code-block';
 import { DOCS } from '../docs';
 
 /** `/components/:name`: demo, usage code, install command, keyboard and a11y notes, and the file itself. */
 @Component({
-  imports: [NgComponentOutlet, RouterLink, FZ_TABS, CodeBlock],
+  imports: [NgComponentOutlet, RouterLink, FZ_KBD, FZ_TABS, CodeBlock],
   template: `
     @if (doc(); as d) {
       <article class="flex flex-col gap-8">
@@ -66,7 +67,7 @@ import { DOCS } from '../docs';
                       <td class="whitespace-nowrap px-4 py-2">
                         @for (key of row[0].split(' / '); track $index) {
                           @if (!$first) {<span class="px-1 text-muted-foreground"> / </span>}
-                          <kbd class="rounded border bg-muted px-1.5 py-0.5 font-sans text-xs">{{ key }}</kbd>
+                          <kbd fzKbd>{{ key }}</kbd>
                         }
                       </td>
                       <td class="px-4 py-2 text-muted-foreground">{{ row[1] }}</td>

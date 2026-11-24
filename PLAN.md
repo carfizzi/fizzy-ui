@@ -112,7 +112,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 - [ ] **scrollspy** (Bootstrap): marks the visible section in a table of contents (`aria-current`)
 - [ ] **resizable** (shadcn): split panes with a keyboard-operable separator (`role="separator"`, `aria-valuenow`)
 - [ ] **input-otp** (shadcn): one native input per box or one input with box styling, paste fills all
-- [ ] Small ones: **kbd**, **button-group** (Bootstrap, shadcn), **close-button** (Bootstrap), **aspect-ratio**, **empty** (empty state)
+- [x] Small ones: **kbd** (native `<kbd>`, nested for combinations; used in the docs header and keyboard tables), **button-group** (`role=group`, joined corners horizontal or vertical, size inherited; arrows are the toolbar's job), **close-button** (named "Close", sized), **aspect-ratio** (CSS `aspect-ratio`), **empty** (empty state: media, title at the user's heading level, description, actions). Checked in Chrome: corners and overlaps, 28/32/36/40px, focus after dismiss, numeric ratio
 - [ ] **carousel** (shadcn, Bootstrap): scroll-snap with prev/next buttons, `aria-roledescription="carousel"`
 - [x] **calendar** and **date-picker** (shadcn, Material datepicker; both in `calendar.ts`): the APG date grid (own roving tabindex, not Aria's grid, whose cells are fixed while arrows cross months): arrows, Home/End, PageUp/Down (Shift: year), full day names, `aria-current="date"`, `min`/`max`/`disabled`, `Intl` + `LOCALE_ID` for names and first weekday. The picker: a button + `cdkConnectedOverlay` dialog, focus on the day, pick/Escape refocus the button; in `fzField` named "label, date". Checked in Chrome (real keys, accessibility tree). Not yet: typing a date, ranges
 - [ ] **timepicker** (Material)
