@@ -39,6 +39,7 @@
     "toggle-group": { "files": ["ui/toggle.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
     "alert-dialog": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] },
     "collapsible": { "files": ["ui/collapsible.ts"], "dependencies": [] },
-    "field": { "files": ["ui/field.ts"], "dependencies": [] }
+    "field": { "files": ["ui/field.ts"], "dependencies": [] },
+    "chips": { "files": ["ui/chips.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
   }
 }

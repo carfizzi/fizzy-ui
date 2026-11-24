@@ -100,6 +100,7 @@ describe('docs', () => {
     ['sheet', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
     ['alert-dialog', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
     ['collapsible', (el: HTMLElement) => el.querySelector<HTMLElement>('button')!.click()],
+    ['chips', (el: HTMLElement) => el.querySelector<HTMLElement>('[role=option]')!.click()],
     ['field', (el: HTMLElement) => el.querySelector<HTMLElement>('input')!.dispatchEvent(new FocusEvent('blur'))], // shows the error
     ['toast', (el: HTMLElement) => el.querySelectorAll<HTMLElement>('button')[1].click()], // with description and action
   ] as const)('%s opened has no violations', async (name, open) => {

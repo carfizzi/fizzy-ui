@@ -87,6 +87,24 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['A native <input type="checkbox">: labels, forms and [indeterminate] work as usual.'],
   },
   {
+    name: 'chips',
+    title: 'Chips',
+    description: 'Compact choices to pick from, or tags to type.',
+    file: 'chips.ts',
+    load: () => all(import('./demos/chips'), import('./demos/chips', { with: { loader: 'text' } }), import('../../registry/ui/chips', { with: { loader: 'text' } })),
+    keyboard: [
+      ['← / →', 'Move between chips (chip listbox)'],
+      ['Space', 'Toggle the focused chip'],
+      ['Enter / ,', 'Add the typed tag (chip input)'],
+      ['Backspace', 'In the empty input, remove the last tag'],
+    ],
+    a11y: [
+      'A chip listbox is a horizontal listbox with one Tab stop; aria-label goes on fz-chip-listbox and moves to the listbox.',
+      'A chip input is a real <input>: label it with fzField or aria-label. Each tag has a "Remove …" button.',
+      'Added and removed tags are announced, since the input itself does not change.',
+    ],
+  },
+  {
     name: 'collapsible',
     title: 'Collapsible',
     description: 'Shows and hides one section of content.',
