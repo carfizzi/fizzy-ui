@@ -76,4 +76,38 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
   - [x] C: exit animations for popover, menu, select, combobox, tooltip: a 150ms fade (`leave()`: data-closing + inert, detach when the animation ends, cancel on reopen; select/combobox keep the overlay open meanwhile with Aria `preserveContent`). Focus returns at once. Checked in Chrome: no flash, reopen while fading, Reduce Motion
 - [ ] Checkbox animation: the check mark (and indeterminate bar) springs in, a fade under Reduce Motion. Today it switches instantly
 - [ ] Tabs: the active-tab indicator slides to the new tab instead of jumping (one indicator element positioned from the selected tab, `ease-spring`; instant under Reduce Motion)
-- [ ] Toggle and toggle group (shadcn `toggle`, `toggle-group`): today `aria-pressed` buttons exist only inside `fzToolbar` (`fzToolbarItem [(pressed)]`, `fzToolbarGroup`). A standalone toggle is a styled native `<button aria-pressed>`; the group can reuse the Aria toolbar (single and multiple)
+
+## Phase 5: more components (from shadcn, Angular Material, Bootstrap)
+
+In priority order. Each one needs the usual four pieces (file, `registry.json`, demo + docs entry, spec).
+
+- [ ] **toast** (shadcn sonner, Material snackbar, Bootstrap toasts): a `FzToaster` service (`show()`), a stacked region in a CDK overlay with `aria-live` (polite, `assertive` for errors), optional action ("Undo"), auto-dismiss paused on hover and focus, exit with `leave()`
+- [ ] **alert** (shadcn, Bootstrap): `role="alert"` or `status`, variants (default, destructive), optional close button
+- [ ] **progress** (all three): styled native `<progress>`, indeterminate when there is no value
+- [ ] **spinner** (Material progress-spinner, Bootstrap, shadcn): `role="status"` with a hidden label, a slow fade under Reduce Motion
+- [ ] **toggle** and **toggle-group** (shadcn, Material button-toggle): today `aria-pressed` buttons exist only inside `fzToolbar` (`fzToolbarItem [(pressed)]`, `fzToolbarGroup`). A standalone toggle is a styled native `<button aria-pressed>`; the group can reuse the Aria toolbar (single and multiple)
+- [ ] **alert-dialog** (shadcn): `dialog.ts` with `role="alertdialog"`, no backdrop close, first focus on Cancel
+- [ ] **collapsible** (shadcn, Bootstrap collapse, Material expansion panel): one panel, from the Aria accordion or native `<details>`, with the accordion height transition
+- [ ] **chips** (Material): a chip listbox to pick from options (Aria listbox) and a chip input for free tags (remove with Backspace / a button)
+- [ ] **field** (shadcn field, Material form-field): label + hint + error wired with `aria-describedby` / `aria-invalid`, around any control
+- [ ] **input-group** (shadcn, Bootstrap) and floating label (Bootstrap): prefix/suffix text or buttons, styles only
+- [ ] **table** (shadcn, Bootstrap): styled `<table>`, sort headers with `aria-sort` (Material sort header). Sorting also for `grid.ts`
+- [ ] **pagination** (shadcn, Bootstrap, Material paginator): `nav` with `aria-current="page"`, page-size select
+- [ ] **breadcrumb** (shadcn, Bootstrap): `nav` + `ol`, `aria-current="page"` on the last item
+- [ ] **list-group** (Bootstrap list group, Material list): static or actionable lists of items
+- [ ] **stepper** (Material): horizontal / vertical steps on Aria tabs, linear mode
+- [ ] **command** (shadcn): combobox + listbox filter in a dialog (⌘K palette)
+- [ ] **hover-card** (shadcn): the popover opened on hover, tooltip delays
+- [ ] **navigation-menu** (shadcn) and navbar (Bootstrap): Aria menubar pattern with link panels, responsive
+- [ ] **sidebar** (shadcn, Material sidenav): collapsible app sidebar, a sheet on mobile (the docs nav already does this)
+- [ ] **drawer** (shadcn): bottom sheet with drag to close; skip unless drag is wanted (`sheet` covers the rest)
+- [ ] **scroll-area** (shadcn): styled scrollbars (`scrollbar-*`), no logic
+- [ ] **scrollspy** (Bootstrap): marks the visible section in a table of contents (`aria-current`)
+- [ ] **resizable** (shadcn): split panes with a keyboard-operable separator (`role="separator"`, `aria-valuenow`)
+- [ ] **input-otp** (shadcn): one native input per box or one input with box styling, paste fills all
+- [ ] Small ones: **kbd**, **button-group** (Bootstrap, shadcn), **close-button** (Bootstrap), **aspect-ratio**, **empty** (empty state)
+- [ ] **carousel** (shadcn, Bootstrap): scroll-snap with prev/next buttons, `aria-roledescription="carousel"`
+- [ ] **calendar** and **date-picker** (shadcn, Material datepicker): on the Aria grid, `Intl` for locale, a popover for the picker
+- [ ] **timepicker** (Material)
+
+Not planned: `chart` and `form` (shadcn builds them on Recharts and react-hook-form, and registry files may import only `@angular/*`; Angular forms already cover `form`), Material `ripple`, `icon`, `grid-list`.
