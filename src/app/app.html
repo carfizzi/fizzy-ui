@@ -11,7 +11,13 @@
       Search
       <kbd class="hidden rounded-sm border bg-muted px-1.5 font-sans text-xs sm:inline" aria-hidden="true">⌘K</kbd>
     </button>
-    <button fzButton variant="ghost" size="sm" class="aria-pressed:bg-accent" [attr.aria-pressed]="dark()" (click)="toggleDark()">Dark mode</button>
+    <button fzButton variant="ghost" size="sm" icon aria-label="Dark mode" [attr.aria-pressed]="dark()" (click)="toggleDark()">
+      @if (dark()) {
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg>
+      } @else {
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11Z" /></svg>
+      }
+    </button>
   </div>
 </header>
 
@@ -48,9 +54,9 @@
   </nav>
 </ng-template>
 
-<ng-template fzDialog #search="fzDialog">
+<ng-template fzDialog bare align="top" #search="fzDialog">
   <h2 fzDialogTitle class="sr-only">Search documentation</h2>
-  <fz-command label="Search components and guides" placeholder="Search components and guides…" (itemSelected)="go($any($event))">
+  <fz-command class="shadow-lg" label="Search components and guides" placeholder="Search components and guides…" (itemSelected)="go($any($event))">
     <fz-command-group heading="Getting started">
       @for (g of guides; track g.path) {
         <fz-command-item [value]="g.path" [label]="g.title" />
