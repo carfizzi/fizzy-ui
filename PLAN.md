@@ -62,6 +62,7 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
 - [x] "View source": show the registry file as text (esbuild `loader: 'text'` import attribute), so it is always the real file
 - [x] Copy-to-clipboard for commands and code, light/dark toggle (remembered, no flash), sidebar navigation (a left sheet on mobile), skip link
 - [x] Keep `app.a11y.spec.ts` green on every page (one axe run per route, plus opened popups; a test fails if a registry item has no page)
+- [ ] Component search (like ui.shadcn.com): a button in the header plus ⌘K / Ctrl+K opens a dialog that filters components and guides by title and description (data from `src/app/docs.ts`, no search service), arrows + Enter navigate to the page. Build it with the `command` component from phase 5 so the docs use their own component (until then, `combobox.ts` in a `dialog.ts`). Add the open dialog to `app.a11y.spec.ts`
 - [ ] Deploy: GitHub Pages needs a public repo (or a paid plan for private), otherwise Cloudflare Pages / Netlify / Vercel. Decide when the repo goes public
 
 ## Cross-cutting
