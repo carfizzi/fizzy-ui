@@ -278,6 +278,15 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['The inner input is the control: label it with fzField, a <label for>, or aria-label.', 'Addon text is not read with the input: repeat units or prefixes that matter in the label.'],
   },
   {
+    name: 'input-otp',
+    title: 'Input OTP',
+    description: 'Boxes for a one-time code.',
+    file: 'input-otp.ts',
+    load: () => all(import('./demos/input-otp'), import('./demos/input-otp', { with: { loader: 'text' } }), import('../../registry/ui/input-otp', { with: { loader: 'text' } })),
+    keyboard: [['0–9', 'Fill the next box'], ['Backspace', 'Clear the last box'], ['Ctrl/⌘ + V', 'Paste a whole code (spaces and dashes are dropped)'], ['← / →', 'Move through the code, as in any text field']],
+    a11y: ['One native text input under the boxes: screen readers read and edit it like any field, and the boxes are aria-hidden.', 'autocomplete="one-time-code" lets phones fill the code from an SMS; digits bring up the numeric keyboard.', 'Inside fzField the label, hint and error are wired to the input.'],
+  },
+  {
     name: 'kbd',
     title: 'Kbd',
     description: 'A keyboard key, alone or in a combination.',
@@ -387,6 +396,15 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/radio-group'), import('./demos/radio-group', { with: { loader: 'text' } }), import('../../registry/ui/radio-group', { with: { loader: 'text' } })),
     keyboard: [['← → ↑ ↓', 'Move to and select the next radio']],
     a11y: ['Radios sharing a name form one Tab stop. Label the group with aria-label.'],
+  },
+  {
+    name: 'scroll-area',
+    title: 'Scroll area',
+    description: 'A scrolling box with a thin scrollbar and faded edges.',
+    file: 'scroll-area.ts',
+    load: () => all(import('./demos/scroll-area'), import('./demos/scroll-area', { with: { loader: 'text' } }), import('../../registry/ui/scroll-area', { with: { loader: 'text' } })),
+    keyboard: [['Tab', 'Focus the area (only while its content overflows)'], ['↑ / ↓ / ← / →', 'Scroll'], ['Page Up / Page Down', 'Scroll by a page'], ['Home / End', 'Scroll to the start or end']],
+    a11y: ['Native scrolling: touch, wheel, keys and screen readers work as usual.', 'While the content overflows it is a Tab stop, so keyboard users can scroll it; with an aria-label it is a named region.', 'The fade is only a mask: nothing is hidden from assistive technology.'],
   },
   {
     name: 'select',

@@ -57,6 +57,8 @@
     "button-group": { "files": ["ui/button-group.ts"], "dependencies": [] },
     "close-button": { "files": ["ui/close-button.ts"], "dependencies": [] },
     "aspect-ratio": { "files": ["ui/aspect-ratio.ts"], "dependencies": [] },
-    "empty": { "files": ["ui/empty.ts"], "dependencies": [] }
+    "empty": { "files": ["ui/empty.ts"], "dependencies": [] },
+    "input-otp": { "files": ["ui/input-otp.ts"], "dependencies": [] },
+    "scroll-area": { "files": ["ui/scroll-area.ts"], "dependencies": [] }
   }
 }
