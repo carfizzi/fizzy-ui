@@ -1,4 +1,4 @@
-import { DOCUMENT, Directive, ElementRef, Injector, TemplateRef, ViewContainerRef, afterNextRender, inject, input } from '@angular/core';
+import { DOCUMENT, Directive, ElementRef, Injector, TemplateRef, ViewContainerRef, afterNextRender, booleanAttribute, inject, input } from '@angular/core';
 import { InputModalityDetector } from '@angular/cdk/a11y';
 import { hasModifierKey } from '@angular/cdk/keycodes';
 import { Dialog, DialogRef } from '@angular/cdk/dialog';
@@ -9,15 +9,23 @@ type Side = 'center' | 'left' | 'right' | 'top' | 'bottom';
 // Classes go on the overlay pane; the CDK container inside it lays out the user's content.
 // `!` where CDK styles the same property: its CSS is unlayered and beats Tailwind's layered utilities
 // (`.cdk-overlay-pane { max-width: 100% }`, `.cdk-dialog-container { display: block }`).
-const CONTENT = 'bg-background text-foreground shadow-lg [&>.cdk-dialog-container]:flex! [&>.cdk-dialog-container]:flex-col [&>.cdk-dialog-container]:gap-4 [&>.cdk-dialog-container]:outline-none';
+const CONTENT = 'text-foreground [&>.cdk-dialog-container]:flex! [&>.cdk-dialog-container]:flex-col [&>.cdk-dialog-container]:gap-4 [&>.cdk-dialog-container]:outline-none';
 // A dialog fades and grows slightly, a sheet slides in from its edge, and they leave the same way
 // (data-closing). Keyframes in fizzy.css; fades under Reduce Motion.
 const PANEL: Record<Side, string> = {
-  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! rounded-lg border p-6 animate-fz-dialog data-closing:animate-fz-dialog-out data-closing:pointer-events-none!`,
-  right: `${CONTENT} w-3/4 max-w-sm! border-l p-6 animate-fz-sheet-right data-closing:animate-fz-sheet-right-out data-closing:pointer-events-none!`,
-  left: `${CONTENT} w-3/4 max-w-sm! border-r p-6 animate-fz-sheet-left data-closing:animate-fz-sheet-left-out data-closing:pointer-events-none!`,
-  top: `${CONTENT} border-b p-6 animate-fz-sheet-top data-closing:animate-fz-sheet-top-out data-closing:pointer-events-none!`,
-  bottom: `${CONTENT} border-t p-6 animate-fz-sheet-bottom data-closing:animate-fz-sheet-bottom-out data-closing:pointer-events-none!`,
+  center: `${CONTENT} w-[calc(100vw-2rem)] max-w-lg! animate-fz-dialog data-closing:animate-fz-dialog-out data-closing:pointer-events-none!`,
+  right: `${CONTENT} w-3/4 max-w-sm! animate-fz-sheet-right data-closing:animate-fz-sheet-right-out data-closing:pointer-events-none!`,
+  left: `${CONTENT} w-3/4 max-w-sm! animate-fz-sheet-left data-closing:animate-fz-sheet-left-out data-closing:pointer-events-none!`,
+  top: `${CONTENT} animate-fz-sheet-top data-closing:animate-fz-sheet-top-out data-closing:pointer-events-none!`,
+  bottom: `${CONTENT} animate-fz-sheet-bottom data-closing:animate-fz-sheet-bottom-out data-closing:pointer-events-none!`,
+};
+// The panel's look, left out with `bare`.
+const CHROME: Record<Side, string> = {
+  center: 'rounded-lg border bg-background p-6 shadow-lg',
+  right: 'border-l bg-background p-6 shadow-lg',
+  left: 'border-r bg-background p-6 shadow-lg',
+  top: 'border-b bg-background p-6 shadow-lg',
+  bottom: 'border-t bg-background p-6 shadow-lg',
 };
 let nextId = 0;
 
@@ -29,11 +37,17 @@ let nextId = 0;
  * exit animation first (ignoring clicks meanwhile), so `closed` emits once it has ended.
  * `role="alertdialog"` asks for a decision: a backdrop click does not close it (Escape still does);
  * add `fzDialogDescription` and put `cdkFocusInitial` on the least destructive button.
+ * `align="top"` (centered dialogs) anchors it near the top: its top edge stays still when its height
+ * changes, as in a palette that filters while you type.
+ * `bare` draws no panel (border, background, padding): the content is the panel, e.g. an
+ * `fz-command` for a ⌘K palette. Behavior (focus trap, Escape, backdrop, animations) stays.
  */
 @Directive({ selector: 'ng-template[fzDialog]', exportAs: 'fzDialog' })
 export class FzDialog<R = unknown> {
   readonly side = input<Side>('center');
   readonly role = input<'dialog' | 'alertdialog'>('dialog');
+  readonly bare = input(false, { transform: booleanAttribute });
+  readonly align = input<'center' | 'top'>('center');
   readonly titleId = `fz-dialog-title-${nextId++}`;
   private readonly dialog = inject(Dialog);
   private readonly template = inject(TemplateRef);
@@ -52,7 +66,7 @@ export class FzDialog<R = unknown> {
       ariaLabelledBy: this.titleId,
       role: this.role(),
       disableClose: alert, // no backdrop close; Escape is handled below
-      panelClass: PANEL[side].split(' '),
+      panelClass: `${PANEL[side]} ${this.bare() ? '' : CHROME[side]} ${this.align() === 'top' ? 'origin-top' : ''}`.split(' ').filter(Boolean),
       backdropClass: ['bg-background/80', 'backdrop-blur-sm'],
       maxWidth: '', // CDK defaults to an inline 80vw, which would beat the max-w-* classes
       positionStrategy: this.position(side),
@@ -99,7 +113,7 @@ export class FzDialog<R = unknown> {
 
   private position(side: Side): PositionStrategy | undefined {
     const global = createGlobalPositionStrategy(this.injector);
-    if (side === 'center') return undefined; // CDK default: centered
+    if (side === 'center') return this.align() === 'top' ? global.centerHorizontally().top('12vh') : undefined; // CDK default: centered
     if (side === 'left') return global.left('0').top('0');
     if (side === 'right') return global.right('0').top('0');
     return side === 'top' ? global.top('0').left('0') : global.bottom('0').left('0');

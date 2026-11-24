@@ -1,4 +1,4 @@
-import { Component, Directive, ElementRef, afterRenderEffect, booleanAttribute, computed, contentChildren, inject, input, output, signal, untracked, viewChild } from '@angular/core';
+import { Component, DestroyRef, Directive, ElementRef, afterNextRender, afterRenderEffect, booleanAttribute, computed, contentChildren, inject, input, output, signal, untracked, viewChild } from '@angular/core';
 import { Combobox, ComboboxPopup, ComboboxWidget } from '@angular/aria/combobox';
 import { Listbox, Option } from '@angular/aria/listbox';
 
@@ -50,6 +50,9 @@ export class FzCommandItem<V = unknown> {
       />
     </div>
     <div aria-live="polite" class="sr-only">{{ count() ? '' : 'No results' }}</div>
+    <!-- The results area moves to the content's height with a spring (instant under Reduce Motion) -->
+    <div #viewport class="overflow-hidden motion-safe:transition-[height] motion-safe:duration-(--fz-duration-control) motion-safe:ease-spring">
+    <div #content>
     <ng-template ngComboboxPopup [combobox]="combobox">
       @if (count()) {
         <div
@@ -95,6 +98,8 @@ export class FzCommandItem<V = unknown> {
         <div class="py-6 text-center text-muted-foreground">No results.</div>
       }
     </ng-template>
+    </div>
+    </div>
   `,
 })
 export class FzCommand<V = unknown> {
@@ -107,6 +112,8 @@ export class FzCommand<V = unknown> {
   private readonly items = contentChildren(FzCommandItem<V>, { descendants: true });
   private readonly listbox = viewChild<Listbox<V>>('listbox');
   private readonly el: HTMLElement = inject(ElementRef).nativeElement;
+  private readonly viewport = viewChild.required<ElementRef<HTMLElement>>('viewport');
+  private readonly content = viewChild.required<ElementRef<HTMLElement>>('content');
 
   /**
    * Matching items, grouped in the order their group first appears (ungrouped items form a group of
@@ -126,6 +133,15 @@ export class FzCommand<V = unknown> {
   protected readonly count = computed(() => this.sections().reduce((n, s) => n + s.items.length, 0));
 
   constructor() {
+    // height: auto can't transition: follow the content's height in px instead.
+    const destroy = inject(DestroyRef);
+    afterNextRender(() => {
+      if (typeof ResizeObserver === 'undefined') return;
+      const viewport = this.viewport().nativeElement;
+      const observer = new ResizeObserver(() => (viewport.style.height = `${this.content().nativeElement.offsetHeight}px`));
+      observer.observe(this.content().nativeElement);
+      destroy.onDestroy(() => observer.disconnect());
+    });
     // Highlight the first match after every change of the results, so Enter runs it.
     afterRenderEffect(() => {
       this.sections();

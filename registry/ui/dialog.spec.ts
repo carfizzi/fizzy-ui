@@ -12,6 +12,7 @@ import { FZ_DIALOG, FzDialog } from './dialog';
       <button data-d="save" fzDialogClose="saved">Save</button>
     </ng-template>
     <ng-template fzDialog side="right" #sheet="fzDialog"><h2 fzDialogTitle>Settings</h2></ng-template>
+    <ng-template fzDialog bare align="top" #plain="fzDialog"><h2 fzDialogTitle class="sr-only">Search</h2><input aria-label="Query" /></ng-template>
     <ng-template fzDialog role="alertdialog" #confirm="fzDialog">
       <h2 fzDialogTitle>Delete?</h2>
       <p fzDialogDescription data-d="desc">This cannot be undone.</p>
@@ -24,6 +25,7 @@ class Host {
   readonly dialog = viewChild.required('dlg', { read: FzDialog });
   readonly sheet = viewChild.required('sheet', { read: FzDialog });
   readonly confirm = viewChild.required('confirm', { read: FzDialog });
+  readonly plain = viewChild.required('plain', { read: FzDialog });
 }
 
 async function setup() {
@@ -167,5 +169,18 @@ describe('FzDialog', () => {
     host.dialog().open();
     await stable();
     expect(dialogEl()!.hasAttribute('aria-describedby')).toBe(false);
+  });
+
+  it('bare + align="top": no panel look, anchored near the top; same size, animation and behavior', async () => {
+    const { host, dialogEl, stable } = await setup();
+    host.plain().open();
+    await stable();
+    const pane = document.querySelector<HTMLElement>('.cdk-overlay-pane')!;
+    for (const c of ['border', 'bg-background', 'p-6', 'shadow-lg']) expect(pane.classList).not.toContain(c);
+    for (const c of ['max-w-lg!', 'animate-fz-dialog']) expect(pane.classList).toContain(c);
+    // align="top": anchored near the top, growing from there
+    expect(pane.style.marginTop).toBe('12vh');
+    expect(pane.classList).toContain('origin-top');
+    expect(dialogEl()!.contains(document.activeElement)).toBe(true);
   });
 });
