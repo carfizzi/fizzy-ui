@@ -8,12 +8,6 @@ import { CodeBlock } from '../code-block';
       <h1 class="text-3xl font-bold tracking-tight">Installation</h1>
       <p class="text-lg text-muted-foreground">Set up an Angular app once, then add components one by one.</p>
 
-      <p class="rounded-md border px-4 py-3 text-sm">
-        <strong>Not on npm yet.</strong> Until the CLI is published, clone the repository and run
-        <code class="rounded bg-muted px-1">node &lt;clone&gt;/cli/index.mjs</code> where these pages say
-        <code class="rounded bg-muted px-1">npx fizzy-ui</code>.
-      </p>
-
       <h2 class="mt-4 text-xl font-semibold tracking-tight">Requirements</h2>
       <p>An Angular 22 app (standalone components; zoneless works). The components are tested with &#64;angular/aria 22.3.</p>
 

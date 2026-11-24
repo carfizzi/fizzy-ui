@@ -70,10 +70,11 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
 - [x] Split the test: one spec per component in `registry/ui/<name>.spec.ts` (the playground spec is gone)
 - [x] Automated accessibility check with axe-core on every docs page and example (`src/app/app.a11y.spec.ts`, initial state + opened panels; `color-contrast` off in jsdom)
 - [x] CLI tests (`cli/index.test.mjs`, `npm run test:cli`): `list`, usage, project root check, `add` (several, `--path`), unknown names rejected, existing files kept unless `--overwrite`, a registry cannot write outside `--path`, `init` idempotent, registry from a URL. Package install is not tested (always `--skip-install`)
-- [ ] Publish the CLI to npm (check that the `fizzy-ui` name is free first)
+- [x] Publish the CLI to npm: `fizzy-ui@22.0.0` (Nov 24, 2026; first publish was staged and approved on npmjs.com)
   - [x] Name free (Nov 2026); version 22.0.0 following Angular's major; package metadata, README and LICENSE bundled; `@angular/*` installed at the project's major, with a warning on a mismatch
   - [x] Real install from the packed tarball in a fresh `ng new` app (Angular 22.0): `init`, `add` of all 51 items (aria/cdk installed at ^22.3), every `FZ_*` imported, `ng build` clean, checked in Chrome (sizes, tabs, date picker in a field)
-  - [ ] Make the repo public, `npm login` + `npm publish`, then trusted publishing from tags; remove the "Not on npm yet" note from the Installation page
+  - [x] Repo public, published, the "Not on npm yet" note removed
+  - [ ] Trusted publishing from tags (GitHub Actions, no token)
 - [x] Animations and transitions, Apple style (HIG Motion, WWDC23 "Animate with springs"): springs as CSS `linear()`, durations as tokens in `fizzy.css` (0s turns motion off), Reduce Motion swaps scale/slide for fades
   - [x] A: enter animations (dialog, sheet, popover, menu, select, combobox, tooltip), accordion height, switch spring. Checked in Chrome: spring curve, origin from the trigger side, submenus instant, fades only under Reduce Motion
   - [x] B: exit animations for dialog and sheet (CDK `closePredicate`: the first close plays the exit, later ones wait, then it closes with the first result; clicks ignored and focus kept inside meanwhile, backdrop fades alongside, CDK gives focus back at the end with the right focus origin; a background tab closes at once). Checked in Chrome: Escape, backdrop, fzDialogClose, double Escape, reopen during exit, mobile nav, Reduce Motion
