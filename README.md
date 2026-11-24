@@ -13,6 +13,12 @@
 </p>
 
 <p align="center">
+  <a href="https://carfizzi.github.io/fizzy-ui/"><strong>Documentation</strong></a> ·
+  <a href="https://carfizzi.github.io/fizzy-ui/components/accordion">Components</a> ·
+  <a href="https://carfizzi.github.io/fizzy-ui/installation">Installation</a>
+</p>
+
+<p align="center">
   <a href="https://www.npmjs.com/package/fizzy-ui"><img src="https://img.shields.io/npm/v/fizzy-ui" alt="npm version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/npm/l/fizzy-ui" alt="MIT license"></a>
 </p>
@@ -90,7 +96,7 @@ export class App {
 | **Data** | table, grid, tree, listbox, list-group |
 | **Layout and feedback** | accordion, collapsible, card, separator, skeleton, avatar, badge, alert, progress, spinner |
 
-`npx fizzy-ui list` prints every name. Each component page in the docs site shows a live example, its source, the keyboard interactions and the accessibility notes.
+`npx fizzy-ui list` prints every name. Each component page in the [docs site](https://carfizzi.github.io/fizzy-ui/) shows a live example, its source, the keyboard interactions and the accessibility notes.
 
 ## CLI
 
