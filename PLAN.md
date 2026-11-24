@@ -74,8 +74,8 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
   - [x] A: enter animations (dialog, sheet, popover, menu, select, combobox, tooltip), accordion height, switch spring. Checked in Chrome: spring curve, origin from the trigger side, submenus instant, fades only under Reduce Motion
   - [x] B: exit animations for dialog and sheet (CDK `closePredicate`: the first close plays the exit, later ones wait, then it closes with the first result; clicks ignored and focus kept inside meanwhile, backdrop fades alongside, CDK gives focus back at the end with the right focus origin; a background tab closes at once). Checked in Chrome: Escape, backdrop, fzDialogClose, double Escape, reopen during exit, mobile nav, Reduce Motion
   - [x] C: exit animations for popover, menu, select, combobox, tooltip: a 150ms fade (`leave()`: data-closing + inert, detach when the animation ends, cancel on reopen; select/combobox keep the overlay open meanwhile with Aria `preserveContent`). Focus returns at once. Checked in Chrome: no flash, reopen while fading, Reduce Motion
-- [ ] Checkbox animation: the check mark (and indeterminate bar) springs in, a fade under Reduce Motion. Today it switches instantly
-- [ ] Tabs: the active-tab indicator slides to the new tab instead of jumping (one indicator element positioned from the selected tab, `ease-spring`; instant under Reduce Motion)
+- [x] Checkbox animation: the check mark (and indeterminate bar) springs in, a fade under Reduce Motion. Checked in Chrome
+- [x] Tabs: the active-tab indicator slides to the new tab instead of jumping (one indicator element positioned from the selected tab, `ease-spring`; instant under Reduce Motion). Checked in Chrome, both tab lists of the docs page
 
 ## Phase 5: more components (from shadcn, Angular Material, Bootstrap)
 

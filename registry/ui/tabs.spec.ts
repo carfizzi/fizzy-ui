@@ -87,4 +87,26 @@ describe('FzTabs', () => {
     expect(fixture.componentInstance.tab()).not.toBe('c');
     expect(tabs[2].getAttribute('aria-selected')).toBe('false');
   });
+
+  it('one hidden indicator follows the selected tab, sliding only after the first placement', async () => {
+    const { fixture, tabs } = await setup();
+    // jsdom has no layout: give the tabs positions
+    tabs.forEach((t, i) => {
+      Object.defineProperty(t, 'offsetLeft', { value: 4 + i * 60 });
+      Object.defineProperty(t, 'offsetWidth', { value: 56 });
+    });
+    const indicator = fixture.nativeElement.querySelector('[fzTabList] > span') as HTMLElement;
+    expect(indicator.ariaHidden).toBe('true');
+    expect(indicator.dataset['ready']).toBeUndefined();
+
+    tabs[1].click();
+    await fixture.whenStable();
+    expect(indicator.style.translate).toBe('64px 0px');
+    expect(indicator.style.width).toBe('56px');
+    expect(indicator.dataset['ready']).toBe('');
+
+    fixture.componentInstance.tab.set(undefined);
+    await fixture.whenStable();
+    expect(indicator.hidden).toBe(true);
+  });
 });

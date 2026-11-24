@@ -23,6 +23,7 @@ describe('FzCheckbox', () => {
     const [terms, all, off] = fixture.nativeElement.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
     expect(terms.classList).toContain('checked:bg-primary');
     expect(terms.classList).toContain('focus-visible:ring-ring');
+    expect(terms.classList).toContain('motion-reduce:before:scale-100'); // Reduce Motion: the mark only fades
 
     fixture.nativeElement.querySelector('label').click();
     await fixture.whenStable();
