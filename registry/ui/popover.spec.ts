@@ -49,7 +49,10 @@ describe('FzPopover', () => {
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
     expect(trigger.getAttribute('aria-controls')).toBe(panel.id);
     expect(panel.id).toMatch(/^fz-popover-/);
-    expect(panel.classList).toContain('hidden');
+    expect(panel.getAttribute('data-open')).toBe('false');
+    // the hide rule yields while closing and never forces a display: a user's flex keeps its layout mid-fade
+    expect(panel.classList).toContain('data-[open=false]:not-data-closing:hidden');
+    expect([...panel.classList].some((c) => c.startsWith('data-closing:') && c.endsWith('!'))).toBe(false);
   });
 
   it('click opens and focuses the first field; Escape closes and gives focus back', async () => {
@@ -57,12 +60,12 @@ describe('FzPopover', () => {
     trigger.focus();
     await open();
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
-    expect(panel.classList).not.toContain('hidden');
+    expect(panel.getAttribute('data-open')).toBe('true');
     expect(document.activeElement).toBe(q('width'));
     q('width').dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     await stable();
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
-    expect(panel.classList).toContain('hidden');
+    expect(panel.getAttribute('data-open')).toBe('false');
     expect(document.activeElement).toBe(trigger);
   });
 
@@ -121,7 +124,7 @@ describe('FzPopover', () => {
       await anim.finish();
       await stable();
       expect(panel.closest('.cdk-overlay-pane')).toBeNull();
-      expect(panel.classList).toContain('hidden');
+      expect(panel.getAttribute('data-open')).toBe('false');
       expect(panel.hasAttribute('data-closing')).toBe(false);
     } finally {
       anim.restore();

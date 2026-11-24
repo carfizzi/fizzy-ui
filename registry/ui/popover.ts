@@ -58,13 +58,14 @@ function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
     role: 'dialog',
     tabindex: '-1',
     '[id]': 'id()',
-    '[class.hidden]': '!open()',
+    '[attr.data-open]': 'open()',
     '(keydown.escape)': 'close()',
     '(focusout)': 'onFocusOut($event)',
     '(document:pointerdown)': 'onOutside($event)',
     class:
       'w-72 rounded-md border bg-background p-4 text-sm text-foreground shadow-md outline-none animate-fz-popup ' +
-      'data-closing:block! data-closing:animate-fz-fade-out',
+      // hidden yields to data-closing, so the user's own display (flex, grid) stays during the fade
+      'data-[open=false]:not-data-closing:hidden data-closing:animate-fz-fade-out',
   },
 })
 export class FzPopover {
