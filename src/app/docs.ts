@@ -340,6 +340,19 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['Same as Dialog: fzDialogTitle names it.'],
   },
   {
+    name: 'sidebar',
+    title: 'Sidebar',
+    description: 'App navigation in a column that collapses, a drawer on phones.',
+    file: 'sidebar.ts',
+    load: () => all(import('./demos/sidebar'), import('./demos/sidebar', { with: { loader: 'text' } }), import('../../registry/ui/sidebar', { with: { loader: 'text' } })),
+    keyboard: [['Enter / Space', 'On the trigger: collapse or expand (open or close the drawer)'], ['Tab', 'Move through the sidebar'], ['Escape', 'Close the drawer, focus back on the trigger']],
+    a11y: [
+      'The trigger is a button with aria-expanded and aria-controls. A collapsed sidebar is inert.',
+      'On phones the open drawer is a modal dialog (named by aria-label on fz-sidebar): everything else on the page is inert and focus moves into it.',
+      'Escape, the backdrop or following a link closes the drawer and focus goes back to the trigger.',
+    ],
+  },
+  {
     name: 'skeleton',
     title: 'Skeleton',
     description: 'A placeholder shape while content loads.',
