@@ -38,6 +38,8 @@ npx ng build
 node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another Angular app
 ```
 
+After every change run `npm test`; when `cli/` or `registry/registry.json` changed, also `npm run test:cli`. Run `npx ng build` before committing. Never commit with a red test or build.
+
 ## Gotchas
 
 - `ng add tailwind` installs an unrelated package. Tailwind is set up by hand: `tailwindcss`, `@tailwindcss/postcss`, and `.postcssrc.json`.
