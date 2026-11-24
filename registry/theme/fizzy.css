@@ -40,6 +40,7 @@
 @keyframes fz-slide-in-top { from { translate: 0 -100%; } }
 @keyframes fz-slide-in-bottom { from { translate: 0 100%; } }
 @keyframes fz-toast-in { from { opacity: 0; translate: 0 100%; } }
+@keyframes fz-indeterminate { from { background-position: -70% 0; } to { background-position: 170% 0; } }
 @keyframes fz-pop-out { to { opacity: 0; scale: 0.96; } }
 @keyframes fz-slide-out-right { to { translate: 100% 0; } }
 @keyframes fz-slide-out-left { to { translate: -100% 0; } }
@@ -57,6 +58,7 @@
   @keyframes fz-slide-in-top { from { opacity: 0; } }
   @keyframes fz-slide-in-bottom { from { opacity: 0; } }
   @keyframes fz-toast-in { from { opacity: 0; } }
+  @keyframes fz-indeterminate { from, to { background-size: 100% 100%; opacity: 1; } 50% { background-size: 100% 100%; opacity: 0.4; } }
   @keyframes fz-pop-out { to { opacity: 0; } }
   @keyframes fz-slide-out-right { to { opacity: 0; } }
   @keyframes fz-slide-out-left { to { opacity: 0; } }
@@ -105,6 +107,7 @@
   --animate-fz-dialog: fz-pop-in var(--fz-duration-panel) var(--fz-spring);
   --animate-fz-tooltip: fz-fade-in var(--fz-duration-fade) ease-out;
   --animate-fz-toast: fz-toast-in var(--fz-duration-popup) var(--fz-spring);
+  --animate-fz-indeterminate: fz-indeterminate 1.5s ease-in-out infinite;
   --animate-fz-fade-out: fz-fade-out var(--fz-duration-fade) ease-out forwards;
   --animate-fz-sheet-right: fz-slide-in-right var(--fz-duration-panel) var(--fz-spring);
   --animate-fz-sheet-left: fz-slide-in-left var(--fz-duration-panel) var(--fz-spring);

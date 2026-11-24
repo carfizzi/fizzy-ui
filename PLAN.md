@@ -83,10 +83,10 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
 In priority order. Each one needs the usual four pieces (file, `registry.json`, demo + docs entry, spec).
 
 - [x] **toast** (shadcn sonner, Material snackbar, Bootstrap toasts): `FzToaster.show()`, a region in a global CDK overlay (bottom right, full width on phones), announced with the CDK `LiveAnnouncer` (polite, assertive for `destructive`), optional action ("Undo"), timers paused on hover and focus, Alt+T to reach it, Escape dismisses, focus goes back, at most 3, exit with `animate.leave`. Checked in Chrome (desktop, phone, enter/exit, clicks through the empty region)
-- [ ] **alert** (shadcn, Bootstrap): `role="alert"` or `status`, variants (default, destructive), optional close button
-- [ ] **progress** (all three): styled native `<progress>`, indeterminate when there is no value
-- [ ] **spinner** (Material progress-spinner, Bootstrap, shadcn): `role="status"` with a hidden label, a slow fade under Reduce Motion
-- [ ] **toggle** and **toggle-group** (shadcn, Material button-toggle): today `aria-pressed` buttons exist only inside `fzToolbar` (`fzToolbarItem [(pressed)]`, `fzToolbarGroup`). A standalone toggle is a styled native `<button aria-pressed>`; the group can reuse the Aria toolbar (single and multiple)
+- [x] **alert** (shadcn, Bootstrap): `role` input (`alert` default, `status`, none), variants (default, destructive), title, description, leading icon. No built-in close button: put an `fzButton` in it
+- [x] **progress** (all three): styled native `<progress>`, value springs; indeterminate when there is no value (a sweeping bar, a pulse under Reduce Motion). Checked in Chrome
+- [x] **spinner** (Material progress-spinner, Bootstrap, shadcn): `<fz-spinner>`, `role="status"` with a hidden label, pulses under Reduce Motion
+- [x] **toggle** and **toggle-group** (shadcn, Material button-toggle, both in `toggle.ts`): `button[fzToggle] [(pressed)]`; the group is an Aria toolbar (one Tab stop, arrows) of `aria-pressed` items, single (pressing again clears) or `multiple` (array)
 - [ ] **alert-dialog** (shadcn): `dialog.ts` with `role="alertdialog"`, no backdrop close, first focus on Cancel
 - [ ] **collapsible** (shadcn, Bootstrap collapse, Material expansion panel): one panel, from the Aria accordion or native `<details>`, with the accordion height transition
 - [ ] **chips** (Material): a chip listbox to pick from options (Aria listbox) and a chip input for free tags (remove with Backspace / a button)
