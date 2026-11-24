@@ -82,7 +82,7 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
 
 In priority order. Each one needs the usual four pieces (file, `registry.json`, demo + docs entry, spec).
 
-- [ ] **toast** (shadcn sonner, Material snackbar, Bootstrap toasts): a `FzToaster` service (`show()`), a stacked region in a CDK overlay with `aria-live` (polite, `assertive` for errors), optional action ("Undo"), auto-dismiss paused on hover and focus, exit with `leave()`
+- [x] **toast** (shadcn sonner, Material snackbar, Bootstrap toasts): `FzToaster.show()`, a region in a global CDK overlay (bottom right, full width on phones), announced with the CDK `LiveAnnouncer` (polite, assertive for `destructive`), optional action ("Undo"), timers paused on hover and focus, Alt+T to reach it, Escape dismisses, focus goes back, at most 3, exit with `animate.leave`. Checked in Chrome (desktop, phone, enter/exit, clicks through the empty region)
 - [ ] **alert** (shadcn, Bootstrap): `role="alert"` or `status`, variants (default, destructive), optional close button
 - [ ] **progress** (all three): styled native `<progress>`, indeterminate when there is no value
 - [ ] **spinner** (Material progress-spinner, Bootstrap, shadcn): `role="status"` with a hidden label, a slow fade under Reduce Motion

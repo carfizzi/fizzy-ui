@@ -242,6 +242,19 @@ export const DOCS: ComponentDoc[] = [
     load: () => all(import('./demos/textarea'), import('./demos/textarea', { with: { loader: 'text' } }), import('../../registry/ui/textarea', { with: { loader: 'text' } })),
   },
   {
+    name: 'toast',
+    title: 'Toast',
+    description: 'A short notification that closes by itself.',
+    file: 'toast.ts',
+    load: () => all(import('./demos/toast'), import('./demos/toast', { with: { loader: 'text' } }), import('../../registry/ui/toast', { with: { loader: 'text' } })),
+    keyboard: [['Alt + T', 'Move focus to the notifications'], ['Tab', 'Move between their buttons'], ['Escape', 'Dismiss the focused toast']],
+    a11y: [
+      'Each toast is announced through a live region: politely, or assertively for the destructive variant. Focus never moves on its own.',
+      'Timers pause while the pointer or focus is on the toasts; closing a focused toast gives focus back to where it was.',
+      'Whatever an action does must also be possible elsewhere in the page: a toast can close before someone reaches it.',
+    ],
+  },
+  {
     name: 'toolbar',
     title: 'Toolbar',
     description: 'A row of buttons, toggles and toggle groups with one Tab stop.',

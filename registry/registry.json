@@ -30,6 +30,7 @@
     "popover": { "files": ["ui/popover.ts"], "dependencies": ["@angular/cdk"] },
     "tooltip": { "files": ["ui/tooltip.ts"], "dependencies": ["@angular/cdk"] },
     "dialog": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] },
-    "sheet": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] }
+    "sheet": { "files": ["ui/dialog.ts"], "dependencies": ["@angular/cdk"] },
+    "toast": { "files": ["ui/toast.ts"], "dependencies": ["@angular/cdk"] }
   }
 }
