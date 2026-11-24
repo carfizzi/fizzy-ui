@@ -327,6 +327,19 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['A status region with hidden text (label, "Loading" by default), so it is announced when it appears.', 'Inside a button, also set the button text or aria-busy so the button itself says what is happening.'],
   },
   {
+    name: 'stepper',
+    title: 'Stepper',
+    description: 'Breaks a task into ordered steps.',
+    file: 'stepper.ts',
+    load: () => all(import('./demos/stepper'), import('./demos/stepper', { with: { loader: 'text' } }), import('../../registry/ui/stepper', { with: { loader: 'text' } })),
+    keyboard: [['Tab', 'Move between step headers and the step content'], ['Enter / Space', 'Go to that step (if it is open)']],
+    a11y: [
+      'The headers are an ordered list of buttons named "Step n of N: label", with ", completed" when done; the current one has aria-current="step".',
+      'In linear mode, steps that are not open yet are aria-disabled: still reachable, so the whole task can be read ahead.',
+      'next() and previous() move focus to the new step header, so the change is announced. Each step is a group named by its header.',
+    ],
+  },
+  {
     name: 'switch',
     title: 'Switch',
     description: 'An on/off toggle on a native checkbox.',

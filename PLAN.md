@@ -97,7 +97,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 - [x] **pagination** (shadcn, Bootstrap, Material paginator): `<fz-pagination [(page)] [pageCount]>`, first/last/neighbours/gaps, `aria-current="page"`, Previous/Next `aria-disabled` at the ends, focus kept when the list shifts. Buttons, not links; no page-size select (use `fz-select`)
 - [x] **breadcrumb** (shadcn, Bootstrap): `nav[fzBreadcrumb]` + `ol`, CSS-border chevrons (nothing to read), `aria-current="page"` set by the user
 - [ ] **list-group** (Bootstrap list group, Material list): static or actionable lists of items
-- [ ] **stepper** (Material): horizontal / vertical steps on Aria tabs, linear mode
+- [x] **stepper** (Material, `stepper.ts`): `<fz-stepper [(step)] linear>` + `<fz-step label [completed]>`; an `ol` of buttons with `aria-current="step"` (not Aria tabs: APG does not recommend tabs for a wizard), locked steps `aria-disabled`, `next()`/`previous()` focus the new header, hidden steps keep their content, horizontal/vertical, labels of other steps hidden on phones. Checked in Chrome (desktop, phone, real keys)
 - [x] **command** (shadcn, `command.ts`): `<fz-command>` with `fz-command-group` / `fz-command-item` data; Aria combobox `alwaysExpanded` + listbox (activedescendant), filter on label and keywords (label matches first), first match highlighted (`gotoFirst`), `(itemSelected)`, Escape forwarded to a dialog around it. Checked in Chrome with real keys
 - [ ] **hover-card** (shadcn): the popover opened on hover, tooltip delays
 - [ ] **navigation-menu** (shadcn) and navbar (Bootstrap): Aria menubar pattern with link panels, responsive

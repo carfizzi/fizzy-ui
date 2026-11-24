@@ -45,6 +45,7 @@
     "table": { "files": ["ui/table.ts"], "dependencies": [] },
     "pagination": { "files": ["ui/pagination.ts"], "dependencies": [] },
     "breadcrumb": { "files": ["ui/breadcrumb.ts"], "dependencies": [] },
-    "command": { "files": ["ui/command.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] }
+    "command": { "files": ["ui/command.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
+    "stepper": { "files": ["ui/stepper.ts"], "dependencies": [] }
   }
 }

@@ -65,6 +65,7 @@ After every change run `npm test`; when `cli/` or `registry/registry.json` chang
 - Destroying an overlay's DOM (`document.body.innerHTML = ''`) mid-test breaks later CDK overlays in the same test: one opened popup per test.
 - Aria `MenuItem.searchTerm` defaults to '', which disables typeahead: `FzMenuItem` falls back to its text.
 - Aria's keyboard managers `stopPropagation` every key they handle, even when the handler does nothing (Escape on an `alwaysExpanded` combobox): a dialog or popover around it never sees it. `command.ts` forwards Escape from its host; the CDK dialog reads `keyCode`, so the forwarded event defines `keyCode: 27`.
+- Angular drops whitespace-only text nodes: a space between an `sr-only` span and the next element disappears from the accessible name ("Step 2 of 3:Payment"). Put the space inside the text.
 - `resource.value()` throws in the error state: check `hasValue()` first.
 - `<base href="/">` makes `href="#x"` mean `/#x`: in-page links (the skip link) need a click handler.
 - Versions: Angular 22, `@angular/aria` 22.3, Node 24.
