@@ -6,8 +6,8 @@ import { FZ_BREADCRUMB } from '../../../registry/ui/breadcrumb';
   template: `
     <nav fzBreadcrumb>
       <ol>
-        <li><a href="/introduction">Home</a></li>
-        <li><a href="/components/accordion">Components</a></li>
+        <li><a href="introduction">Home</a></li>
+        <li><a href="components/accordion">Components</a></li>
         <li><span aria-current="page">Breadcrumb</span></li>
       </ol>
     </nav>

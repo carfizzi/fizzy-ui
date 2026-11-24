@@ -1,0 +1,25 @@
+# Publishes the CLI to npm when a tag v<version> is pushed. No token: npm trusted publishing (OIDC),
+# configured on npmjs.com for this repo and this file name. Provenance is added automatically.
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:cli
+      - name: Tag matches cli/package.json
+        run: test "v$(node -p "require('./cli/package.json').version")" = "$GITHUB_REF_NAME"
+      - run: npm publish
+        working-directory: cli
