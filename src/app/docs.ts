@@ -267,6 +267,19 @@ export const DOCS: ComponentDoc[] = [
     a11y: ['Label it with aria-labelledby.'],
   },
   {
+    name: 'navigation-menu',
+    title: 'Navigation menu',
+    description: 'Site navigation with dropdown panels of links.',
+    file: 'navigation-menu.ts',
+    load: () => all(import('./demos/navigation-menu'), import('./demos/navigation-menu', { with: { loader: 'text' } }), import('../../registry/ui/navigation-menu', { with: { loader: 'text' } })),
+    keyboard: [['Tab', 'Move through buttons and links'], ['Enter / Space', 'Open or close a panel'], ['Escape', 'Close the panel, focus back on its button']],
+    a11y: [
+      'The disclosure navigation pattern: buttons with aria-expanded and aria-controls open panels of plain links. No menu roles: those are for application menus.',
+      'One panel at a time. It closes on Escape, a click outside, or when focus leaves the nav.',
+      'Give the nav an aria-label and mark the current page with aria-current="page".',
+    ],
+  },
+  {
     name: 'pagination',
     title: 'Pagination',
     description: 'Moves between pages of results.',
