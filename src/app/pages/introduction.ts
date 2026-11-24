@@ -1,43 +1,63 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FZ_BUTTON } from '../../../registry/ui/button';
+import { FZ_CARD } from '../../../registry/ui/card';
+import { FZ_SWITCH } from '../../../registry/ui/switch';
+import { FZ_SLIDER } from '../../../registry/ui/slider';
+import { FZ_TABS } from '../../../registry/ui/tabs';
 import { CopyButton } from '../copy-button';
-import { Logo } from '../logo';
 
 @Component({
-  imports: [RouterLink, FZ_BUTTON, CopyButton, Logo],
-  styles: `
-    @keyframes rise {
-      from { translate: 0 6rem; opacity: 0; }
-      20%, 70% { opacity: 1; }
-      to { translate: 0 -10rem; opacity: 0; }
-    }
-    /* Reduce Motion: the bubbles stay where they are. */
-    @media (prefers-reduced-motion: no-preference) {
-      .bubble { animation: rise var(--t) linear var(--delay) infinite backwards; }
-    }
-  `,
+  imports: [RouterLink, FZ_BUTTON, FZ_CARD, FZ_SWITCH, FZ_SLIDER, FZ_TABS, CopyButton],
   template: `
-    <section class="relative isolate mb-12 overflow-hidden rounded-xl border bg-muted/40 px-6 py-12 sm:px-10 sm:py-16">
-      <div aria-hidden="true" class="absolute inset-y-0 right-0 -z-10 w-1/2">
-        @for (b of bubbles; track $index) {
-          <span class="bubble absolute rounded-full border-2 border-foreground/10 bg-foreground/[0.03]"
-            [style.left.%]="b[0]" [style.top.%]="b[1]" [style.width.rem]="b[2]" [style.height.rem]="b[2]"
-            [style.--t]="b[3] + 's'" [style.--delay]="-b[4] + 's'"></span>
-        }
-      </div>
-      <app-logo class="size-14" />
-      <h1 class="mt-6 max-w-xl text-4xl font-bold tracking-tight text-balance sm:text-5xl">Accessible Angular components you own.</h1>
-      <p class="mt-4 max-w-xl text-lg text-muted-foreground text-pretty">
+    <section class="pb-14 pt-4 md:pt-10">
+      <h1 class="text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-balance sm:text-6xl">
+        Accessible Angular components.
+        <span class="block text-muted-foreground">Yours to own.</span>
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty sm:text-xl">
         Behavior from &#64;angular/aria, styles from Tailwind v4. The CLI copies each component's source into your app, and from
         then on it is your code.
       </p>
       <div class="mt-8 flex flex-wrap items-center gap-3">
         <a fzButton routerLink="/installation">Get started</a>
         <a fzButton variant="outline" routerLink="/components/button">Browse components</a>
-        <div class="flex items-center gap-2 rounded-md border bg-background py-0.5 pl-3 pr-0.5 font-mono text-sm">
-          <span aria-hidden="true" class="text-muted-foreground">$ </span><code>npx fizzy-ui init</code>
+        <div class="flex items-center gap-1 pl-2 font-mono text-sm text-muted-foreground">
+          <code>npx fizzy-ui init</code>
           <app-copy-button text="npx fizzy-ui init" label="Copy install command" />
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Live example" class="mb-16 grid gap-4 md:grid-cols-5">
+      <div fzCard class="md:col-span-3">
+        <div fzCardHeader>
+          <h2 fzCardTitle>Notifications</h2>
+          <p fzCardDescription>Choose what reaches you, and how loud.</p>
+        </div>
+        <div fzCardContent class="flex flex-col gap-5 text-sm">
+          <label class="flex items-center justify-between gap-4">Mentions <input type="checkbox" fzSwitch checked /></label>
+          <label class="flex items-center justify-between gap-4">Weekly digest <input type="checkbox" fzSwitch /></label>
+          <div class="flex flex-col gap-3">
+            <label for="hero-volume" class="flex justify-between">Volume <span class="text-muted-foreground">{{ volume() }}%</span></label>
+            <input id="hero-volume" type="range" fzSlider min="0" max="100" [value]="volume()" (input)="volume.set(+$any($event.target).value)" />
+          </div>
+        </div>
+      </div>
+      <div fzCard class="md:col-span-2">
+        <div fzCardHeader>
+          <h2 fzCardTitle>Appearance</h2>
+          <p fzCardDescription>Every key and role from &#64;angular/aria.</p>
+        </div>
+        <div fzCardContent fzTabs>
+          <ul fzTabList [(selectedTab)]="theme">
+            <li fzTab value="light">Light</li>
+            <li fzTab value="dark">Dark</li>
+            <li fzTab value="auto">Auto</li>
+          </ul>
+          <div fzTabPanel value="light" class="pt-4 text-sm text-muted-foreground"><ng-template ngTabContent>Always light.</ng-template></div>
+          <div fzTabPanel value="dark" class="pt-4 text-sm text-muted-foreground"><ng-template ngTabContent>Always dark.</ng-template></div>
+          <div fzTabPanel value="auto" class="pt-4 text-sm text-muted-foreground"><ng-template ngTabContent>Follows your system.</ng-template></div>
         </div>
       </div>
     </section>
@@ -72,9 +92,6 @@ import { Logo } from '../logo';
   `,
 })
 export class IntroductionPage {
-  /** Decorative fizz: [left %, top %, size rem, rise seconds, phase seconds]. */
-  protected readonly bubbles = [
-    [70, 70, 3.5, 9, 0], [40, 55, 1.5, 7, 2], [85, 30, 1, 6, 4], [55, 85, 2.25, 8, 5],
-    [20, 75, 0.75, 5, 1], [75, 10, 1.75, 10, 6], [30, 25, 1, 7, 3.5], [90, 80, 0.75, 6, 2.5],
-  ];
+  protected readonly volume = signal(60);
+  protected readonly theme = signal('auto');
 }
