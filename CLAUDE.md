@@ -35,6 +35,10 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 - Form controls (checkbox, switch, radio-group, slider) are styled native inputs, not Aria: keep it that way so forms and labels keep working.
 - A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, a demo in `src/app/demos/<name>.ts` plus its entry in `src/app/docs.ts`, and `registry/ui/<name>.spec.ts`.
 
+## README
+
+`README.md` is still generic, and that is fine while fizzy-ui offers nothing special. When a feature lands that sets the project apart or that users will care about (forms support, `llms.txt`, `diff`/`update`, the agent bridge, MCP, themes, a big component like the data table...), update the README in the same change: what it is, a short example, and a link to the docs. Keep it user-facing (development notes go in `CONTRIBUTING.md`) and keep image links absolute.
+
 ## Commands
 
 ```sh

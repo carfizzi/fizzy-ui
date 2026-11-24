@@ -118,4 +118,41 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 - [x] **calendar** and **date-picker** (shadcn, Material datepicker; both in `calendar.ts`): the APG date grid (own roving tabindex, not Aria's grid, whose cells are fixed while arrows cross months): arrows, Home/End, PageUp/Down (Shift: year), full day names, `aria-current="date"`, `min`/`max`/`disabled`, `Intl` + `LOCALE_ID` for names and first weekday. The picker: a button + `cdkConnectedOverlay` dialog, focus on the day, pick/Escape refocus the button; in `fzField` named "label, date". Checked in Chrome (real keys, accessibility tree). Not yet: typing a date, ranges
 - [ ] **timepicker** (Material)
 
+## Phase 6: forms and small wins
+
+- [ ] **Forms support** (Signal Forms, Reactive Forms, `ngModel`): select, combobox, calendar, date-picker, chips, input-otp, toggle-group, slider... work with `[formField]` / `formControl` / `ngModel` and show `aria-invalid` / touched state. First check which components already do (`field.ts` has part of it); write a spec per control for each forms API
+- [ ] **Size preview in the docs**: the component page shows a component at every size (`xs|sm|md|lg`, e.g. input) side by side, so the `data-size` scale can be compared at a glance
+- [ ] **RTL**: check for `left/right` (use logical properties), add a demo with `dir="rtl"`, test the popups and the tab highlight
+
+## Phase 7: docs and tooling
+
+- [ ] **llms.txt + markdown per component**: generated from `docs.ts` (description, keyboard table, a11y notes) and the demos: `/llms.txt`, `/<name>.md`. Cheap, and the base for the MCP idea and an agent skill
+- [ ] **CLI `diff` and `update`**: the code is the user's, so it drifts. `diff <name>` compares the local file with the registry version; `update <name>` merges (or asks per file). Check first how `add` handles internal dependencies and overwrites
+- [ ] **Open in StackBlitz** on each demo
+
+## Phase 8: trust and look
+
+- [ ] **A11y you can show**: axe result badge on the site (from `app.a11y.spec.ts`), keyboard + ARIA box per component; CDK `ComponentHarness` per component (`registry/testing`) so users can test their own apps
+- [ ] **Themes**: presets (`init --theme`) and a token editor on the site that outputs the CSS
+
+## Phase 9: agents (needs phase 6 and the llms.txt data)
+
+- [ ] **MCP support**: an MCP server over `registry/` (list components, read a component's source and docs, `add`), so agents can use fizzy-ui; the CLI already knows the registry
+- [ ] **Agent bridge** (inspired by https://ui-sdk.dev, docs read; their behaviors/primitives are not needed, `@angular/aria` covers them): `agent.ts`, a root service `FzAgent` (like `FzToaster`) + directive `fzAgent` that registers a control with label, state and actions.
+  - API: `snapshot()` (components with state and `actions`), `act({steps:[{ref, action, args}]})` (ref = snapshot ref, label or row text; ambiguous fails and lists candidates; stops at the first error, no rollback), `subscribe()` (changes with `source: 'agent' | 'user'`).
+  - Native controls (input, checkbox, switch, slider): set the value and dispatch `input`/`change`, so Angular forms react. Aria components use their own API (`open`, selected tab). Label read like `field.ts` does.
+  - Safety: `allow(step, {signal})` required (may be async, for a confirm UI); markup `data-agent-confirm` (needs a person), `data-agent-hidden`, `data-agent-secret` (password, card, OTP secret by default).
+  - Registration in `afterNextRender` (prerendered site). Optional later: WebMCP adapter (`document.modelContext.registerTool`: `snapshot`, `act`, `query`; only if the API exists; its input schemas are ours to define).
+  - Not taking: paginated `query`, history/undo, run-on-server.
+  - First step: prototype with `fz-input` + `fz-checkbox`, spec, demo. Ties in with the MCP and AI Elements ideas (MCP serves agents that build with fizzy-ui; the bridge serves agents that use the built app)
+- [ ] **AI Elements** (agent UIs): chat message, conversation (scroll to bottom), prompt input, reasoning/tool-call blocks, streaming text, sources, code block; built on existing pieces (`field`, `scroll-area`, `collapsible`, `toast`)
+
+## Phase 10: big pieces
+
+- [ ] **Data table**: grid + sorting, filters, pagination, row selection (see the open sorting item in Phase 5)
+- [ ] **Blocks** (composed pages installable with `add`): login, settings, dashboard with sidebar, table with filters
+- [ ] **`ng add fizzy-ui`** next to `init` (the schematic runs the same setup)
+
+Order inside a phase is the order to do them. Hard dependencies: forms before the agent bridge, llms.txt before MCP, data table before blocks.
+
 Not planned: `chart` and `form` (shadcn builds them on Recharts and react-hook-form, and registry files may import only `@angular/*`; Angular forms already cover `form`), Material `ripple`, `icon`, `grid-list`.
