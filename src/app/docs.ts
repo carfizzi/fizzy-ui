@@ -177,7 +177,7 @@ export const DOCS: ComponentDoc[] = [
     description: 'A button that opens a calendar.',
     file: 'calendar.ts',
     load: () => all(import('./demos/date-picker'), import('./demos/date-picker', { with: { loader: 'text' } }), import('../../registry/ui/calendar', { with: { loader: 'text' } })),
-    keyboard: [['Enter / Space', 'Open the calendar (focus goes to the picked day, or today)'], ['Arrows, Page Up / Down', 'Move in the calendar'], ['Enter', 'Pick and close'], ['Escape', 'Close, focus back on the button']],
+    keyboard: [['Enter / Space', 'Open the calendar (focus goes to the picked day, or today)'], ['Arrows / Page Up / Page Down', 'Move in the calendar'], ['Enter', 'Pick and close'], ['Escape', 'Close, focus back on the button']],
     a11y: [
       'In fzField the button is named "label, date" (aria-labelledby on the label and itself), so the value is read with the label.',
       'The calendar opens in a dialog labelled "Choose date"; picking or Escape closes it and focus returns to the button.',

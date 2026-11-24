@@ -1,2 +1,8 @@
 @import "tailwindcss";
 @import "../registry/theme/fizzy.css";
+
+/* Page changes cross-fade (router withViewTransitions), short like the theme's fades. It is already a fade, so Reduce Motion keeps it. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--fz-duration-fade);
+}

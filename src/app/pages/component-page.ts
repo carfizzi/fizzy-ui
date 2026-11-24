@@ -63,7 +63,12 @@ import { DOCS } from '../docs';
                 <tbody>
                   @for (row of d.keyboard; track $index) {
                     <tr class="border-t">
-                      <td class="whitespace-nowrap px-4 py-2"><kbd class="rounded border bg-muted px-1.5 py-0.5 font-mono text-xs">{{ row[0] }}</kbd></td>
+                      <td class="whitespace-nowrap px-4 py-2">
+                        @for (key of row[0].split(' / '); track $index) {
+                          @if (!$first) {<span class="px-1 text-muted-foreground"> / </span>}
+                          <kbd class="rounded border bg-muted px-1.5 py-0.5 font-sans text-xs">{{ key }}</kbd>
+                        }
+                      </td>
                       <td class="px-4 py-2 text-muted-foreground">{{ row[1] }}</td>
                     </tr>
                   }
@@ -88,7 +93,8 @@ import { DOCS } from '../docs';
           <h2 class="text-xl font-semibold tracking-tight">Source</h2>
           <p class="text-sm text-muted-foreground">The exact file <code class="rounded bg-muted px-1">add</code> copies. It is yours to edit.</p>
           <details class="group rounded-md border">
-            <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <summary class="flex cursor-pointer list-none select-none items-center gap-2 rounded-md px-4 py-2 font-mono text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 shrink-0 text-muted-foreground group-open:rotate-90 motion-safe:transition-transform motion-safe:duration-(--fz-duration-popup) motion-safe:ease-spring" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
               {{ d.file }}
             </summary>
             <div class="border-t p-2">
@@ -98,6 +104,21 @@ import { DOCS } from '../docs';
             </div>
           </details>
         </section>
+
+        <nav aria-label="Components" class="mt-4 grid grid-cols-2 gap-4 border-t pt-8">
+          @if (prev(); as p) {
+            <a [routerLink]="['/components', p.name]" class="group flex flex-col gap-1 rounded-md p-2 -m-2 outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <span class="text-sm text-muted-foreground">Previous</span>
+              <span class="font-medium group-hover:underline group-hover:underline-offset-4"><span aria-hidden="true">← </span>{{ p.title }}</span>
+            </a>
+          } @else { <span></span> }
+          @if (next(); as n) {
+            <a [routerLink]="['/components', n.name]" class="group flex flex-col items-end gap-1 rounded-md p-2 -m-2 text-right outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <span class="text-sm text-muted-foreground">Next</span>
+              <span class="font-medium group-hover:underline group-hover:underline-offset-4">{{ n.title }}<span aria-hidden="true"> →</span></span>
+            </a>
+          }
+        </nav>
       </article>
     } @else {
       <h1 class="text-3xl font-bold tracking-tight">Not found</h1>
@@ -109,6 +130,9 @@ export class ComponentPage {
   /** Route param, bound by `withComponentInputBinding()`. */
   readonly name = input.required<string>();
   protected readonly doc = computed(() => DOCS.find((d) => d.name === this.name()));
+  private readonly index = computed(() => DOCS.findIndex((d) => d.name === this.name()));
+  protected readonly prev = computed(() => DOCS[this.index() - 1]);
+  protected readonly next = computed(() => (this.index() < 0 ? undefined : DOCS[this.index() + 1]));
   protected readonly tab = linkedSignal<string, string | undefined>({ source: this.name, computation: () => 'preview' });
   protected readonly files = resource({ params: () => this.doc(), loader: ({ params }) => params.load() });
   // Show the demo the way a user writes it: `add` puts the files in ./ui next to their component.
