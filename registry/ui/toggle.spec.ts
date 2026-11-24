@@ -114,4 +114,24 @@ describe('FzToggleGroup', () => {
     expect(el.querySelector('[data-t=multi]')!.getAttribute('data-size')).toBe('sm');
     expect(items('multi').every((b) => !b.hasAttribute('data-size') && b.classList.contains('h-(--fz-h)'))).toBe(true);
   });
+
+  it('single + required: pressing the pressed item keeps it pressed', async () => {
+    @Component({
+      imports: [FZ_TOGGLE_GROUP],
+      template: `<div fzToggleGroup required [(value)]="size" aria-label="Size"><button fzToggleGroupItem value="sm">sm</button><button fzToggleGroupItem value="md">md</button></div>`,
+    })
+    class Required {
+      size = signal<string | undefined>('md');
+    }
+    const fixture = TestBed.createComponent(Required);
+    await fixture.whenStable();
+    const [sm, md] = fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>;
+    md.click();
+    await fixture.whenStable();
+    expect(fixture.componentInstance.size()).toBe('md');
+    expect(md.getAttribute('aria-pressed')).toBe('true');
+    sm.click();
+    await fixture.whenStable();
+    expect(fixture.componentInstance.size()).toBe('sm');
+  });
 });

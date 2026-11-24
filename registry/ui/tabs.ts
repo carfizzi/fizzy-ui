@@ -1,5 +1,7 @@
-import { afterRenderEffect, DestroyRef, Directive, ElementRef, inject } from '@angular/core';
+import { afterRenderEffect, DestroyRef, Directive, ElementRef, inject, input } from '@angular/core';
 import { Tab, TabContent, TabList, TabPanel, Tabs } from '@angular/aria/tabs';
+
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
 
 @Directive({
   selector: '[fzTabs]',
@@ -17,9 +19,15 @@ export class FzTabs {}
       outputs: ['selectedTabChange'],
     },
   ],
-  host: { class: 'relative isolate inline-flex w-fit items-center rounded-lg bg-muted p-1 text-muted-foreground' },
+  host: {
+    '[attr.data-size]': 'size() ?? null',
+    class: 'relative isolate inline-flex h-(--fz-h) w-fit items-center rounded-lg bg-muted p-1 text-(length:--fz-text) text-muted-foreground',
+  },
 })
 export class FzTabList {
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
+
   constructor() {
     const host: HTMLElement = inject(ElementRef).nativeElement;
     const list = inject(TabList);
@@ -59,7 +67,7 @@ export class FzTabList {
   hostDirectives: [{ directive: Tab, inputs: ['value', 'disabled'] }],
   host: {
     class:
-      'inline-flex cursor-pointer items-center justify-center rounded-md px-3 py-1 text-sm font-medium transition-colors ' +
+      'inline-flex h-full cursor-pointer items-center justify-center rounded-md px-(--fz-field-px) font-medium transition-colors ' +
       'outline-none focus-visible:ring-2 focus-visible:ring-ring aria-disabled:opacity-50 aria-selected:text-foreground',
   },
 })

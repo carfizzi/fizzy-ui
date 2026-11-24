@@ -18,6 +18,7 @@ import { Combobox, ComboboxPopup, ComboboxWidget } from '@angular/aria/combobox'
 import { Listbox, Option } from '@angular/aria/listbox';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
 
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
 const POSITIONS: ConnectedPosition[] = [
   { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
   // panelClass: the popup grows from the trigger side when it flips above.
@@ -25,8 +26,8 @@ const POSITIONS: ConnectedPosition[] = [
 ];
 
 const TRIGGER =
-  'flex h-9 w-full min-w-40 cursor-default select-none items-center justify-between gap-2 rounded-md border bg-background px-3 ' +
-  'text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
+  'flex h-(--fz-h) w-full min-w-40 cursor-default select-none items-center justify-between gap-2 rounded-md border bg-background px-(--fz-field-px) ' +
+  'text-(length:--fz-text) shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 const CSS = {
   list: 'flex max-h-72 w-full flex-col gap-0.5 overflow-y-auto rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none animate-fz-popup origin-top in-[.fz-above]:origin-bottom data-closing:animate-fz-fade-out',
@@ -109,7 +110,7 @@ export class FzSelectItem<V = unknown> {
   selector: 'fz-select',
   imports: [CdkConnectedOverlay, ComboboxPopup, ComboboxWidget, Listbox, Option],
   hostDirectives: [{ directive: Combobox, inputs: ['disabled'] }],
-  host: { class: TRIGGER },
+  host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null' },
   template: `
     <span class="truncate" [class.text-muted-foreground]="!selected()">{{ selected()?.text() ?? placeholder() }}</span>
     ${CHEVRON}
@@ -154,6 +155,8 @@ export class FzSelectItem<V = unknown> {
   `,
 })
 export class FzSelect<V = unknown> {
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
   readonly value = model<V>();
   readonly placeholder = input('Select…');
 
@@ -193,7 +196,7 @@ export class FzSelect<V = unknown> {
   selector: 'fz-multiselect',
   imports: [CdkConnectedOverlay, ComboboxPopup, ComboboxWidget, Listbox, Option],
   hostDirectives: [{ directive: Combobox, inputs: ['disabled'] }],
-  host: { class: TRIGGER },
+  host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null' },
   template: `
     <span class="truncate" [class.text-muted-foreground]="!summary()">{{ summary() || placeholder() }}</span>
     ${CHEVRON}
@@ -229,6 +232,8 @@ export class FzSelect<V = unknown> {
   `,
 })
 export class FzMultiselect<V = unknown> {
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
   readonly value = model<V[]>([]);
   readonly placeholder = input('Select…');
 

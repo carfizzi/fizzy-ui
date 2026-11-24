@@ -3,6 +3,7 @@ import { Combobox, ComboboxPopup, ComboboxWidget } from '@angular/aria/combobox'
 import { Listbox, Option } from '@angular/aria/listbox';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
 
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
 const POSITIONS: ConnectedPosition[] = [
   { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
   // panelClass: the popup grows from the trigger side when it flips above.
@@ -73,13 +74,18 @@ function closingPopup(combobox: () => Combobox, popup: () => ElementRef<HTMLElem
   hostDirectives: [{ directive: Combobox, inputs: ['value', 'disabled'], outputs: ['valueChange'] }],
   host: {
     autocomplete: 'off',
+    '[attr.data-size]': 'size() ?? null',
+    // our size, not the native one (a width in characters): keep the DOM attribute out
+    '[attr.size]': 'null',
     '(click)': 'combobox.expanded.set(true)',
     class:
-      'flex h-9 w-full min-w-0 rounded-md border bg-background px-3 py-1 text-sm shadow-xs outline-none ' +
+      'flex h-(--fz-h) w-full min-w-0 rounded-md border bg-background px-(--fz-field-px) py-1 text-(length:--fz-text) shadow-xs outline-none ' +
       'placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
   },
 })
 export class FzCombobox {
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
   readonly options = input.required<readonly string[]>();
   readonly combobox = inject(Combobox);
   readonly element = inject(ElementRef<HTMLInputElement>).nativeElement;

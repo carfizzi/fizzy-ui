@@ -1,4 +1,6 @@
-import { Directive } from '@angular/core';
+import { Directive, input } from '@angular/core';
+
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
 
 /**
  * An input with text, icons or buttons inside its border:
@@ -9,16 +11,20 @@ import { Directive } from '@angular/core';
 @Directive({
   selector: '[fzInputGroup]',
   host: {
+    '[attr.data-size]': 'size() ?? null',
     class:
-      'flex h-9 w-full min-w-0 items-center rounded-md border bg-background text-sm shadow-xs transition-colors ' +
+      'flex h-(--fz-h) w-full min-w-0 items-center rounded-md border bg-background text-(length:--fz-text) shadow-xs transition-colors ' +
       'focus-within:ring-2 focus-within:ring-ring has-[[aria-invalid=true]]:border-destructive has-[input:disabled]:opacity-50',
   },
 })
-export class FzInputGroup {}
+export class FzInputGroup {
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
+}
 
 @Directive({
   selector: '[fzInputGroupAddon]',
-  host: { class: 'flex h-full shrink-0 items-center gap-1 px-3 text-muted-foreground has-[>button]:px-1 [&>svg]:size-4' },
+  host: { class: 'flex h-full shrink-0 items-center gap-1 px-(--fz-field-px) text-muted-foreground has-[>button]:px-1 [&>svg]:size-4' },
 })
 export class FzInputGroupAddon {}
 
@@ -26,7 +32,7 @@ export class FzInputGroupAddon {}
   selector: 'input[fzInputGroupInput]',
   host: {
     class:
-      'h-full min-w-0 flex-1 bg-transparent px-3 outline-none placeholder:text-muted-foreground not-first:pl-0 not-last:pr-0 ' +
+      'h-full min-w-0 flex-1 bg-transparent px-(--fz-field-px) outline-none placeholder:text-muted-foreground not-first:pl-0 not-last:pr-0 ' +
       'disabled:cursor-not-allowed',
   },
 })

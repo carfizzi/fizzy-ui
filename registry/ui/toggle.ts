@@ -26,7 +26,7 @@ export class FzToggle {
 /**
  * A set of toggles with one Tab stop (arrows, Home, End move between them):
  * `<div fzToggleGroup [(value)]="align" aria-label="Alignment">` + `<button fzToggleGroupItem value="left">`.
- * One value at a time (pressing it again clears it), or `multiple` for an array of values.
+ * One value at a time (pressing it again clears it, unless `required`), or `multiple` for an array of values.
  * Every item is an `aria-pressed` button in both modes.
  */
 @Directive({
@@ -37,6 +37,8 @@ export class FzToggle {
 export class FzToggleGroup<V = unknown> {
   readonly value = model<V | V[] | undefined>();
   readonly multiple = input(false, { transform: booleanAttribute });
+  /** Single mode: one item always stays pressed. */
+  readonly required = input(false, { transform: booleanAttribute });
   readonly variant = input<Variant>('default');
   /** Sizes every item (they inherit it through data-size). */
   readonly size = input<FzSize>();
@@ -47,7 +49,7 @@ export class FzToggleGroup<V = unknown> {
   }
 
   toggle(v: V) {
-    if (!this.multiple()) return this.value.set(this.isPressed(v) ? undefined : v);
+    if (!this.multiple()) return this.value.set(this.isPressed(v) && !this.required() ? undefined : v);
     const list = Array.isArray(this.value()) ? (this.value() as V[]) : [];
     this.value.set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
   }

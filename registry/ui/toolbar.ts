@@ -1,6 +1,8 @@
 import { Directive, ElementRef, inject, input, model } from '@angular/core';
 import { Toolbar, ToolbarWidget, ToolbarWidgetGroup } from '@angular/aria/toolbar';
 
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
+
 /**
  * `<div fzToolbar aria-label="…">` with `<button fzToolbarItem>` children. One Tab stop; arrows,
  * Home and End move between items. Use `fzSeparator orientation="vertical"` between groups.
@@ -9,12 +11,16 @@ import { Toolbar, ToolbarWidget, ToolbarWidgetGroup } from '@angular/aria/toolba
   selector: '[fzToolbar]',
   hostDirectives: [{ directive: Toolbar, inputs: ['orientation', 'softDisabled', 'disabled', 'wrap'] }],
   host: {
+    '[attr.data-size]': 'size() ?? null',
     class:
-      'flex w-fit items-center gap-1 rounded-md border bg-background p-1 text-sm ' +
+      'flex w-fit items-center gap-1 rounded-md border bg-background p-1 text-(length:--fz-text) ' +
       'aria-[orientation=vertical]:flex-col aria-disabled:opacity-50',
   },
 })
-export class FzToolbar {}
+export class FzToolbar {
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
+}
 
 /**
  * Single-choice toggle group: `<div fzToolbarGroup [(value)]="align" aria-label="…">` with
@@ -42,7 +48,7 @@ export class FzToolbarGroup<V = unknown> {
     '[attr.aria-pressed]': 'group ? null : pressed()',
     '(click)': 'toggle()',
     class:
-      'inline-flex h-8 min-w-8 cursor-default select-none items-center justify-center gap-2 rounded-sm px-2 font-medium outline-none ' +
+      'inline-flex h-[calc(var(--fz-h)-4px)] min-w-[calc(var(--fz-h)-4px)] cursor-default select-none items-center justify-center gap-2 rounded-sm px-[calc(var(--fz-px)/2)] font-medium outline-none ' +
       'hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring ' +
       'aria-pressed:bg-accent aria-pressed:text-accent-foreground aria-checked:bg-accent aria-checked:text-accent-foreground ' +
       'aria-disabled:pointer-events-none aria-disabled:opacity-50',

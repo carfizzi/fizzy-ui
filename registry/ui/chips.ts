@@ -2,6 +2,8 @@ import { Component, Directive, ElementRef, booleanAttribute, computed, contentCh
 import { Listbox, Option } from '@angular/aria/listbox';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
+
 /** One option of `fz-chip-listbox`, read as data: `<fz-chip value="vegan" label="Vegan" />`. */
 @Directive({ selector: 'fz-chip' })
 export class FzChip<V = unknown> {
@@ -20,7 +22,7 @@ export class FzChip<V = unknown> {
   selector: 'fz-chip-listbox',
   imports: [Listbox, Option],
   // The listbox is inside: its label moves there, off the host.
-  host: { class: 'block', '[attr.aria-label]': 'null', '[attr.aria-labelledby]': 'null' },
+  host: { class: 'block', '[attr.aria-label]': 'null', '[attr.aria-labelledby]': 'null', '[attr.data-size]': 'size() ?? null' },
   template: `
     <div
       ngListbox
@@ -39,7 +41,7 @@ export class FzChip<V = unknown> {
           [value]="chip.value()"
           [label]="chip.text()"
           [disabled]="chip.disabled()"
-          class="inline-flex h-8 cursor-default select-none items-center gap-1.5 rounded-full border bg-background px-3 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring aria-selected:border-primary aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:before:content-['✓'] aria-disabled:pointer-events-none aria-disabled:opacity-50"
+          class="inline-flex h-[calc(var(--fz-h)-4px)] cursor-default select-none items-center gap-1.5 rounded-full border bg-background px-(--fz-field-px) text-(length:--fz-text) font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring aria-selected:border-primary aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:before:content-['✓'] aria-disabled:pointer-events-none aria-disabled:opacity-50"
         >
           {{ chip.text() }}
         </div>
@@ -50,6 +52,8 @@ export class FzChip<V = unknown> {
 export class FzChipListbox<V = unknown> {
   readonly value = model<V[]>([]);
   readonly multiple = input(false, { transform: booleanAttribute });
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly ariaLabel = input<string | undefined>(undefined, { alias: 'aria-label' });
   readonly ariaLabelledby = input<string | undefined>(undefined, { alias: 'aria-labelledby' });
@@ -65,8 +69,9 @@ export class FzChipListbox<V = unknown> {
   selector: 'fz-chip-input',
   host: {
     '[attr.aria-label]': 'null',
+    '[attr.data-size]': 'size() ?? null',
     class:
-      'flex min-h-9 w-full flex-wrap items-center gap-1.5 rounded-md border bg-background px-2 py-1 text-sm shadow-xs ' +
+      'flex min-h-(--fz-h) w-full flex-wrap items-center gap-1.5 rounded-md border bg-background px-2 py-1 text-(length:--fz-text) shadow-xs ' +
       'focus-within:ring-2 focus-within:ring-ring has-[input[aria-invalid=true]]:border-destructive',
   },
   template: `
@@ -92,7 +97,7 @@ export class FzChipListbox<V = unknown> {
       [attr.id]="inputId() ?? null"
       [attr.aria-label]="ariaLabel() ?? null"
       [placeholder]="placeholder()"
-      class="h-7 min-w-24 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+      class="h-[calc(var(--fz-h)-10px)] min-w-24 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
       (keydown)="onKeydown($event)"
       (blur)="add()"
     />
@@ -101,6 +106,8 @@ export class FzChipListbox<V = unknown> {
 export class FzChipInput {
   readonly value = model<string[]>([]);
   readonly placeholder = input('');
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
   /** Id of the inner input, for a `<label for>` outside `fzField`. */
   readonly inputId = input<string>();
   readonly ariaLabel = input<string | undefined>(undefined, { alias: 'aria-label' });

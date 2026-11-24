@@ -1,5 +1,7 @@
 import { Component, computed, input, model } from '@angular/core';
 
+type FzSize = 'xs' | 'sm' | 'md' | 'lg';
+
 /** First, last, the current page and its neighbours; `null` marks a gap. A gap of one page shows that page. */
 export function pageItems(page: number, count: number): (number | null)[] {
   const pages = [...new Set([1, page - 1, page, page + 1, count])].filter((p) => p >= 1 && p <= count).sort((a, b) => a - b);
@@ -21,10 +23,10 @@ export function pageItems(page: number, count: number): (number | null)[] {
  */
 @Component({
   selector: 'fz-pagination',
-  host: { class: 'block' },
+  host: { class: 'block', '[attr.data-size]': 'size() ?? null' },
   template: `
     <nav [attr.aria-label]="label()">
-      <ul class="flex flex-wrap items-center gap-1 text-sm">
+      <ul class="flex flex-wrap items-center gap-1 text-(length:--fz-text)">
         <li>
           <button type="button" [class]="css + ' gap-1 px-2.5'" [attr.aria-disabled]="page() <= 1 || null" (click)="go(page() - 1)">
             <svg viewBox="0 0 16 16" class="size-4 rtl:rotate-180" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4L6 8l4 4" /></svg>
@@ -35,11 +37,11 @@ export function pageItems(page: number, count: number): (number | null)[] {
         @for (item of items(); track item ?? 'gap' + $index) {
           <li>
             @if (item === null) {
-              <span class="flex size-9 items-center justify-center text-muted-foreground" aria-hidden="true">…</span>
+              <span class="flex size-(--fz-h) items-center justify-center text-muted-foreground" aria-hidden="true">…</span>
             } @else {
               <button
                 type="button"
-                [class]="css + ' w-9'"
+                [class]="css + ' w-(--fz-h)'"
                 [attr.aria-label]="'Page ' + item"
                 [attr.aria-current]="item === page() ? 'page' : null"
                 (click)="go(item)"
@@ -63,9 +65,11 @@ export class FzPagination {
   readonly page = model(1);
   readonly pageCount = input.required<number>();
   readonly label = input('Pagination');
+  /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
+  readonly size = input<FzSize>();
   protected readonly items = computed(() => pageItems(this.page(), this.pageCount()));
   protected readonly css =
-    'inline-flex h-9 cursor-pointer items-center justify-center rounded-md font-medium outline-none transition-colors ' +
+    'inline-flex h-(--fz-h) cursor-pointer items-center justify-center rounded-md font-medium outline-none transition-colors ' +
     'hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring ' +
     'aria-[current=page]:border aria-[current=page]:bg-background aria-[current=page]:shadow-xs ' +
     'aria-disabled:pointer-events-none aria-disabled:opacity-50';
