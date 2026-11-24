@@ -1,4 +1,4 @@
-import { DOCUMENT, DestroyRef, Directive, ElementRef, Injector, effect, inject, input } from '@angular/core';
+import { afterNextRender, DOCUMENT, DestroyRef, Directive, ElementRef, Injector, effect, inject, input } from '@angular/core';
 import { DomPortal } from '@angular/cdk/portal';
 import { ConnectedPosition, OverlayRef, createFlexibleConnectedPositionStrategy, createOverlayRef } from '@angular/cdk/overlay';
 
@@ -76,9 +76,12 @@ export class FzTooltip {
     // Hoverable (WCAG 1.4.13): moving the pointer onto the tooltip keeps it open.
     this.tip.addEventListener('pointerenter', () => clearTimeout(this.timer));
     this.tip.addEventListener('pointerleave', () => this.hide(HIDE_DELAY));
-    // Kept next to the trigger while hidden so aria-describedby always resolves.
-    this.host.after(this.tip);
-    this.host.setAttribute('aria-describedby', [this.host.getAttribute('aria-describedby'), id].filter(Boolean).join(' '));
+    // Kept next to the trigger while hidden so aria-describedby always resolves. Browser only: nothing to
+    // describe in a prerendered page, and a server-made id would not match the client's.
+    afterNextRender(() => {
+      this.host.after(this.tip);
+      this.host.setAttribute('aria-describedby', [this.host.getAttribute('aria-describedby'), id].filter(Boolean).join(' '));
+    });
     effect(() => (this.tip.textContent = this.fzTooltip()));
     inject(DestroyRef).onDestroy(() => {
       clearTimeout(this.timer);

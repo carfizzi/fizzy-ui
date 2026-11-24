@@ -44,7 +44,7 @@ export class FzSidebarLayout {
     this.backdrop.className =
       'fixed inset-0 z-40 bg-background/80 backdrop-blur-sm animate-fz-tooltip md:hidden data-[open=false]:hidden';
     this.backdrop.addEventListener('click', () => this.closeDrawer());
-    this.el.append(this.backdrop);
+    afterNextRender(() => this.el.append(this.backdrop)); // browser only: no DOM to change while prerendering
 
     effect(() => {
       const modal = this.mobile() && this.drawerOpen();

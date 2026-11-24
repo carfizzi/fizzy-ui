@@ -64,6 +64,7 @@ Move it to its own repo only if it later needs its own release cycle or heavy de
 - [x] Keep `app.a11y.spec.ts` green on every page (one axe run per route, plus opened popups; a test fails if a registry item has no page)
 - [x] Component search (like ui.shadcn.com): a header button and ⌘K / Ctrl+K open a dialog with `fz-command` over guides and components (name and description as keywords); Enter navigates and closes. Tested in `app.a11y.spec.ts` (axe on the open dialog) and in Chrome
 - [x] Deploy: GitHub Pages at carfizzi.github.io/fizzy-ui/ (`.github/workflows/pages.yml`: tests, build with `--base-href /fizzy-ui/`, `404.html` fallback for deep links; demo links are relative to the base href)
+  - [x] Prerendered: one HTML file per page (62), hydrated; deep links answer 200; `index.csr.html` is the 404 fallback. Checked in Chrome: no hydration errors, demos interactive, theme state, trailing slash
 
 ## Cross-cutting
 

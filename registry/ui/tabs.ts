@@ -1,4 +1,4 @@
-import { afterRenderEffect, DestroyRef, Directive, ElementRef, inject, input } from '@angular/core';
+import { afterNextRender, afterRenderEffect, DestroyRef, Directive, ElementRef, inject, input } from '@angular/core';
 import { Tab, TabContent, TabList, TabPanel, Tabs } from '@angular/aria/tabs';
 
 type FzSize = 'xs' | 'sm' | 'md' | 'lg';
@@ -37,7 +37,7 @@ export class FzTabList {
     indicator.className =
       'pointer-events-none absolute top-0 left-0 -z-10 rounded-md bg-background shadow-sm ' +
       'data-ready:motion-safe:transition-[translate,width,height] data-ready:motion-safe:duration-(--fz-duration-control) data-ready:motion-safe:ease-spring';
-    host.append(indicator);
+    afterNextRender(() => host.append(indicator)); // browser only: no DOM to change while prerendering
 
     const place = () => {
       const tab = host.querySelector<HTMLElement>('[role=tab][aria-selected=true]');

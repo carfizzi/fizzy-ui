@@ -1,5 +1,5 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import { Component, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { FZ_BUTTON } from '../../registry/ui/button';
 import { FZ_DIALOG, FzDialog } from '../../registry/ui/dialog';
@@ -22,10 +22,16 @@ export class App {
     { path: '/installation', title: 'Installation' },
     { path: '/theming', title: 'Theming' },
   ];
-  protected readonly dark = signal(document.documentElement.classList.contains('dark'));
+  // Read after the first render: the prerendered page can't know the visitor's theme (index.html sets it).
+  protected readonly dark = signal(false);
+  private readonly doc = inject(DOCUMENT);
   private readonly router = inject(Router);
   private readonly search = viewChild.required('search', { read: FzDialog });
   private searchRef?: DialogRef;
+
+  constructor() {
+    afterNextRender(() => this.dark.set(this.doc.documentElement.classList.contains('dark')));
+  }
 
   // ⌘K / Ctrl+K opens the search from anywhere.
   protected onKeydown(event: KeyboardEvent) {
@@ -50,7 +56,7 @@ export class App {
   }
 
   protected toggleDark() {
-    const dark = document.documentElement.classList.toggle('dark');
+    const dark = this.doc.documentElement.classList.toggle('dark');
     this.dark.set(dark);
     try {
       localStorage.setItem('theme', dark ? 'dark' : 'light');

@@ -24,8 +24,8 @@ jobs:
       - run: npm test
       - run: npm run test:cli
       - run: npx ng build --base-href /fizzy-ui/
-      # Pages has no SPA fallback: a deep link (/fizzy-ui/components/tabs) gets 404.html, which is the app.
-      - run: cp dist/fizzy-ui/browser/index.html dist/fizzy-ui/browser/404.html
+      # Every page is prerendered; an unknown URL gets 404.html, the client-rendered app, which redirects it.
+      - run: cp dist/fizzy-ui/browser/index.csr.html dist/fizzy-ui/browser/404.html
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist/fizzy-ui/browser
