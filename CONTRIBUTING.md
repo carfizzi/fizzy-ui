@@ -28,4 +28,12 @@ Run `npm test` after every change (and `npm run test:cli` when `cli/` or `regist
 
 ## Release
 
-The version follows Angular's major (`22.x.y` for Angular 22): minor for new components and features, patch for fixes. Bump `cli/package.json`, then `npm publish` from `cli/`.
+The version follows Angular's major (`22.x.y` for Angular 22): minor for new components and features, patch for fixes. From a clean `main`:
+
+```sh
+npm run release            # 22.0.0 -> 22.1.0
+npm run release patch      # 22.1.0 -> 22.1.1
+npm run release -- --dry-run   # only print the next version
+```
+
+The script runs the tests, bumps `cli/package.json`, commits, tags `v<version>` and pushes. The tag starts the Release workflow, which publishes to npm (trusted publishing, no token). After an Angular upgrade the next release is `<new major>.0.0`, whatever you pass.
