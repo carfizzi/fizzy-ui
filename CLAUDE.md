@@ -10,7 +10,7 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
   - `registry.json` maps each component name to its `files` and npm `dependencies`.
   - `ui/*.ts` holds the components.
   - `theme/fizzy.css` holds the tokens, with `.dark` for dark mode.
-- `cli/index.mjs` is the `fizzy-ui` CLI (`init`, `add`, `list`). It has zero dependencies. `npm publish` from `cli/` bundles `registry/` through `prepack`.
+- `cli/index.mjs` is the `fizzy-ui` CLI (`init`, `add`, `list`). It has zero dependencies. `npm publish` from `cli/` bundles `registry/` through `prepack`. Its version follows Angular's major (`22.x.y` for Angular 22; minor for components and features, patch for fixes), and `add` installs `@angular/*` dependencies at the project's `@angular/core` major. `README.md` is for users (npm shows it too, so image links are absolute); development notes go in `CONTRIBUTING.md`.
 - `src/` is the docs site (formerly the playground). `src/app/docs.ts` lists one entry per registry item (title, keyboard table, a11y notes, lazy loaders); `src/app/demos/<name>.ts` is its live example, also shown as the usage code; `src/app/pages/` holds the guides and the component page. Demos import straight from `../../../registry/ui/*`. Tests live next to each component in `registry/ui/<name>.spec.ts` (picked up through `angular.json` test `include` and `tsconfig.spec.json`; `prepack` strips them from the npm package). `src/app/app.a11y.spec.ts` runs axe-core on every route and demo, and fails if a registry item has no docs entry.
 
 ## Component conventions

@@ -29,14 +29,31 @@ async function read(file) {
   return res.text();
 }
 
+// The project's Angular major (from @angular/core), or undefined.
+function angularMajor() {
+  const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+  return (pkg.dependencies?.['@angular/core'] ?? pkg.devDependencies?.['@angular/core'])?.match(/\d+/)?.[0];
+}
+
 function install(deps, dev = false) {
   const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
   const missing = deps.filter((d) => !pkg.dependencies?.[d] && !pkg.devDependencies?.[d]);
-  if (!missing.length || opts['skip-install']) return;
+  if (!missing.length) return;
+  // @angular/aria and @angular/cdk must match the project's Angular, not be the latest
+  const major = angularMajor();
+  const specs = missing.map((d) => (major && d.startsWith('@angular/') ? `${d}@${major}` : d));
   const pm = existsSync('pnpm-lock.yaml') ? 'pnpm' : existsSync('yarn.lock') ? 'yarn' : 'npm';
-  const cmd = `${pm} ${pm === 'npm' ? 'install' : 'add'} ${dev ? '-D ' : ''}${missing.join(' ')}`;
-  console.log(`> ${cmd}`);
-  execSync(cmd, { stdio: 'inherit' });
+  const cmd = `${pm} ${pm === 'npm' ? 'install' : 'add'} ${dev ? '-D ' : ''}${specs.join(' ')}`;
+  console.log(`> ${cmd}${opts['skip-install'] ? ' (skipped)' : ''}`);
+  if (!opts['skip-install']) execSync(cmd, { stdio: 'inherit' });
+}
+
+// fizzy-ui's major is the Angular major its components are written for.
+function checkAngular() {
+  const ours = JSON.parse(readFileSync(join(here, 'package.json'), 'utf8')).version.split('.')[0];
+  const theirs = angularMajor();
+  if (theirs && theirs !== ours)
+    console.warn(`warning: this project uses Angular ${theirs}; fizzy-ui ${ours} is for Angular ${ours} (try npx fizzy-ui@${theirs})`);
 }
 
 function write(target, content) {
@@ -58,6 +75,7 @@ async function init() {
 }
 
 async function add() {
+  checkAngular();
   const registry = JSON.parse(await read('registry.json'));
   if (!names.length) throw new Error(`usage: fizzy-ui add <${Object.keys(registry.items).join('|')}>...`);
   const deps = new Set();

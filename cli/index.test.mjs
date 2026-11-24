@@ -112,3 +112,17 @@ test('add works from a registry URL', async () => {
     server.close();
   }
 });
+
+test("add installs @angular/* at the project's Angular major, and warns on a mismatch", () => {
+  const dir = project();
+  writeFileSync(join(dir, 'package.json'), '{ "name": "app", "dependencies": { "@angular/core": "^22.3.0" } }');
+  const out = run(dir, 'add', 'tabs');
+  assert.equal(out.status, 0, out.stderr);
+  assert.match(out.stdout, /> npm install @angular\/aria@22 @angular\/cdk@22 \(skipped\)/);
+  assert.doesNotMatch(out.stderr, /warning/);
+
+  writeFileSync(join(dir, 'package.json'), '{ "name": "app", "dependencies": { "@angular/core": "~21.1.0" } }');
+  const old = run(dir, 'add', 'badge', '--overwrite');
+  assert.equal(old.status, 0, old.stderr);
+  assert.match(old.stderr, /Angular 21; fizzy-ui 22 is for Angular 22 \(try npx fizzy-ui@21\)/);
+});
