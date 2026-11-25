@@ -18,6 +18,12 @@ const text = (m: unknown) => (m as { default: string }).default;
 const all = (demo: Promise<{ Demo: Type<unknown> }>, demoSrc: Promise<unknown>, src: Promise<unknown>) =>
   Promise.all([demo, demoSrc, src]).then(([d, a, b]) => [d.Demo, text(a), text(b)] as [Type<unknown>, string, string]);
 
+/** Components with a `size` input: their page shows one at every size (`demos/sizes.ts` has a case for each). */
+export const SIZED = new Set([
+  'avatar', 'badge', 'button', 'button-group', 'chips', 'close-button', 'combobox', 'date-picker', 'input', 'input-group', 'input-otp',
+  'multiselect', 'pagination', 'select', 'spinner', 'tabs', 'textarea', 'toggle', 'toggle-group', 'toolbar',
+]);
+
 export const DOCS: ComponentDoc[] = [
   {
     name: 'accordion',

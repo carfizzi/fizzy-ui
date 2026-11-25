@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FZ_KBD } from '../../../registry/ui/kbd';
 import { FZ_TABS } from '../../../registry/ui/tabs';
 import { CodeBlock } from '../code-block';
-import { DOCS } from '../docs';
+import { DOCS, SIZED } from '../docs';
 
 /** `/components/:name`: demo, usage code, install command, keyboard and a11y notes, and the file itself. */
 @Component({
@@ -43,6 +43,23 @@ import { DOCS } from '../docs';
             </ng-template>
           </div>
         </div>
+
+        @if (sized()) {
+          <section class="flex flex-col gap-3">
+            <h2 class="text-xl font-semibold tracking-tight">Sizes</h2>
+            <p class="text-sm text-muted-foreground">
+              <code class="rounded bg-muted px-1">xs</code>, <code class="rounded bg-muted px-1">sm</code>,
+              <code class="rounded bg-muted px-1">md</code> (default) and <code class="rounded bg-muted px-1">lg</code>: set
+              <code class="rounded bg-muted px-1">size="sm"</code> on it, or <code class="rounded bg-muted px-1">data-size="sm"</code> on any
+              container, as here. See <a routerLink="/theming" class="underline underline-offset-4">Theming</a>.
+            </p>
+            <div class="rounded-md border p-6">
+              @if (sizes.hasValue()) {
+                <ng-container *ngComponentOutlet="sizes.value(); inputs: { name: d.name }" />
+              }
+            </div>
+          </section>
+        }
 
         <section class="flex flex-col gap-3">
           <h2 class="text-xl font-semibold tracking-tight">Installation</h2>
@@ -136,6 +153,8 @@ export class ComponentPage {
   protected readonly next = computed(() => (this.index() < 0 ? undefined : DOCS[this.index() + 1]));
   protected readonly tab = linkedSignal<string, string | undefined>({ source: this.name, computation: () => 'preview' });
   protected readonly files = resource({ params: () => this.doc(), loader: ({ params }) => params.load() });
+  protected readonly sized = computed(() => SIZED.has(this.name()));
+  protected readonly sizes = resource({ params: () => this.sized() || undefined, loader: () => import('../demos/sizes').then((m) => m.Sizes) });
   // Show the demo the way a user writes it: `add` puts the files in ./ui next to their component.
   protected readonly usage = computed(() => this.files.hasValue() ? this.files.value()[1].replaceAll('../../../registry/ui/', './ui/') : '');
 }

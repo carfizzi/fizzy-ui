@@ -121,7 +121,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 ## Phase 6: forms and small wins
 
 - [x] **Forms support** (Signal Forms, Reactive Forms, `ngModel`): no CVA, Angular 22 binds a `value` model directly. select, multiselect, combobox (`ngNoCva`), chip-listbox, chip-input, input-otp, calendar, date-picker, toggle-group have `touch` and a boolean `disabled`, and read null as empty; `aria-invalid` comes from `fzField`. Renamed what forms set by name: calendar/date-picker `disabled` (days) → `dateDisabled`, input-otp `pattern` → `charset`. `registry/ui/forms.spec.ts`: each control × each API (value both ways, touched, disabled). Docs: Forms guide. Native controls rely on Angular's own accessors (not re-tested). Checked in headless Chrome over CDP, light and dark: submit shows both errors (red border and label), picking clears them, the example books
-- [ ] **Size preview in the docs**: the component page shows a component at every size (`xs|sm|md|lg`, e.g. input) side by side, so the `data-size` scale can be compared at a glance
+- [x] **Size preview in the docs**: a "Sizes" section on the page of each sized component (`SIZED` in `docs.ts`): one small instance per size in a `data-size` container, from `src/app/demos/sizes.ts` (one `@case` per component, loaded lazily). The a11y spec checks the four sizes render and axe passes. Measured in headless Chrome: 28/32/36/40px on every control, light and dark
 - [ ] **RTL**: check for `left/right` (use logical properties), add a demo with `dir="rtl"`, test the popups and the tab highlight
 
 ## Phase 7: docs and tooling

@@ -7,7 +7,7 @@ import registry from '../../registry/registry.json';
 import cli from '../../cli/package.json';
 import { App } from './app';
 import { routes } from './app.routes';
-import { DOCS } from './docs';
+import { DOCS, SIZED } from './docs';
 
 // Runs axe on every docs page and example. color-contrast is off: jsdom has no layout or computed colors.
 // region is off for pages and demos: they are tested outside the shell, which provides the landmarks.
@@ -96,6 +96,10 @@ describe('docs', () => {
     expect(el.querySelector('[role=tabpanel] ng-component')).not.toBeNull(); // the demo, not "Loading…"
     expect(el.textContent).toContain(`npx fizzy-ui add ${name}`);
     expect(el.querySelector('details code')!.textContent).toContain('export const FZ_');
+    // Sized components show one instance per size, each inheriting it from its container.
+    const sizes = [...el.querySelectorAll('[data-sizes] > [data-size]')];
+    expect(sizes.map((s) => s.getAttribute('data-size'))).toEqual(SIZED.has(name) ? ['xs', 'sm', 'md', 'lg'] : []);
+    expect(sizes.every((s) => s.children.length >= 2)).toBe(true); // the component (its @case exists) and the caption
     expect(await violations(el)).toEqual([]);
   });
 
