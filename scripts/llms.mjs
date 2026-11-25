@@ -2,6 +2,7 @@
 // the demos and the registry. Run `npm run llms` after changing them; `npm run test:cli` fails while the files are stale.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { basename } from 'node:path';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const pkg = JSON.parse(readFileSync(`${root}cli/package.json`, 'utf8'));
@@ -30,6 +31,12 @@ function component(doc, registry, sized) {
   lines.push('', '## Usage', '', '```ts', demo.trimEnd(), '```');
   if (doc.keyboard) lines.push('', '## Keyboard', '', '| Key | Action |', '|---|---|', ...doc.keyboard.map(([k, a]) => `| ${cell(k)} | ${cell(a)} |`));
   if (doc.a11y) lines.push('', '## Accessibility', '', ...doc.a11y.map((n) => `- ${n}`));
+  if (doc.harness) {
+    const file = basename(item.testing[0]);
+    lines.push('', '## Testing', '',
+      `\`npx fizzy-ui add ${doc.name} --harness\` also copies \`${file}\`, an Angular CDK test harness: \`${doc.harness}\` (methods documented in ${RAW}registry/${item.testing[0]}).` +
+        (doc.harness === 'FzDialogHarness' ? ' Dialogs render in an overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.' : ''));
+  }
   lines.push('', '## Source', '', `${RAW}registry/ui/${doc.file} (the file \`add\` copies; its doc comments describe the inputs)`, '');
   return lines.join('\n');
 }

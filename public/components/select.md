@@ -47,6 +47,10 @@ export class Demo {
 
 - Focus stays on the trigger; label it with aria-labelledby.
 
+## Testing
+
+`npx fizzy-ui add select --harness` also copies `select.harness.ts`, an Angular CDK test harness: `FzSelectHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/select.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/select.ts (the file `add` copies; its doc comments describe the inputs)

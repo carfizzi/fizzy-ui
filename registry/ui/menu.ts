@@ -135,6 +135,8 @@ export class FzMenu {
 @Directive({
   selector: '[fzMenuTrigger]',
   hostDirectives: [{ directive: MenuTrigger, inputs: ['menu: fzMenuTrigger', 'disabled', 'softDisabled'] }],
+  // the binding leaves no attribute, and tests (FzMenuHarness) need one
+  host: { 'data-menu-trigger': '' },
 })
 export class FzMenuTrigger {}
 
@@ -186,7 +188,8 @@ export class FzMenubar {}
 @Component({
   selector: '[fzContextMenu]',
   imports: [MenuTrigger],
-  host: { '(contextmenu)': 'open($event)' },
+  // data-context-menu: the binding leaves no attribute, and tests (FzContextMenuHarness) need one
+  host: { 'data-context-menu': '', '(contextmenu)': 'open($event)' },
   template: `
     <ng-content />
     <!-- Invisible anchor moved to the pointer: the menu is positioned against it. -->

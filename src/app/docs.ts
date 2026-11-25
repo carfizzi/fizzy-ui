@@ -11,6 +11,8 @@ export interface ComponentDoc {
   load: () => Promise<[Type<unknown>, string, string]>;
   keyboard?: [keys: string, action: string][];
   a11y?: string[];
+  /** CDK test harness class, in the registry item's `testing` file (`add <name> --harness`). */
+  harness?: string;
 }
 
 // Text imports go through Angular's `loader: 'text'` import attribute; TypeScript still types them as the module.
@@ -27,6 +29,7 @@ export const SIZED = new Set([
 export const DOCS: ComponentDoc[] = [
   {
     name: 'accordion',
+    harness: 'FzAccordionHarness',
     title: 'Accordion',
     description: 'Stacked headings that show and hide a section of content.',
     file: 'accordion.ts',
@@ -44,6 +47,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'alert-dialog',
+    harness: 'FzDialogHarness',
     title: 'Alert dialog',
     description: 'A modal that asks to confirm an action.',
     file: 'dialog.ts',
@@ -174,6 +178,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'combobox',
+    harness: 'FzComboboxHarness',
     title: 'Combobox',
     description: 'Autocomplete on your own text input.',
     file: 'combobox.ts',
@@ -196,6 +201,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'context-menu',
+    harness: 'FzContextMenuHarness',
     title: 'Context menu',
     description: 'A menu that opens on right click or the keyboard context-menu shortcut.',
     file: 'menu.ts',
@@ -218,6 +224,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'dialog',
+    harness: 'FzDialogHarness',
     title: 'Dialog',
     description: 'A modal window over the page, opened from an ng-template.',
     file: 'dialog.ts',
@@ -330,6 +337,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'menu',
+    harness: 'FzMenuHarness',
     title: 'Menu',
     description: 'A dropdown menu of actions, with submenus.',
     file: 'menu.ts',
@@ -339,6 +347,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'menubar',
+    harness: 'FzMenubarHarness',
     title: 'Menubar',
     description: 'A horizontal bar of menus, like a desktop app.',
     file: 'menu.ts',
@@ -348,6 +357,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'multiselect',
+    harness: 'FzMultiselectHarness',
     title: 'Multiselect',
     description: 'A select that keeps several values.',
     file: 'select.ts',
@@ -414,6 +424,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'select',
+    harness: 'FzSelectHarness',
     title: 'Select',
     description: 'Pick one value from a popup list.',
     file: 'select.ts',
@@ -430,6 +441,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'sheet',
+    harness: 'FzDialogHarness',
     title: 'Sheet',
     description: 'A dialog docked to an edge of the screen.',
     file: 'dialog.ts',
@@ -508,6 +520,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'tabs',
+    harness: 'FzTabsHarness',
     title: 'Tabs',
     description: 'Panels of content, one visible at a time.',
     file: 'tabs.ts',

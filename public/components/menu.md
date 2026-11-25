@@ -50,6 +50,10 @@ export class Demo {
 
 - Disabled items stay focusable but cannot be selected.
 
+## Testing
+
+`npx fizzy-ui add menu --harness` also copies `menu.harness.ts`, an Angular CDK test harness: `FzMenuHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/menu.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/menu.ts (the file `add` copies; its doc comments describe the inputs)

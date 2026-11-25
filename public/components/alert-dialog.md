@@ -42,6 +42,10 @@ export class Demo {}
 - A click outside does not close it: it waits for an answer. Escape cancels.
 - Put cdkFocusInitial on the least destructive button (Cancel), so Enter never confirms by accident.
 
+## Testing
+
+`npx fizzy-ui add alert-dialog --harness` also copies `dialog.harness.ts`, an Angular CDK test harness: `FzDialogHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/dialog.harness.ts). Dialogs render in an overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/dialog.ts (the file `add` copies; its doc comments describe the inputs)

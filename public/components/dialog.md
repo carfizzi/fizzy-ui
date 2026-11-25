@@ -44,6 +44,10 @@ export class Demo {}
 - fzDialogTitle is required: it names the dialog (aria-labelledby).
 - The rest of the page gets aria-hidden while the dialog is open.
 
+## Testing
+
+`npx fizzy-ui add dialog --harness` also copies `dialog.harness.ts`, an Angular CDK test harness: `FzDialogHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/dialog.harness.ts). Dialogs render in an overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/dialog.ts (the file `add` copies; its doc comments describe the inputs)

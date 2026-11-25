@@ -61,6 +61,10 @@ export class Demo {
 
 - One Tab stop for the whole bar. Give it an aria-label.
 
+## Testing
+
+`npx fizzy-ui add menubar --harness` also copies `menu.harness.ts`, an Angular CDK test harness: `FzMenubarHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/menu.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/menu.ts (the file `add` copies; its doc comments describe the inputs)

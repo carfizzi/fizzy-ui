@@ -43,6 +43,10 @@ export class Demo {
 - The input keeps focus; the active option is announced through aria-activedescendant.
 - The input is yours, so a <label for> labels it.
 
+## Testing
+
+`npx fizzy-ui add combobox --harness` also copies `combobox.harness.ts`, an Angular CDK test harness: `FzComboboxHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/combobox.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/combobox.ts (the file `add` copies; its doc comments describe the inputs)

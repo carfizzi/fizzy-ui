@@ -43,6 +43,10 @@ export class Demo {
 
 - One Tab stop for the tab list; Tab then moves into the panel.
 
+## Testing
+
+`npx fizzy-ui add tabs --harness` also copies `tabs.harness.ts`, an Angular CDK test harness: `FzTabsHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/tabs.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/tabs.ts (the file `add` copies; its doc comments describe the inputs)

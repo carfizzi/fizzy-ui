@@ -38,6 +38,10 @@ export class Demo {}
 
 - Same as Dialog: fzDialogTitle names it.
 
+## Testing
+
+`npx fizzy-ui add sheet --harness` also copies `dialog.harness.ts`, an Angular CDK test harness: `FzDialogHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/dialog.harness.ts). Dialogs render in an overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/dialog.ts (the file `add` copies; its doc comments describe the inputs)

@@ -49,6 +49,10 @@ export class Demo {
 
 - Make the area focusable (tabindex="0") so keyboard users can open the menu too.
 
+## Testing
+
+`npx fizzy-ui add context-menu --harness` also copies `menu.harness.ts`, an Angular CDK test harness: `FzContextMenuHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/menu.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/menu.ts (the file `add` copies; its doc comments describe the inputs)

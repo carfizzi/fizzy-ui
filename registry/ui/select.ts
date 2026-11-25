@@ -113,7 +113,7 @@ export class FzSelectItem<V = unknown> {
   hostDirectives: [{ directive: Combobox, inputs: ['disabled'] }],
   host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null', '(focusout)': 'touch.emit()' },
   template: `
-    <span class="truncate" [class.text-muted-foreground]="!selected()">{{ selected()?.text() ?? placeholder() }}</span>
+    <span class="truncate" [class.text-muted-foreground]="!selected()" [attr.data-placeholder]="selected() ? null : ''">{{ selected()?.text() ?? placeholder() }}</span>
     ${CHEVRON}
 
     <ng-template
@@ -201,7 +201,7 @@ export class FzSelect<V = unknown> {
   hostDirectives: [{ directive: Combobox, inputs: ['disabled'] }],
   host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null', '(focusout)': 'touch.emit()' },
   template: `
-    <span class="truncate" [class.text-muted-foreground]="!summary()">{{ summary() || placeholder() }}</span>
+    <span class="truncate" [class.text-muted-foreground]="!summary()" [attr.data-placeholder]="summary() ? null : ''">{{ summary() || placeholder() }}</span>
     ${CHEVRON}
 
     <ng-template

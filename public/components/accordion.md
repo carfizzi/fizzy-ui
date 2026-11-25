@@ -36,6 +36,10 @@ export class Demo {}
 - Each heading is a button with aria-expanded and aria-controls pointing at its region.
 - Collapsed panels are inert, so their content is out of the tab order.
 
+## Testing
+
+`npx fizzy-ui add accordion --harness` also copies `accordion.harness.ts`, an Angular CDK test harness: `FzAccordionHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/accordion.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/accordion.ts (the file `add` copies; its doc comments describe the inputs)

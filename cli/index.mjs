@@ -14,6 +14,7 @@ const { values: opts, positionals } = parseArgs({
     registry: { type: 'string' },
     path: { type: 'string', default: 'src/app/ui' },
     overwrite: { type: 'boolean', default: false },
+    harness: { type: 'boolean', default: false },
     'skip-install': { type: 'boolean', default: false },
   },
 });
@@ -88,8 +89,10 @@ async function selection() {
   const files = new Map();
   const deps = new Set();
   for (const name of chosen) {
-    const { files: list, dependencies } = item(registry, name);
+    const { files: list, testing = [], dependencies } = item(registry, name);
     for (const file of list) files.set(join(opts.path, basename(file)), file);
+    // test harnesses: the ones you have, or all with --harness
+    for (const file of testing) if (opts.harness || existsSync(join(opts.path, basename(file)))) files.set(join(opts.path, basename(file)), file);
     dependencies.forEach((d) => deps.add(d));
   }
   if (!files.size) console.log(`no fizzy-ui components in ${opts.path} (use --path)`);
@@ -121,8 +124,9 @@ async function add() {
   const deps = new Set();
   for (const name of names) {
     const found = item(registry, name);
+    const files = [...found.files, ...(opts.harness ? (found.testing ?? []) : [])];
     // basename(): a registry can never write outside --path
-    for (const file of found.files) write(join(opts.path, basename(file)), await read(file), true);
+    for (const file of files) write(join(opts.path, basename(file)), await read(file), true);
     found.dependencies.forEach((d) => deps.add(d));
   }
   install([...deps]);
@@ -189,7 +193,7 @@ async function update() {
 
 const commands = { init, add, diff, update, list: async () => console.log(Object.keys(JSON.parse(await read('registry.json')).items).join('\n')) };
 if (!commands[command]) {
-  console.log('usage: fizzy-ui <init|add|diff|update|list> [names...] [--path src/app/ui] [--registry dir|url] [--overwrite]');
+  console.log('usage: fizzy-ui <init|add|diff|update|list> [names...] [--path src/app/ui] [--registry dir|url] [--overwrite] [--harness]');
   process.exit(command ? 1 : 0);
 }
 if (!existsSync(resolve('package.json'))) throw new Error('run fizzy-ui from your Angular project root');

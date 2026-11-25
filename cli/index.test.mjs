@@ -199,3 +199,16 @@ test('update without a base (added by an older CLI) leaves an edited file alone 
   assert.equal(read(dir, 'src/app/ui/box.ts'), lines('new'));
   assert.equal(read(dir, '.fizzy-ui/src/app/ui/box.ts'), lines('new'));
 });
+
+test('add --harness also copies the test harness (with its base); diff and update follow the harnesses you have', () => {
+  const dir = project();
+  assert.equal(run(dir, 'add', 'select', '--harness').status, 0);
+  assert.equal(read(dir, 'src/app/ui/select.harness.ts'), read(registry, 'testing/select.harness.ts'));
+  assert.equal(read(dir, '.fizzy-ui/src/app/ui/select.harness.ts'), read(registry, 'testing/select.harness.ts'));
+  assert.match(run(dir, 'diff').stdout, /select\.harness\.ts: up to date/);
+
+  const plain = project();
+  run(plain, 'add', 'tabs');
+  assert.ok(!existsSync(join(plain, 'src/app/ui/tabs.harness.ts')));
+  assert.doesNotMatch(run(plain, 'diff').stdout, /harness/);
+});

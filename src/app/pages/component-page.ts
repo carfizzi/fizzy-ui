@@ -6,6 +6,8 @@ import { FZ_KBD } from '../../../registry/ui/kbd';
 import { FZ_TABS } from '../../../registry/ui/tabs';
 import { CodeBlock } from '../code-block';
 import { DOCS, SIZED } from '../docs';
+import registry from '../../../registry/registry.json';
+import cli from '../../../cli/package.json';
 
 /** `/components/:name`: demo, usage code, install command, keyboard and a11y notes, and the file itself. */
 @Component({
@@ -133,6 +135,19 @@ import { DOCS, SIZED } from '../docs';
           }
         </section>
 
+        @if (testing(); as t) {
+          <section class="flex flex-col gap-3">
+            <h2 class="text-xl font-semibold tracking-tight">Testing</h2>
+            <p class="text-sm text-muted-foreground">
+              <code class="rounded bg-muted px-1">{{ t.harness }}</code> drives it in your tests, the way a user would, with the Angular CDK
+              harness API. <code class="rounded bg-muted px-1">--harness</code> also copies <code class="rounded bg-muted px-1">{{ t.file }}</code>;
+              its methods are documented <a [href]="t.url" class="underline underline-offset-4">in the file</a>.
+            </p>
+            <app-code-block [code]="'npx fizzy-ui add ' + d.name + ' --harness'" label="install command with the harness" />
+            <app-code-block [code]="t.usage" label="test example" />
+          </section>
+        }
+
         <section class="flex flex-col gap-3">
           <h2 class="text-xl font-semibold tracking-tight">Source</h2>
           <p class="text-sm text-muted-foreground">The exact file <code class="rounded bg-muted px-1">add</code> copies. It is yours to edit.</p>
@@ -182,6 +197,23 @@ export class ComponentPage {
   protected readonly sized = computed(() => SIZED.has(this.name()));
   protected readonly sizes = resource({ params: () => this.sized() || undefined, loader: () => import('../demos/sizes').then((m) => m.Sizes) });
   protected readonly axeVersion = axe.version;
+  protected readonly testing = computed(() => {
+    const doc = this.doc();
+    const file = (registry.items as Record<string, { testing?: string[] }>)[doc?.name ?? '']?.testing?.[0];
+    if (!doc?.harness || !file) return undefined;
+    const name = file.split('/').pop()!;
+    // Dialogs render in an overlay: their harness loads from the document root.
+    const loader = doc.harness === 'FzDialogHarness' ? 'documentRootLoader' : 'loader';
+    const variable = doc.harness.slice(2, 3).toLowerCase() + doc.harness.slice(3, -'Harness'.length);
+    const usage = [
+      "import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';",
+      `import { ${doc.harness} } from './ui/${name.replace(/\.ts$/, '')}';`,
+      '',
+      `const ${variable} = await TestbedHarnessEnvironment.${loader}(fixture).getHarness(${doc.harness});`,
+    ].join('\n');
+    const repo = cli.repository.url.replace(/^git\+/, '').replace(/\.git$/, '');
+    return { harness: doc.harness, file: name, usage, url: `${repo}/blob/main/registry/${file}` };
+  });
   /** Roles and aria-* attributes seen in the live demo (the lists grow as it is used). */
   protected readonly aria = signal<{ roles: string[]; attributes: string[] }>({ roles: [], attributes: [] });
   private readonly demoHost = viewChild<ElementRef<HTMLElement>>('demoHost');

@@ -9,7 +9,7 @@
   "type": "module",
   "bin": { "fizzy-ui": "index.mjs" },
   "files": ["index.mjs", "registry"],
-  "scripts": { "prepack": "rm -rf registry && cp -R ../registry ./registry && rm -f registry/ui/*.spec.ts && cp ../README.md ../LICENSE .", "postpack": "rm -rf registry README.md LICENSE" },
+  "scripts": { "prepack": "rm -rf registry && cp -R ../registry ./registry && rm -f registry/ui/*.spec.ts registry/testing/*.spec.ts && cp ../README.md ../LICENSE .", "postpack": "rm -rf registry README.md LICENSE" },
   "engines": { "node": ">=20" },
   "license": "MIT"
 }

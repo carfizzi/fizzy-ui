@@ -100,6 +100,9 @@ describe('docs', () => {
     const sizes = [...el.querySelectorAll('[data-sizes] > [data-size]')];
     expect(sizes.map((s) => s.getAttribute('data-size'))).toEqual(SIZED.has(name) ? ['xs', 'sm', 'md', 'lg'] : []);
     expect(sizes.every((s) => s.children.length >= 2)).toBe(true); // the component (its @case exists) and the caption
+    const harness = DOCS.find((d) => d.name === name)!.harness;
+    if (harness) expect(el.textContent).toContain(`npx fizzy-ui add ${name} --harness`);
+    if (harness) expect(el.textContent).toContain(`getHarness(${harness})`);
     expect(await violations(el)).toEqual([]);
   });
 
