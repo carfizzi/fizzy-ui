@@ -136,6 +136,7 @@ export class FzPopover {
 @Directive({
   selector: '[fzPopoverTrigger]',
   host: {
+    'data-popover-trigger': '', // the binding leaves no attribute; tests (FzPopoverHarness) find it by this
     'aria-haspopup': 'dialog',
     '[attr.aria-expanded]': 'fzPopoverTrigger().open()',
     '[attr.aria-controls]': 'fzPopoverTrigger().id()',

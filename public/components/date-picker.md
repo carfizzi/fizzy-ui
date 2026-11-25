@@ -53,6 +53,10 @@ export class Demo {
 - The calendar opens in a dialog labelled "Choose date"; picking or Escape closes it and focus returns to the button.
 - No typing a date in: where that matters most, a native <input type="date"> is the better choice.
 
+## Testing
+
+`npx fizzy-ui add date-picker --harness` also copies `calendar.harness.ts`, an Angular CDK test harness: `FzDatePickerHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/calendar.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/calendar.ts (the file `add` copies; its doc comments describe the inputs)

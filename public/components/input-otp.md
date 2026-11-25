@@ -60,6 +60,10 @@ export class Demo {
 - autocomplete="one-time-code" lets phones fill the code from an SMS; digits bring up the numeric keyboard.
 - Inside fzField the label, hint and error are wired to the input.
 
+## Testing
+
+`npx fizzy-ui add input-otp --harness` also copies `input-otp.harness.ts`, an Angular CDK test harness: `FzInputOtpHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/input-otp.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/input-otp.ts (the file `add` copies; its doc comments describe the inputs)

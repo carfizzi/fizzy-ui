@@ -40,6 +40,10 @@ export class Demo {
 - Each day is named in full ("Sunday, March 15, 2026"); today has aria-current="date"; unavailable days are aria-disabled but still reachable.
 - Month, weekday names and the first day of the week follow the app LOCALE_ID.
 
+## Testing
+
+`npx fizzy-ui add calendar --harness` also copies `calendar.harness.ts`, an Angular CDK test harness: `FzCalendarHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/calendar.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/calendar.ts (the file `add` copies; its doc comments describe the inputs)

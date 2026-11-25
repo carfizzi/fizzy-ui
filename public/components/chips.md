@@ -56,6 +56,10 @@ export class Demo {
 - A chip input is a real <input>: label it with fzField or aria-label. Each tag has a "Remove …" button.
 - Added and removed tags are announced, since the input itself does not change.
 
+## Testing
+
+`npx fizzy-ui add chips --harness` also copies `chips.harness.ts`, an Angular CDK test harness: `FzChipListboxHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/chips.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/chips.ts (the file `add` copies; its doc comments describe the inputs)

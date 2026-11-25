@@ -40,7 +40,7 @@ export class Demo {}
 
 ## Testing
 
-`npx fizzy-ui add sheet --harness` also copies `dialog.harness.ts`, an Angular CDK test harness: `FzDialogHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/dialog.harness.ts). Dialogs render in an overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.
+`npx fizzy-ui add sheet --harness` also copies `dialog.harness.ts`, an Angular CDK test harness: `FzDialogHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/dialog.harness.ts). It renders in a global overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.
 
 ## Source
 

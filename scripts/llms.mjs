@@ -35,7 +35,7 @@ function component(doc, registry, sized) {
     const file = basename(item.testing[0]);
     lines.push('', '## Testing', '',
       `\`npx fizzy-ui add ${doc.name} --harness\` also copies \`${file}\`, an Angular CDK test harness: \`${doc.harness}\` (methods documented in ${RAW}registry/${item.testing[0]}).` +
-        (doc.harness === 'FzDialogHarness' ? ' Dialogs render in an overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.' : ''));
+        (['FzDialogHarness', 'FzToastHarness'].includes(doc.harness) ? ' It renders in a global overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.' : ''));
   }
   lines.push('', '## Source', '', `${RAW}registry/ui/${doc.file} (the file \`add\` copies; its doc comments describe the inputs)`, '');
   return lines.join('\n');

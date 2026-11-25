@@ -106,6 +106,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'calendar',
+    harness: 'FzCalendarHarness',
     title: 'Calendar',
     description: 'A month grid to pick a day.',
     file: 'calendar.ts',
@@ -142,6 +143,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'chips',
+    harness: 'FzChipListboxHarness',
     title: 'Chips',
     description: 'Compact choices to pick from, or tags to type.',
     file: 'chips.ts',
@@ -211,6 +213,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'date-picker',
+    harness: 'FzDatePickerHarness',
     title: 'Date picker',
     description: 'A button that opens a calendar.',
     file: 'calendar.ts',
@@ -292,6 +295,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'input-otp',
+    harness: 'FzInputOtpHarness',
     title: 'Input OTP',
     description: 'Boxes for a one-time code.',
     file: 'input-otp.ts',
@@ -380,6 +384,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'pagination',
+    harness: 'FzPaginationHarness',
     title: 'Pagination',
     description: 'Moves between pages of results.',
     file: 'pagination.ts',
@@ -389,6 +394,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'popover',
+    harness: 'FzPopoverHarness',
     title: 'Popover',
     description: 'Rich content in a panel anchored to a trigger.',
     file: 'popover.ts',
@@ -537,6 +543,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'toast',
+    harness: 'FzToastHarness',
     title: 'Toast',
     description: 'A short notification that closes by itself.',
     file: 'toast.ts',
@@ -550,6 +557,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'toggle',
+    harness: 'FzToggleHarness',
     title: 'Toggle',
     description: 'A button that stays on or off.',
     file: 'toggle.ts',
@@ -559,6 +567,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'toggle-group',
+    harness: 'FzToggleGroupHarness',
     title: 'Toggle group',
     description: 'A set of toggles: one choice, or several.',
     file: 'toggle.ts',
@@ -577,6 +586,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'tooltip',
+    harness: 'FzTooltipHarness',
     title: 'Tooltip',
     description: 'A short hint on hover or keyboard focus.',
     file: 'tooltip.ts',

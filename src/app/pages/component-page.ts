@@ -9,6 +9,8 @@ import { DOCS, SIZED } from '../docs';
 import registry from '../../../registry/registry.json';
 import cli from '../../../cli/package.json';
 
+const ROOT_HARNESSES = ['FzDialogHarness', 'FzToastHarness'];
+
 /** `/components/:name`: demo, usage code, install command, keyboard and a11y notes, and the file itself. */
 @Component({
   imports: [NgComponentOutlet, RouterLink, FZ_KBD, FZ_TABS, CodeBlock],
@@ -202,8 +204,8 @@ export class ComponentPage {
     const file = (registry.items as Record<string, { testing?: string[] }>)[doc?.name ?? '']?.testing?.[0];
     if (!doc?.harness || !file) return undefined;
     const name = file.split('/').pop()!;
-    // Dialogs render in an overlay: their harness loads from the document root.
-    const loader = doc.harness === 'FzDialogHarness' ? 'documentRootLoader' : 'loader';
+    // Dialogs and toasts render in a global overlay: their harness loads from the document root.
+    const loader = ROOT_HARNESSES.includes(doc.harness) ? 'documentRootLoader' : 'loader';
     const variable = doc.harness.slice(2, 3).toLowerCase() + doc.harness.slice(3, -'Harness'.length);
     const usage = [
       "import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';",

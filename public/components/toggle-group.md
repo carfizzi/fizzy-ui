@@ -51,6 +51,10 @@ export class Demo {
 - Give the group an aria-label.
 - Disabled items stay focusable with the arrows but cannot be pressed.
 
+## Testing
+
+`npx fizzy-ui add toggle-group --harness` also copies `toggle.harness.ts`, an Angular CDK test harness: `FzToggleGroupHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/toggle.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/toggle.ts (the file `add` copies; its doc comments describe the inputs)

@@ -40,6 +40,10 @@ export class Demo {}
 
 - The panel is a non-modal dialog: give it an aria-label.
 
+## Testing
+
+`npx fizzy-ui add popover --harness` also copies `popover.harness.ts`, an Angular CDK test harness: `FzPopoverHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/popover.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/popover.ts (the file `add` copies; its doc comments describe the inputs)

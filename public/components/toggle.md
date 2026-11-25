@@ -40,6 +40,10 @@ export class Demo {
 - A native <button> with aria-pressed.
 - An icon-only toggle needs an aria-label that does not change with the state.
 
+## Testing
+
+`npx fizzy-ui add toggle --harness` also copies `toggle.harness.ts`, an Angular CDK test harness: `FzToggleHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/toggle.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/toggle.ts (the file `add` copies; its doc comments describe the inputs)

@@ -49,6 +49,7 @@ function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
 @Directive({
   selector: '[fzTooltip]',
   host: {
+    'data-tooltip': '', // [fzTooltip]="expr" leaves no attribute; tests (FzTooltipHarness) find it by this
     '(pointerenter)': 'show(SHOW_DELAY)',
     '(pointerleave)': 'hide(HIDE_DELAY)',
     '(focusin)': 'onFocus()',

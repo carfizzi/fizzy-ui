@@ -55,6 +55,10 @@ export class Demo {
 - Timers pause while the pointer or focus is on the toasts; closing a focused toast gives focus back to where it was.
 - Whatever an action does must also be possible elsewhere in the page: a toast can close before someone reaches it.
 
+## Testing
+
+`npx fizzy-ui add toast --harness` also copies `toast.harness.ts`, an Angular CDK test harness: `FzToastHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/toast.harness.ts). It renders in a global overlay: load it with `TestbedHarnessEnvironment.documentRootLoader(fixture)`.
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/toast.ts (the file `add` copies; its doc comments describe the inputs)

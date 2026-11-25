@@ -38,6 +38,10 @@ export class Demo {
 - A nav labelled "Pagination"; each page button is named "Page n" and the current one has aria-current="page".
 - Previous and Next use aria-disabled at the ends, so they keep focus.
 
+## Testing
+
+`npx fizzy-ui add pagination --harness` also copies `pagination.harness.ts`, an Angular CDK test harness: `FzPaginationHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/pagination.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/pagination.ts (the file `add` copies; its doc comments describe the inputs)

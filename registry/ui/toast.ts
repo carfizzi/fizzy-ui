@@ -116,6 +116,7 @@ export class FzToaster {
       <div
         class="group pointer-events-auto relative flex items-center gap-3 rounded-lg border bg-background p-4 pe-10 text-sm text-foreground shadow-lg animate-fz-toast data-[variant=destructive]:border-destructive"
         animate.leave="animate-fz-fade-out!"
+        data-toast
         [attr.data-variant]="t.variant"
         (keydown.escape)="close(t.id)"
       >
