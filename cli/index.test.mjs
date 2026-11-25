@@ -212,3 +212,25 @@ test('add --harness also copies the test harness (with its base); diff and updat
   assert.ok(!existsSync(join(plain, 'src/app/ui/tabs.harness.ts')));
   assert.doesNotMatch(run(plain, 'diff').stdout, /harness/);
 });
+
+test('init --theme sets a preset in both modes, keeps your other edits, and neutral goes back to the defaults', () => {
+  const dir = project();
+  const presets = JSON.parse(read(registry, 'theme/presets.json'));
+  assert.equal(run(dir, 'init', '--theme', 'blue').status, 0);
+  const blue = read(dir, 'src/fizzy.css');
+  assert.ok(blue.includes(`--primary: ${presets.blue.light.primary};`));
+  assert.ok(blue.slice(blue.indexOf('\n.dark {')).includes(`--primary: ${presets.blue.dark.primary};`));
+
+  writeFileSync(join(dir, 'src/fizzy.css'), blue.replace('--radius: 0.5rem;', '--radius: 1rem;'));
+  assert.equal(run(dir, 'init', '--theme', 'rose').status, 0);
+  const rose = read(dir, 'src/fizzy.css');
+  assert.ok(rose.includes('--radius: 1rem;'), 'kept');
+  assert.ok(rose.includes(`--ring: ${presets.rose.light.ring};`));
+
+  assert.equal(run(dir, 'init', '--theme', 'neutral').status, 0);
+  assert.equal(read(dir, 'src/fizzy.css'), read(registry, 'theme/fizzy.css').replace('--radius: 0.5rem;', '--radius: 1rem;'));
+
+  const bad = run(dir, 'init', '--theme', 'plaid');
+  assert.equal(bad.status, 1);
+  assert.match(bad.stderr, /unknown theme "plaid". Available: neutral, blue/);
+});

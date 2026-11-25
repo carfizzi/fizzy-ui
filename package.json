@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:cli": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test cli/index.test.mjs scripts/release.test.mjs scripts/llms.test.mjs",
+    "test:cli": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test cli/index.test.mjs scripts/release.test.mjs scripts/llms.test.mjs scripts/themes.test.mjs",
     "llms": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/llms.mjs",
     "release": "node scripts/release.mjs"
   },

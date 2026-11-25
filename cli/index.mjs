@@ -15,6 +15,7 @@ const { values: opts, positionals } = parseArgs({
     path: { type: 'string', default: 'src/app/ui' },
     overwrite: { type: 'boolean', default: false },
     harness: { type: 'boolean', default: false },
+    theme: { type: 'string' },
     'skip-install': { type: 'boolean', default: false },
   },
 });
@@ -106,9 +107,42 @@ function temp(file, content) {
   return path;
 }
 
+// The color tokens of fizzy.css's `:root {` or `.dark {` block: [start, end) and name -> value.
+function block(css, selector) {
+  const start = css.search(new RegExp(`(^|\\n)${selector.replace('.', '\\.')} \\{`));
+  if (start < 0) throw new Error(`no "${selector} {" block in the theme`);
+  const end = css.indexOf('}', start);
+  return { start, end, tokens: Object.fromEntries([...css.slice(start, end).matchAll(/--([a-z-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()])) };
+}
+
+// Sets a preset's tokens in both modes; tokens other presets change go back to the registry default.
+function applyTheme(css, defaults, presets, name) {
+  for (const [selector, mode] of [[':root', 'light'], ['.dark', 'dark']]) {
+    const names = new Set(Object.values(presets).flatMap((p) => Object.keys(p[mode])));
+    const base = block(defaults, selector).tokens;
+    const { start, end } = block(css, selector);
+    let text = css.slice(start, end);
+    for (const token of names) {
+      const value = presets[name][mode][token] ?? base[token];
+      const re = new RegExp(`(--${token}:\\s*)[^;]+;`);
+      text = re.test(text) ? text.replace(re, `$1${value};`) : `${text}  --${token}: ${value};\n`;
+    }
+    css = css.slice(0, start) + text + css.slice(end);
+  }
+  return css;
+}
+
 async function init() {
   const registry = JSON.parse(await read('registry.json'));
-  write('src/fizzy.css', await read(registry.theme));
+  const theme = await read(registry.theme);
+  if (opts.theme) {
+    const presets = JSON.parse(await read(registry.presets));
+    if (!Object.hasOwn(presets, opts.theme)) throw new Error(`unknown theme "${opts.theme}". Available: ${Object.keys(presets).join(', ')}`);
+    // An existing theme keeps your other edits: only the preset's tokens change.
+    const current = existsSync('src/fizzy.css') && !opts.overwrite ? readFileSync('src/fizzy.css', 'utf8') : theme;
+    put('src/fizzy.css', applyTheme(current, theme, presets, opts.theme));
+    console.log(`theme ${opts.theme}: src/fizzy.css`);
+  } else write('src/fizzy.css', theme);
   const styles = 'src/styles.css';
   const css = existsSync(styles) ? readFileSync(styles, 'utf8') : '';
   const imports = ['@import "tailwindcss";', '@import "./fizzy.css";'].filter((l) => !css.includes(l));
@@ -193,7 +227,7 @@ async function update() {
 
 const commands = { init, add, diff, update, list: async () => console.log(Object.keys(JSON.parse(await read('registry.json')).items).join('\n')) };
 if (!commands[command]) {
-  console.log('usage: fizzy-ui <init|add|diff|update|list> [names...] [--path src/app/ui] [--registry dir|url] [--overwrite] [--harness]');
+  console.log('usage: fizzy-ui <init|add|diff|update|list> [names...] [--path src/app/ui] [--registry dir|url] [--overwrite] [--harness] [--theme name]');
   process.exit(command ? 1 : 0);
 }
 if (!existsSync(resolve('package.json'))) throw new Error('run fizzy-ui from your Angular project root');

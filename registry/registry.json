@@ -1,6 +1,7 @@
 {
   "name": "fizzy-ui",
   "theme": "theme/fizzy.css",
+  "presets": "theme/presets.json",
   "items": {
     "button": { "files": ["ui/button.ts"], "dependencies": [] },
     "tabs": { "files": ["ui/tabs.ts"], "testing": ["testing/tabs.harness.ts"], "dependencies": ["@angular/aria", "@angular/cdk"] },
