@@ -217,7 +217,12 @@ export class ComponentPage {
     return { harness: doc.harness, file: name, usage, url: `${repo}/blob/main/registry/${file}` };
   });
   /** Roles and aria-* attributes seen in the live demo (the lists grow as it is used). */
-  protected readonly aria = signal<{ roles: string[]; attributes: string[] }>({ roles: [], attributes: [] });
+  // equal: only a real change re-renders. A render can rewrite the same attributes (fzField does,
+  // after every render), which the observer sees: without this the two would loop forever.
+  protected readonly aria = signal<{ roles: string[]; attributes: string[] }>(
+    { roles: [], attributes: [] },
+    { equal: (a, b) => a.roles.join() === b.roles.join() && a.attributes.join() === b.attributes.join() },
+  );
   private readonly demoHost = viewChild<ElementRef<HTMLElement>>('demoHost');
 
   constructor() {
