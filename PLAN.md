@@ -133,7 +133,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 ## Phase 8: trust and look
 
 - [x] **A11y you can show**: an Accessibility box on every component page: an axe-core badge (true by construction: the site deploys only when the axe spec passes) and the roles and aria-* attributes read live from the example as it is used. CDK test harnesses for the 30 interactive items in `registry/testing` (`add --harness`), each tested against its demo, with a Testing section on the page and in the Markdown. Not for presentational/native items or hover-card
-- [ ] **Themes**: presets (`init --theme`) and a token editor on the site that outputs the CSS
+- [x] **Themes**: presets in `registry/theme/presets.json` (neutral, blue, green, rose, violet, orange: primary, primary-foreground, ring per mode), `init --theme <name>` (keeps other edits; neutral restores). Theme editor on Theming (preset, radius, every color token, light/dark previews, live WCAG checks, CSS of the differences or the init command). `scripts/themes.test.mjs` checks AA contrast of every pair for every preset; it fixed the default light muted-foreground (4.34 → 4.64 on muted) and ring (2.59 → 3.5)
 
 ## Phase 9: agents (needs phase 6 and the llms.txt data)
 

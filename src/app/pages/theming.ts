@@ -6,9 +6,10 @@ import { FZ_SELECT } from '../../../registry/ui/select';
 import { FZ_INPUT_GROUP } from '../../../registry/ui/input-group';
 import { FZ_TOGGLE, FZ_TOGGLE_GROUP } from '../../../registry/ui/toggle';
 import { RtlExample } from './rtl-example';
+import { ThemeEditor } from './theme-editor';
 
 @Component({
-  imports: [CodeBlock, RtlExample, FZ_BUTTON, FZ_INPUT, FZ_SELECT, FZ_INPUT_GROUP, FZ_TOGGLE, FZ_TOGGLE_GROUP],
+  imports: [CodeBlock, RtlExample, ThemeEditor, FZ_BUTTON, FZ_INPUT, FZ_SELECT, FZ_INPUT_GROUP, FZ_TOGGLE, FZ_TOGGLE_GROUP],
   template: `
     <article class="flex max-w-2xl flex-col gap-6">
       <h1 class="text-3xl font-bold tracking-tight">Theming</h1>
@@ -28,6 +29,17 @@ import { RtlExample } from './rtl-example';
           </li>
         }
       </ul>
+
+      <h2 class="mt-4 text-xl font-semibold tracking-tight">Presets and the theme editor</h2>
+      <p>
+        <code class="rounded bg-muted px-1">npx fizzy-ui init --theme blue</code> sets a color preset (neutral, blue, green, rose,
+        violet, orange) in <code class="rounded bg-muted px-1">src/fizzy.css</code>, light and dark, and keeps your other edits.
+        Or pick one here, change the radius or any color, and copy the CSS. Every preset meets WCAG AA contrast; the editor
+        checks your colors as you go.
+      </p>
+      @if (css.hasValue()) {
+        <app-theme-editor [source]="css.value()" />
+      }
 
       <h2 class="mt-4 text-xl font-semibold tracking-tight">Dark mode</h2>
       <p>

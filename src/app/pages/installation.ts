@@ -91,6 +91,7 @@ export class InstallationPage {
     ['--path <dir>', 'Where the components live (default src/app/ui)'],
     ['--overwrite', 'add: replace files that exist; update: replace instead of merging'],
     ['--harness', 'add: also copy the test harness of each component (<file>.harness.ts)'],
+    ['--theme <name>', 'init: set a color preset in src/fizzy.css (neutral, blue, green, rose, violet, orange)'],
     ['--skip-install', 'Do not install npm dependencies'],
     ['--registry <dir|url>', 'Read components from another registry'],
   ];
