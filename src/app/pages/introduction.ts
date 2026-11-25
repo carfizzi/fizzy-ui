@@ -97,6 +97,12 @@ import { CopyButton } from '../copy-button';
       <p>
         Each component has unit tests for its keyboard and ARIA behavior, and every example on this site is checked with axe-core.
       </p>
+
+      <h2 class="mt-4 text-xl font-semibold tracking-tight">For AI assistants</h2>
+      <p>
+        <a href="llms.txt" class="underline underline-offset-4">llms.txt</a> lists every component with a link to its page in Markdown
+        (install command, usage, keyboard, accessibility notes). Point your coding assistant at it.
+      </p>
     </article>
   `,
 })

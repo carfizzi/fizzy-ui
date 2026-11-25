@@ -35,7 +35,8 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 - RTL: use logical utilities (`ms-`, `pe-`, `start-0`, `end-2`, `text-start`, `border-e`, `rounded-s-`), never `ml-`/`left-`/`text-left`. Where Tailwind has none (transform origin, gradient direction, translate, `content`), add an `rtl:` class repeating the same variants plus `rtl:` (`in-[.fz-above]:origin-bottom-left rtl:in-[.fz-above]:origin-bottom-right`): `rtl` is registered after `in`/`aria`/`data`/`max`, so it sorts later and wins. Physical math in JS needs the same care (`scrollLeft` is negative in RTL; CDK mirrors `start`/`end` but not `offsetX`). Sheets keep a physical `side`. Demo: Theming → Right-to-left.
 - Form controls (checkbox, switch, radio-group, slider) are styled native inputs, not Aria: keep it that way so forms and labels keep working.
 - A custom value control (select, chips, calendar…) works with Signal Forms, Reactive Forms and `ngModel` without a CVA: a `value` model, a boolean `disabled` input and a `touch` output (focus leaves the whole control). Read null as empty (`ngModel` writes it first, `reset()` too). Never name an input after a forms binding (`disabled`, `required`, `pattern`, `min`, `max`, `name`, `readonly`, `hidden`, `errors`, `invalid`, `touched`…) unless it means that: Signal Forms sets it on every directive of the host. An `<input>` host with an Aria `value` model sets `ngNoCva` (combobox), or the native accessor wins. `aria-invalid` stays with `fzField`. Tests: `registry/ui/forms.spec.ts`.
-- A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, a demo in `src/app/demos/<name>.ts` plus its entry in `src/app/docs.ts`, and `registry/ui/<name>.spec.ts`.
+- A new component needs four things: the file in `registry/ui/`, an entry in `registry.json`, a demo in `src/app/demos/<name>.ts` plus its entry in `src/app/docs.ts`, and `registry/ui/<name>.spec.ts`. Then `npm run llms`.
+- `scripts/llms.mjs` generates `public/llms.txt` and `public/components/<name>.md` (served next to each page, "View as Markdown") from `docs.ts` (imported by Node's type stripping: keep it plain TS), the demos and `registry.json`. The files are committed; `npm run test:cli` fails while they are stale.
 
 ## README
 
@@ -46,13 +47,14 @@ The roadmap and test checklist are in `PLAN.md`. Update its checkboxes as work l
 ```sh
 npm start                 # docs site at http://localhost:4200
 npm test                  # vitest, jsdom (ng test --watch=false)
-npm run test:cli          # CLI tests (node:test), each in a temp project
+npm run test:cli          # CLI tests (node:test), each in a temp project; also fails on stale llms files
+npm run llms              # regenerate public/llms.txt and public/components/*.md
 npm run release [minor|patch]   # bump cli/package.json, test, commit, tag, push (CI stages it on npm, approve on npmjs.com); -- --dry-run to preview
 npx ng build
 node cli/index.mjs add tabs --registry <path-to>/registry   # run inside another Angular app
 ```
 
-After every change run `npm test`; when `cli/` or `registry/registry.json` changed, also `npm run test:cli`. Run `npx ng build` before committing. Never commit with a red test or build.
+After every change run `npm test`; when `cli/` or `registry/registry.json` changed, also `npm run test:cli`. After touching `docs.ts`, a demo or `registry.json`, run `npm run llms` then `npm run test:cli`. Run `npx ng build` before committing. Never commit with a red test or build.
 
 ## Gotchas
 

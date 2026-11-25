@@ -1,0 +1,83 @@
+# fizzy-ui
+
+> shadcn-style Angular components built on @angular/aria. Copy the source, own the code. Angular 22, Tailwind CSS v4, keyboard and ARIA from @angular/aria and the CDK.
+
+A CLI copies each component's source into the app (`src/app/ui/`); the user owns and edits it. Setup:
+`npx fizzy-ui init` once (theme, Tailwind), then `npx fizzy-ui add <name...>`. Each file exports `FZ_<NAME>` for `imports`.
+
+- Values bind two-way: `[(value)]`, `[(open)]`, `[(selectedTab)]`. Form controls also work with `[formField]`, `[formControl]` and `[(ngModel)]`; put them in `<div fzField>` with `<label fzLabel>` and an `@if`'d `<p fzFieldError>`.
+- Sizes `xs|sm|md|lg`: the `size` input, or `data-size` on a container.
+- Colors are theme tokens (`bg-primary`, `text-muted-foreground`) defined in `src/fizzy.css`; `.dark` on `<html>` for dark mode; `dir="rtl"` for right-to-left.
+- A `class` on a component adds to its own classes; to override one, use `!` (`class="w-56!"`).
+
+## Guides
+
+- [Introduction](https://carfizzi.github.io/fizzy-ui/introduction): what fizzy-ui is
+- [Installation](https://carfizzi.github.io/fizzy-ui/installation): `init`, `add`, customizing
+- [Forms](https://carfizzi.github.io/fizzy-ui/forms): Signal Forms, Reactive Forms, ngModel, errors
+- [Theming](https://carfizzi.github.io/fizzy-ui/theming): tokens, dark mode, sizes, motion, right-to-left
+
+## Components
+
+- [Accordion](https://carfizzi.github.io/fizzy-ui/components/accordion.md): Stacked headings that show and hide a section of content.
+- [Alert](https://carfizzi.github.io/fizzy-ui/components/alert.md): A callout for a message that needs attention.
+- [Alert dialog](https://carfizzi.github.io/fizzy-ui/components/alert-dialog.md): A modal that asks to confirm an action.
+- [Aspect ratio](https://carfizzi.github.io/fizzy-ui/components/aspect-ratio.md): Keeps content at a width-to-height ratio.
+- [Avatar](https://carfizzi.github.io/fizzy-ui/components/avatar.md): An image with a text fallback while it loads or when it fails.
+- [Badge](https://carfizzi.github.io/fizzy-ui/components/badge.md): A small label for status or counts.
+- [Breadcrumb](https://carfizzi.github.io/fizzy-ui/components/breadcrumb.md): Shows where the page sits in the site.
+- [Button](https://carfizzi.github.io/fizzy-ui/components/button.md): A native button or link with variants and sizes.
+- [Button group](https://carfizzi.github.io/fizzy-ui/components/button-group.md): Related buttons joined into one bar.
+- [Calendar](https://carfizzi.github.io/fizzy-ui/components/calendar.md): A month grid to pick a day.
+- [Card](https://carfizzi.github.io/fizzy-ui/components/card.md): A bordered container with header, content and footer slots.
+- [Checkbox](https://carfizzi.github.io/fizzy-ui/components/checkbox.md): A styled native checkbox, including the mixed state.
+- [Chips](https://carfizzi.github.io/fizzy-ui/components/chips.md): Compact choices to pick from, or tags to type.
+- [Close button](https://carfizzi.github.io/fizzy-ui/components/close-button.md): An icon button for dismissing a panel or message.
+- [Collapsible](https://carfizzi.github.io/fizzy-ui/components/collapsible.md): Shows and hides one section of content.
+- [Combobox](https://carfizzi.github.io/fizzy-ui/components/combobox.md): Autocomplete on your own text input.
+- [Command](https://carfizzi.github.io/fizzy-ui/components/command.md): A searchable list of commands, the core of a ⌘K palette.
+- [Context menu](https://carfizzi.github.io/fizzy-ui/components/context-menu.md): A menu that opens on right click or the keyboard context-menu shortcut.
+- [Date picker](https://carfizzi.github.io/fizzy-ui/components/date-picker.md): A button that opens a calendar.
+- [Dialog](https://carfizzi.github.io/fizzy-ui/components/dialog.md): A modal window over the page, opened from an ng-template.
+- [Empty](https://carfizzi.github.io/fizzy-ui/components/empty.md): What to show when there is nothing here yet.
+- [Field](https://carfizzi.github.io/fizzy-ui/components/field.md): A label, a control, a hint and an error, wired together.
+- [Grid](https://carfizzi.github.io/fizzy-ui/components/grid.md): A data table with cell navigation, selection and editable cells.
+- [Hover card](https://carfizzi.github.io/fizzy-ui/components/hover-card.md): A preview of what a link leads to, on hover or keyboard focus.
+- [Input](https://carfizzi.github.io/fizzy-ui/components/input.md): A styled native text input.
+- [Input group](https://carfizzi.github.io/fizzy-ui/components/input-group.md): An input with text, icons or buttons inside its border.
+- [Input OTP](https://carfizzi.github.io/fizzy-ui/components/input-otp.md): Boxes for a one-time code.
+- [Kbd](https://carfizzi.github.io/fizzy-ui/components/kbd.md): A keyboard key, alone or in a combination.
+- [Label](https://carfizzi.github.io/fizzy-ui/components/label.md): A styled native label.
+- [List group](https://carfizzi.github.io/fizzy-ui/components/list-group.md): A bordered list of rows, static or actionable.
+- [Listbox](https://carfizzi.github.io/fizzy-ui/components/listbox.md): An inline list of options with single or multiple selection.
+- [Menu](https://carfizzi.github.io/fizzy-ui/components/menu.md): A dropdown menu of actions, with submenus.
+- [Menubar](https://carfizzi.github.io/fizzy-ui/components/menubar.md): A horizontal bar of menus, like a desktop app.
+- [Multiselect](https://carfizzi.github.io/fizzy-ui/components/multiselect.md): A select that keeps several values.
+- [Navigation menu](https://carfizzi.github.io/fizzy-ui/components/navigation-menu.md): Site navigation with dropdown panels of links.
+- [Pagination](https://carfizzi.github.io/fizzy-ui/components/pagination.md): Moves between pages of results.
+- [Popover](https://carfizzi.github.io/fizzy-ui/components/popover.md): Rich content in a panel anchored to a trigger.
+- [Progress](https://carfizzi.github.io/fizzy-ui/components/progress.md): Shows how far a task has gone.
+- [Radio group](https://carfizzi.github.io/fizzy-ui/components/radio-group.md): Styled native radios in a labelled group.
+- [Scroll area](https://carfizzi.github.io/fizzy-ui/components/scroll-area.md): A scrolling box with a thin scrollbar and faded edges.
+- [Select](https://carfizzi.github.io/fizzy-ui/components/select.md): Pick one value from a popup list.
+- [Separator](https://carfizzi.github.io/fizzy-ui/components/separator.md): A horizontal or vertical divider.
+- [Sheet](https://carfizzi.github.io/fizzy-ui/components/sheet.md): A dialog docked to an edge of the screen.
+- [Sidebar](https://carfizzi.github.io/fizzy-ui/components/sidebar.md): App navigation in a column that collapses, a drawer on phones.
+- [Skeleton](https://carfizzi.github.io/fizzy-ui/components/skeleton.md): A placeholder shape while content loads.
+- [Slider](https://carfizzi.github.io/fizzy-ui/components/slider.md): A styled native range input.
+- [Spinner](https://carfizzi.github.io/fizzy-ui/components/spinner.md): A small indicator that something is loading.
+- [Stepper](https://carfizzi.github.io/fizzy-ui/components/stepper.md): Breaks a task into ordered steps.
+- [Switch](https://carfizzi.github.io/fizzy-ui/components/switch.md): An on/off toggle on a native checkbox.
+- [Table](https://carfizzi.github.io/fizzy-ui/components/table.md): A styled table, with sortable columns.
+- [Tabs](https://carfizzi.github.io/fizzy-ui/components/tabs.md): Panels of content, one visible at a time.
+- [Textarea](https://carfizzi.github.io/fizzy-ui/components/textarea.md): A styled native multi-line input.
+- [Toast](https://carfizzi.github.io/fizzy-ui/components/toast.md): A short notification that closes by itself.
+- [Toggle](https://carfizzi.github.io/fizzy-ui/components/toggle.md): A button that stays on or off.
+- [Toggle group](https://carfizzi.github.io/fizzy-ui/components/toggle-group.md): A set of toggles: one choice, or several.
+- [Toolbar](https://carfizzi.github.io/fizzy-ui/components/toolbar.md): A row of buttons, toggles and toggle groups with one Tab stop.
+- [Tooltip](https://carfizzi.github.io/fizzy-ui/components/tooltip.md): A short hint on hover or keyboard focus.
+- [Tree](https://carfizzi.github.io/fizzy-ui/components/tree.md): A hierarchical list that expands and collapses.
+
+## Optional
+
+- [Source code](https://github.com/carfizzi/fizzy-ui): the registry (`registry/ui/*.ts`) is what `add` copies

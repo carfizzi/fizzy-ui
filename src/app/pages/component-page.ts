@@ -15,6 +15,7 @@ import { DOCS, SIZED } from '../docs';
         <header class="flex flex-col gap-2">
           <h1 class="text-3xl font-bold tracking-tight">{{ d.title }}</h1>
           <p class="text-lg text-muted-foreground">{{ d.description }}</p>
+          <a [href]="'components/' + d.name + '.md'" class="w-fit text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground">View as Markdown</a>
         </header>
 
         <h2 class="sr-only">Example</h2>

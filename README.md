@@ -33,6 +33,7 @@ npx fizzy-ui add button dialog tabs
 - **Accessible by default.** Keyboard, focus and ARIA come from Angular Aria and the CDK, following the WAI-ARIA patterns. Every component has behavior tests, and every demo is checked with axe.
 - **The code is yours.** Like [shadcn/ui](https://ui.shadcn.com), the CLI copies the source into your app. Nothing to upgrade at runtime and no wrapper to fight: change a component by editing its file.
 - **Modern Angular.** Standalone components, signals, zoneless-ready. Two-way bindings with `[(value)]`.
+- **Ready for AI assistants.** [`llms.txt`](https://carfizzi.github.io/fizzy-ui/llms.txt) indexes every component, and each page is also served as Markdown (install command, usage, keyboard, accessibility).
 - **Works with your forms.** Every control binds with Signal Forms, Reactive Forms or `ngModel`, including value, disabled and touched state, with no ControlValueAccessor. Put it in `fzField` and the error is announced and marks the control `aria-invalid`.
 - **Themeable.** Colors, radius, sizes and motion are CSS variables in one file, with dark mode built in.
 - **Motion that feels native.** Spring animations in the style of Apple's guidelines, replaced by fades when the user asks for Reduce Motion.

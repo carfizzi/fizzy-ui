@@ -13,18 +13,19 @@ The conventions every component follows are in [CLAUDE.md](CLAUDE.md); the roadm
 ```sh
 npm start          # docs site at http://localhost:4200
 npm test           # behavior and accessibility tests (vitest, jsdom)
-npm run test:cli   # CLI tests
+npm run test:cli   # CLI tests, and a check that the llms files are current
+npm run llms       # regenerate public/llms.txt and public/components/*.md
 npx ng build
 node cli/index.mjs add tabs --registry ./registry   # try the CLI inside another project
 ```
 
-Run `npm test` after every change (and `npm run test:cli` when `cli/` or `registry/registry.json` changes).
+Run `npm test` after every change (and `npm run test:cli` when `cli/` or `registry/registry.json` changes). After changing `src/app/docs.ts`, a demo or `registry.json`, run `npm run llms` and commit the files it writes.
 
 ## Add a component
 
 1. Write `registry/ui/<name>.ts`. Compose the Angular Aria directive with `hostDirectives` and put Tailwind classes on `host`. Import only from `@angular/*`, since the file gets copied as-is.
 2. Register it in `registry/registry.json` with its `files` and `dependencies`.
-3. Add a demo in `src/app/demos/<name>.ts` and its entry in `src/app/docs.ts` (the a11y spec fails until you do), and a test in `registry/ui/<name>.spec.ts`.
+3. Add a demo in `src/app/demos/<name>.ts` and its entry in `src/app/docs.ts` (the a11y spec fails until you do), and a test in `registry/ui/<name>.spec.ts`. Then `npm run llms`.
 
 ## Release
 
