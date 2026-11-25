@@ -43,6 +43,19 @@ import { CodeBlock } from '../code-block';
         <code class="rounded bg-muted px-1">w-56</code>).
       </p>
 
+      <h2 class="mt-4 text-xl font-semibold tracking-tight">Updating</h2>
+      <p>
+        Your copies never change by themselves. <code class="rounded bg-muted px-1">npx fizzy-ui&#64;latest diff</code> shows what
+        changed in the registry for the components you have; <code class="rounded bg-muted px-1">npx fizzy-ui&#64;latest update</code>
+        brings it in and keeps your edits (a three-way merge with git; where you and the registry changed the same lines,
+        the file gets conflict markers to resolve). Name components to limit either one: <code class="rounded bg-muted px-1">update select tabs</code>.
+      </p>
+      <p class="text-sm text-muted-foreground">
+        <code class="rounded bg-muted px-1">add</code> and <code class="rounded bg-muted px-1">update</code> keep the version they wrote in
+        <code class="rounded bg-muted px-1">.fizzy-ui/</code>, the base of the merge: commit it. Files added before 22.4 have none, so
+        <code class="rounded bg-muted px-1">update</code> leaves an edited one alone until you pass <code class="rounded bg-muted px-1">--overwrite</code>.
+      </p>
+
       <h2 class="mt-4 text-xl font-semibold tracking-tight">Options</h2>
       <div class="overflow-x-auto rounded-md border">
         <table class="w-full text-sm">
@@ -75,8 +88,8 @@ export class InstallationPage {
     'export class App {}',
   ].join('\n');
   protected readonly options = [
-    ['--path <dir>', 'Where add writes files (default src/app/ui)'],
-    ['--overwrite', 'Replace files that already exist'],
+    ['--path <dir>', 'Where the components live (default src/app/ui)'],
+    ['--overwrite', 'add: replace files that exist; update: replace instead of merging'],
     ['--skip-install', 'Do not install npm dependencies'],
     ['--registry <dir|url>', 'Read components from another registry'],
   ];

@@ -126,3 +126,76 @@ test("add installs @angular/* at the project's Angular major, and warns on a mis
   assert.equal(old.status, 0, old.stderr);
   assert.match(old.stderr, /Angular 21; fizzy-ui 22 is for Angular 22 \(try npx fizzy-ui@21\)/);
 });
+
+// A one-file registry the test can change between `add` and `update`.
+function fakeRegistry(content) {
+  const root = mkdtempSync(join(tmpdir(), 'fizzy-reg-'));
+  mkdirSync(join(root, 'ui'));
+  writeFileSync(join(root, 'registry.json'), JSON.stringify({ items: { box: { files: ['ui/box.ts'], dependencies: [] } } }));
+  const set = (text) => writeFileSync(join(root, 'ui/box.ts'), text);
+  set(content);
+  return { root, set };
+}
+const runWith = (reg, cwd, ...args) => spawnSync('node', [cli, ...args, '--registry', reg, '--skip-install'], { cwd, encoding: 'utf8' });
+const lines = (...l) => l.join('\n') + '\n';
+
+test('add keeps the registry version in .fizzy-ui/ as the base for update', () => {
+  const dir = project();
+  assert.equal(run(dir, 'add', 'tabs').status, 0);
+  assert.equal(read(dir, '.fizzy-ui/src/app/ui/tabs.ts'), read(registry, 'ui/tabs.ts'));
+});
+
+test('diff: up to date, or a git diff from your file to the registry; only components you have', () => {
+  const reg = fakeRegistry(lines('a', 'b', 'c'));
+  const dir = project();
+  runWith(reg.root, dir, 'add', 'box');
+  assert.match(runWith(reg.root, dir, 'diff').stdout, /src\/app\/ui\/box\.ts: up to date/);
+  reg.set(lines('a', 'B', 'c'));
+  const out = runWith(reg.root, dir, 'diff', 'box');
+  assert.equal(out.status, 0, out.stderr);
+  assert.match(out.stdout, /--- src\/app\/ui\/box\.ts\n\+\+\+ registry\/box\.ts/);
+  assert.match(out.stdout, /-b\n\+B/);
+  assert.match(run(project(), 'diff').stdout, /no fizzy-ui components/);
+});
+
+test('update: replaces an untouched file, keeps your edits when the registry has none, merges both', () => {
+  const reg = fakeRegistry(lines('one', 'two', 'three', 'four', 'five'));
+  const dir = project();
+  const box = 'src/app/ui/box.ts';
+  runWith(reg.root, dir, 'add', 'box');
+
+  // untouched: replaced
+  reg.set(lines('one', 'two', 'three', 'four', 'FIVE'));
+  assert.match(runWith(reg.root, dir, 'update').stdout, /update src\/app\/ui\/box\.ts/);
+  assert.equal(read(dir, box), lines('one', 'two', 'three', 'four', 'FIVE'));
+
+  // your edit, nothing new upstream: kept
+  writeFileSync(join(dir, box), lines('ONE', 'two', 'three', 'four', 'FIVE'));
+  assert.match(runWith(reg.root, dir, 'update').stdout, /kept your changes/);
+  assert.equal(read(dir, box), lines('ONE', 'two', 'three', 'four', 'FIVE'));
+
+  // your edit and an upstream one elsewhere: both
+  reg.set(lines('one', 'two', 'THREE', 'four', 'FIVE'));
+  const merged = runWith(reg.root, dir, 'update', 'box');
+  assert.match(merged.stdout, /merge src\/app\/ui\/box\.ts\n/);
+  assert.equal(read(dir, box), lines('ONE', 'two', 'THREE', 'four', 'FIVE'));
+  assert.equal(read(dir, '.fizzy-ui/' + box), lines('one', 'two', 'THREE', 'four', 'FIVE'));
+
+  // the same line changed on both sides: a marked conflict
+  writeFileSync(join(dir, box), lines('ONE', 'two', 'mine', 'four', 'FIVE'));
+  reg.set(lines('one', 'two', 'theirs', 'four', 'FIVE'));
+  assert.match(runWith(reg.root, dir, 'update').stdout, /1 conflict\(s\)/);
+  assert.match(read(dir, box), /<<<<<<< yours\nmine\n=======\ntheirs\n>>>>>>> registry/);
+});
+
+test('update without a base (added by an older CLI) leaves an edited file alone unless --overwrite', () => {
+  const reg = fakeRegistry(lines('new'));
+  const dir = project();
+  mkdirSync(join(dir, 'src/app/ui'), { recursive: true });
+  writeFileSync(join(dir, 'src/app/ui/box.ts'), lines('old, edited'));
+  assert.match(runWith(reg.root, dir, 'update').stdout, /no base to merge from/);
+  assert.equal(read(dir, 'src/app/ui/box.ts'), lines('old, edited'));
+  runWith(reg.root, dir, 'update', '--overwrite');
+  assert.equal(read(dir, 'src/app/ui/box.ts'), lines('new'));
+  assert.equal(read(dir, '.fizzy-ui/src/app/ui/box.ts'), lines('new'));
+});

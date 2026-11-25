@@ -120,12 +120,14 @@ See [Forms](https://carfizzi.github.io/fizzy-ui/forms) in the docs.
 |---|---|
 | `fizzy-ui init` | Theme, Tailwind setup, imports in `styles.css` |
 | `fizzy-ui add <names...>` | Copy components into your project and install their dependencies |
+| `fizzy-ui diff [names...]` | Show what changed in the registry for the components you have |
+| `fizzy-ui update [names...]` | Bring those changes in, keeping your edits (three-way merge) |
 | `fizzy-ui list` | Print the available components |
 
 | Option | |
 |---|---|
-| `--path <dir>` | Where `add` writes files (default `src/app/ui`) |
-| `--overwrite` | Replace files that already exist (by default they are kept) |
+| `--path <dir>` | Where the components live (default `src/app/ui`) |
+| `--overwrite` | `add`: replace files that exist (by default they are kept); `update`: replace instead of merging |
 | `--skip-install` | Do not install npm dependencies |
 | `--registry <dir\|url>` | Read components from another registry |
 
@@ -142,7 +144,15 @@ See [Forms](https://carfizzi.github.io/fizzy-ui/forms) in the docs.
 
 ## Updating
 
-Your copies never change by themselves. To take a newer version of a component, run `npx fizzy-ui add <name> --overwrite` and review the diff in git: your own edits to that file are replaced. `npx fizzy-ui init --overwrite` does the same for the theme.
+Your copies never change by themselves. To take a newer version:
+
+```sh
+npx fizzy-ui@latest diff            # what changed in the registry, for the components you have
+npx fizzy-ui@latest update          # bring it in and keep your edits
+npx fizzy-ui@latest update select   # or only some
+```
+
+`update` is a three-way merge (with git) between your file, the registry's new version and the version you started from, which `add` and `update` keep in `.fizzy-ui/`: commit that folder. Where both sides changed the same lines, the file gets conflict markers to resolve. Files added before 22.4 have no base, so `update` leaves an edited one alone until you pass `--overwrite`. `npx fizzy-ui init --overwrite` replaces the theme.
 
 ## Versions
 
