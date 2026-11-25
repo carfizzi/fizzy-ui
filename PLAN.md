@@ -128,7 +128,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 
 - [x] **llms.txt + markdown per component**: `scripts/llms.mjs` (`npm run llms`) writes `public/llms.txt` (summary, conventions, guides, one link per component) and `public/components/<name>.md` (description, install line with dependencies and shared file, sizes, the demo as usage with `./ui/` paths, keyboard table, a11y notes, raw source link) from `docs.ts`, the demos and `registry.json`. Committed; `test:cli` fails while stale. "View as Markdown" on each component page, a section in the Introduction, README. No `llms-full.txt` (add it if an assistant asks for one file)
 - [x] **CLI `diff` and `update`**: `diff [names]` runs `git diff --no-index` from the user's file to the registry's (all components found in `--path` by default); `update [names]` replaces untouched files, keeps edits when the registry has nothing new, otherwise `git merge-file` against the base kept in `.fizzy-ui/<path>` (written by `add` and `update`), with conflict markers. No base (older adds): an edited file is left alone unless `--overwrite`. No prompts. Tests in `cli/index.test.mjs` with a one-file fake registry
-- [ ] **Open in StackBlitz** on each demo
+- [ ] **Open in StackBlitz** on each demo. Deferred (Nov 25, 2026): needs a whole Angular 22 + Tailwind project per demo and a real browser to check it boots in WebContainers
 
 ## Phase 8: trust and look
 
