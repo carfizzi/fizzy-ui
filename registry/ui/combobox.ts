@@ -1,4 +1,4 @@
-import { Component, Directive, ElementRef, ViewContainerRef, computed, effect, inject, input, linkedSignal, signal, untracked, viewChild } from '@angular/core';
+import { Component, Directive, ElementRef, ViewContainerRef, computed, effect, inject, input, linkedSignal, output, signal, untracked, viewChild } from '@angular/core';
 import { Combobox, ComboboxPopup, ComboboxWidget } from '@angular/aria/combobox';
 import { Listbox, Option } from '@angular/aria/listbox';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
@@ -74,23 +74,29 @@ function closingPopup(combobox: () => Combobox, popup: () => ElementRef<HTMLElem
   hostDirectives: [{ directive: Combobox, inputs: ['value', 'disabled'], outputs: ['valueChange'] }],
   host: {
     autocomplete: 'off',
+    // Forms bind Aria's value (a model), not the native input's: typing and picking both reach them.
+    ngNoCva: '',
+    '(blur)': 'touch.emit()',
     '[attr.data-size]': 'size() ?? null',
     // our size, not the native one (a width in characters): keep the DOM attribute out
     '[attr.size]': 'null',
     '(click)': 'combobox.expanded.set(true)',
     class:
       'flex h-(--fz-h) w-full min-w-0 rounded-md border bg-background px-(--fz-field-px) py-1 text-(length:--fz-text) shadow-xs outline-none ' +
-      'placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+      'placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ' +
+      'aria-invalid:border-destructive aria-invalid:focus-visible:ring-destructive',
   },
 })
 export class FzCombobox {
   /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
   readonly size = input<FzSize>();
   readonly options = input.required<readonly string[]>();
+  /** Emits on blur: forms mark the field touched. */
+  readonly touch = output();
   readonly combobox = inject(Combobox);
   readonly element = inject(ElementRef<HTMLInputElement>).nativeElement;
   readonly filtered = computed(() => {
-    const query = this.combobox.value().trim().toLowerCase();
+    const query = (this.combobox.value() ?? '').trim().toLowerCase(); // forms may write null
     return this.options().filter((o) => o.toLowerCase().includes(query));
   });
 

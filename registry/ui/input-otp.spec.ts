@@ -4,11 +4,11 @@ import { FzInputOtp } from './input-otp';
 
 @Component({
   imports: [FzInputOtp],
-  template: `<fz-input-otp [(value)]="code" [pattern]="pattern()" [length]="length()" aria-label="Verification code" (complete)="done.set($event)" />`,
+  template: `<fz-input-otp [(value)]="code" [charset]="charset()" [length]="length()" aria-label="Verification code" (complete)="done.set($event)" />`,
 })
 class Host {
   readonly code = signal('');
-  readonly pattern = signal<'digits' | 'alphanumeric'>('digits');
+  readonly charset = signal<'digits' | 'alphanumeric'>('digits');
   readonly length = signal(6);
   readonly done = signal('');
 }
@@ -56,7 +56,7 @@ describe('FzInputOtp', () => {
 
   it('alphanumeric keeps letters; a value set from outside shows in the boxes and the input', async () => {
     const { fixture, host, field, type, boxes } = await setup();
-    host.pattern.set('alphanumeric');
+    host.charset.set('alphanumeric');
     host.length.set(4);
     await fixture.whenStable();
     expect(field.inputMode).toBe('text');

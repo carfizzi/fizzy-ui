@@ -19,7 +19,7 @@ import { FZ_LABEL } from '../../../registry/ui/label';
       </div>
       <div fzField>
         <label fzLabel>Recovery key</label>
-        <fz-input-otp pattern="alphanumeric" [length]="4" size="sm" />
+        <fz-input-otp charset="alphanumeric" [length]="4" size="sm" />
       </div>
     </div>
   `,

@@ -4,7 +4,7 @@ import { FZ_CALENDAR, FZ_DATE_PICKER } from './calendar';
 
 @Component({
   imports: [FZ_CALENDAR],
-  template: `<fz-calendar [(value)]="date" [firstDayOfWeek]="1" [min]="min()" [max]="max()" [disabled]="weekend()" />`,
+  template: `<fz-calendar [(value)]="date" [firstDayOfWeek]="1" [min]="min()" [max]="max()" [dateDisabled]="weekend()" />`,
 })
 class Host {
   date = signal<Date | undefined>(new Date(2026, 2, 15));

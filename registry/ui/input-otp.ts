@@ -7,7 +7,7 @@ type FzSize = 'xs' | 'sm' | 'md' | 'lg';
  * or inside `fzField` with a label. One real `<input>` (transparent, over the boxes), so pasting
  * "123 456", SMS autofill (`autocomplete="one-time-code"`), the numeric keyboard and screen readers all
  * work as in any text field; the boxes are only a drawing of it. Characters that don't fit the
- * `pattern` are dropped.
+ * `charset` are dropped. (Not `pattern`: Signal Forms binds that name.)
  */
 @Component({
   selector: 'fz-input-otp',
@@ -34,17 +34,17 @@ type FzSize = 'xs' | 'sm' | 'md' | 'lg';
       #field
       [attr.id]="inputId() ?? null"
       [attr.aria-label]="ariaLabel() ?? null"
-      [value]="value()"
+      [value]="text()"
       [disabled]="disabled()"
       autocomplete="one-time-code"
-      [attr.inputmode]="pattern() === 'digits' ? 'numeric' : 'text'"
-      [attr.pattern]="pattern() === 'digits' ? '[0-9]*' : null"
+      [attr.inputmode]="charset() === 'digits' ? 'numeric' : 'text'"
+      [attr.pattern]="charset() === 'digits' ? '[0-9]*' : null"
       spellcheck="false"
       autocapitalize="off"
       class="absolute inset-0 size-full cursor-text bg-transparent text-transparent caret-transparent outline-none selection:bg-transparent disabled:cursor-not-allowed"
       (input)="onInput()"
       (focus)="focused.set(true); sync()"
-      (blur)="focused.set(false)"
+      (blur)="focused.set(false); touch.emit()"
       (pointerup)="toEnd()"
       (selectionchange)="sync()"
       (keyup)="sync()"
@@ -56,7 +56,7 @@ export class FzInputOtp {
   readonly value = model('');
   readonly length = input(6, { transform: numberAttribute });
   /** `digits` (default) or `alphanumeric` (letters and digits). */
-  readonly pattern = input<'digits' | 'alphanumeric'>('digits');
+  readonly charset = input<'digits' | 'alphanumeric'>('digits');
   readonly disabled = input(false, { transform: booleanAttribute });
   /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
   readonly size = input<FzSize>();
@@ -65,16 +65,20 @@ export class FzInputOtp {
   readonly ariaLabel = input<string | undefined>(undefined, { alias: 'aria-label' });
   /** Emits the code once every box is filled. */
   readonly complete = output<string>();
+  /** Emits on blur: forms mark the field touched. */
+  readonly touch = output();
 
   protected readonly focused = signal(false);
   private readonly selection = signal<[number, number]>([0, 0]);
   private readonly field = viewChild.required<ElementRef<HTMLInputElement>>('field');
 
-  protected readonly slots = computed(() => Array.from({ length: this.length() }, (_, i) => this.value()[i] ?? ''));
+  /** Forms write null (ngModel before its first value, `reset()`): read it as empty. */
+  protected readonly text = computed(() => this.value() ?? '');
+  protected readonly slots = computed(() => Array.from({ length: this.length() }, (_, i) => this.text()[i] ?? ''));
   /** The box with the blinking caret: the next one to fill, while focused and nothing is selected. */
   protected readonly caret = computed(() => {
     const [start, end] = this.selection();
-    return this.focused() && start === end && start === this.value().length && start < this.length() ? start : -1;
+    return this.focused() && start === end && start === this.text().length && start < this.length() ? start : -1;
   });
 
   protected active(i: number) {
@@ -85,7 +89,7 @@ export class FzInputOtp {
 
   protected onInput() {
     const field = this.field().nativeElement;
-    const clean = field.value.replace(this.pattern() === 'digits' ? /\D/g : /[^\da-z]/gi, '').slice(0, this.length());
+    const clean = field.value.replace(this.charset() === 'digits' ? /\D/g : /[^\da-z]/gi, '').slice(0, this.length());
     if (clean !== field.value) field.value = clean;
     this.value.set(clean);
     this.sync();

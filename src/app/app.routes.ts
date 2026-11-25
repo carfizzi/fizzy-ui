@@ -5,6 +5,7 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'introduction' },
   { path: 'introduction', title: 'Introduction · fizzy-ui', loadComponent: () => import('./pages/introduction').then((m) => m.IntroductionPage) },
   { path: 'installation', title: 'Installation · fizzy-ui', loadComponent: () => import('./pages/installation').then((m) => m.InstallationPage) },
+  { path: 'forms', title: 'Forms · fizzy-ui', loadComponent: () => import('./pages/forms').then((m) => m.FormsPage) },
   { path: 'theming', title: 'Theming · fizzy-ui', loadComponent: () => import('./pages/theming').then((m) => m.ThemingPage) },
   {
     path: 'components/:name',

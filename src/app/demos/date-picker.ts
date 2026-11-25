@@ -13,7 +13,7 @@ import { FZ_LABEL } from '../../../registry/ui/label';
       </div>
       <div fzField>
         <label fzLabel>Appointment</label>
-        <fz-date-picker [(value)]="appointment" [min]="today" [disabled]="weekend" placeholder="Pick a weekday" />
+        <fz-date-picker [(value)]="appointment" [min]="today" [dateDisabled]="weekend" placeholder="Pick a weekday" />
         <p fzFieldDescription>Weekdays only, from today.</p>
       </div>
     </div>

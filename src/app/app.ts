@@ -24,6 +24,7 @@ export class App {
   protected readonly guides = [
     { path: '/introduction', title: 'Introduction' },
     { path: '/installation', title: 'Installation' },
+    { path: '/forms', title: 'Forms' },
     { path: '/theming', title: 'Theming' },
   ];
   // Read after the first render: the prerendered page can't know the visitor's theme (index.html sets it).

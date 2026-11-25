@@ -10,6 +10,7 @@ import {
   input,
   linkedSignal,
   model,
+  output,
   signal,
   untracked,
   viewChild,
@@ -28,7 +29,7 @@ const POSITIONS: ConnectedPosition[] = [
 const TRIGGER =
   'flex h-(--fz-h) w-full min-w-40 cursor-default select-none items-center justify-between gap-2 rounded-md border bg-background px-(--fz-field-px) ' +
   'text-(length:--fz-text) shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
-  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
+  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:focus-visible:ring-destructive';
 const CSS = {
   list: 'flex max-h-72 w-full flex-col gap-0.5 overflow-y-auto rounded-md border bg-background p-1 text-sm text-foreground shadow-md outline-none animate-fz-popup origin-top in-[.fz-above]:origin-bottom data-closing:animate-fz-fade-out',
   option:
@@ -110,7 +111,7 @@ export class FzSelectItem<V = unknown> {
   selector: 'fz-select',
   imports: [CdkConnectedOverlay, ComboboxPopup, ComboboxWidget, Listbox, Option],
   hostDirectives: [{ directive: Combobox, inputs: ['disabled'] }],
-  host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null' },
+  host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null', '(focusout)': 'touch.emit()' },
   template: `
     <span class="truncate" [class.text-muted-foreground]="!selected()">{{ selected()?.text() ?? placeholder() }}</span>
     ${CHEVRON}
@@ -159,6 +160,8 @@ export class FzSelect<V = unknown> {
   readonly size = input<FzSize>();
   readonly value = model<V>();
   readonly placeholder = input('Select…');
+  /** Emits when focus leaves: forms mark the field touched. */
+  readonly touch = output();
 
   protected readonly items = contentChildren(FzSelectItem<V>);
   protected readonly combobox = inject(Combobox);
@@ -168,13 +171,13 @@ export class FzSelect<V = unknown> {
   protected readonly positions = POSITIONS;
   protected readonly css = CSS;
   protected readonly selected = computed(() => this.items().find((i) => i.value() === this.value()));
-  protected readonly listValue = linkedSignal<V[]>(() => (this.value() === undefined ? [] : [this.value()!]));
+  protected readonly listValue = linkedSignal<V[]>(() => (this.value() == null ? [] : [this.value()!]));
 
   protected pick(values: V[]) {
     if (values.length) this.value.set(values[0]);
     // Explicit mode toggles: clicking the selected option empties the listbox. A select never
     // clears itself, so push the current value back.
-    else this.listValue.set(this.value() === undefined ? [] : [this.value()!]);
+    else this.listValue.set(this.value() == null ? [] : [this.value()!]);
   }
 
   // Like a native select: a click on a disabled option keeps the list open.
@@ -196,7 +199,7 @@ export class FzSelect<V = unknown> {
   selector: 'fz-multiselect',
   imports: [CdkConnectedOverlay, ComboboxPopup, ComboboxWidget, Listbox, Option],
   hostDirectives: [{ directive: Combobox, inputs: ['disabled'] }],
-  host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null' },
+  host: { class: TRIGGER, '[attr.data-size]': 'size() ?? null', '(focusout)': 'touch.emit()' },
   template: `
     <span class="truncate" [class.text-muted-foreground]="!summary()">{{ summary() || placeholder() }}</span>
     ${CHEVRON}
@@ -216,7 +219,8 @@ export class FzSelect<V = unknown> {
           tabindex="-1"
           focusMode="activedescendant"
           selectionMode="explicit"
-          [(value)]="value"
+          [value]="values()"
+          (valueChange)="value.set($event)"
           [activeDescendant]="listbox.activeDescendant()"
           (mousedown)="$event.preventDefault()"
           [class]="css.list"
@@ -236,6 +240,8 @@ export class FzMultiselect<V = unknown> {
   readonly size = input<FzSize>();
   readonly value = model<V[]>([]);
   readonly placeholder = input('Select…');
+  /** Emits when focus leaves: forms mark the field touched. */
+  readonly touch = output();
 
   protected readonly items = contentChildren(FzSelectItem<V>);
   protected readonly combobox = inject(Combobox);
@@ -244,9 +250,11 @@ export class FzMultiselect<V = unknown> {
   protected readonly host = inject(ElementRef);
   protected readonly positions = POSITIONS;
   protected readonly css = CSS;
+  /** Forms write null (ngModel before its first value, `reset()`): read it as empty. */
+  protected readonly values = computed(() => this.value() ?? []);
   protected readonly summary = computed(() =>
     this.items()
-      .filter((i) => this.value().includes(i.value()))
+      .filter((i) => this.values().includes(i.value()))
       .map((i) => i.text())
       .join(', '),
   );

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, booleanAttribute, computed, inject, input, model } from '@angular/core';
+import { Directive, ElementRef, booleanAttribute, computed, inject, input, model, output } from '@angular/core';
 import { Toolbar, ToolbarWidget } from '@angular/aria/toolbar';
 
 const base =
@@ -32,7 +32,7 @@ export class FzToggle {
 @Directive({
   selector: '[fzToggleGroup]',
   hostDirectives: [{ directive: Toolbar, inputs: ['orientation', 'disabled'] }],
-  host: { class: 'inline-flex w-fit items-center gap-1 aria-[orientation=vertical]:flex-col', '[attr.data-size]': 'size() ?? null' },
+  host: { class: 'inline-flex w-fit items-center gap-1 aria-[orientation=vertical]:flex-col', '[attr.data-size]': 'size() ?? null', '(focusout)': 'onFocusOut($event)' },
 })
 export class FzToggleGroup<V = unknown> {
   readonly value = model<V | V[] | undefined>();
@@ -42,6 +42,13 @@ export class FzToggleGroup<V = unknown> {
   readonly variant = input<Variant>('default');
   /** Sizes every item (they inherit it through data-size). */
   readonly size = input<FzSize>();
+  /** Emits when focus leaves it: forms mark the field touched. */
+  readonly touch = output();
+  private readonly el: HTMLElement = inject(ElementRef).nativeElement;
+
+  protected onFocusOut(event: FocusEvent) {
+    if (!this.el.contains(event.relatedTarget as Node | null)) this.touch.emit();
+  }
 
   isPressed(v: V) {
     const value = this.value();

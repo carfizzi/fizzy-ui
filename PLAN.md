@@ -120,7 +120,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 
 ## Phase 6: forms and small wins
 
-- [ ] **Forms support** (Signal Forms, Reactive Forms, `ngModel`): select, combobox, calendar, date-picker, chips, input-otp, toggle-group, slider... work with `[formField]` / `formControl` / `ngModel` and show `aria-invalid` / touched state. First check which components already do (`field.ts` has part of it); write a spec per control for each forms API
+- [x] **Forms support** (Signal Forms, Reactive Forms, `ngModel`): no CVA, Angular 22 binds a `value` model directly. select, multiselect, combobox (`ngNoCva`), chip-listbox, chip-input, input-otp, calendar, date-picker, toggle-group have `touch` and a boolean `disabled`, and read null as empty; `aria-invalid` comes from `fzField`. Renamed what forms set by name: calendar/date-picker `disabled` (days) → `dateDisabled`, input-otp `pattern` → `charset`. `registry/ui/forms.spec.ts`: each control × each API (value both ways, touched, disabled). Docs: Forms guide. Native controls rely on Angular's own accessors (not re-tested). Not checked in Chrome yet (extension offline)
 - [ ] **Size preview in the docs**: the component page shows a component at every size (`xs|sm|md|lg`, e.g. input) side by side, so the `data-size` scale can be compared at a glance
 - [ ] **RTL**: check for `left/right` (use logical properties), add a demo with `dir="rtl"`, test the popups and the tab highlight
 

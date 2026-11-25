@@ -4,12 +4,14 @@ import {
   Injector,
   LOCALE_ID,
   afterNextRender,
+  booleanAttribute,
   computed,
   effect,
   inject,
   input,
   linkedSignal,
   model,
+  output,
   signal,
   untracked,
   viewChild,
@@ -54,7 +56,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'fz-calendar',
-  host: { class: 'inline-flex w-fit flex-col gap-2 text-sm' },
+  host: { class: 'inline-flex w-fit flex-col gap-2 text-sm has-[table[aria-disabled]]:opacity-50', '(focusout)': 'onFocusOut($event)' },
   template: `
     <div class="flex items-center justify-between gap-2">
       <button type="button" [class]="nav" [attr.aria-label]="'Previous month'" [attr.aria-disabled]="!canGo(-1) || null" (click)="go(-1)">
@@ -65,7 +67,7 @@ let nextId = 0;
         <svg viewBox="0 0 16 16" class="size-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 4l4 4-4 4" /></svg>
       </button>
     </div>
-    <table #grid role="grid" [attr.aria-labelledby]="labelId" class="border-collapse" (keydown)="onKeydown($event)">
+    <table #grid role="grid" [attr.aria-labelledby]="labelId" [attr.aria-disabled]="disabled() || null" class="border-collapse" (keydown)="onKeydown($event)">
       <thead>
         <tr>
           @for (w of weekdays(); track w.long) {
@@ -104,17 +106,22 @@ let nextId = 0;
   `,
 })
 export class FzCalendar {
-  readonly value = model<Date | undefined>();
+  readonly value = model<Date | null | undefined>();
   readonly min = input<Date>();
   readonly max = input<Date>();
-  /** Days that cannot be picked (weekends, holidays…). They stay reachable with the arrows. */
-  readonly disabled = input<(d: Date) => boolean>(() => false);
+  /** Days that cannot be picked (weekends, holidays…). They stay reachable with the arrows. Not `disabled`: forms set that one. */
+  readonly dateDisabled = input<(d: Date) => boolean>(() => false);
+  /** Nothing can be picked; the days stay reachable. Forms set it. */
+  readonly disabled = input(false, { transform: booleanAttribute });
+  /** Emits when focus leaves it: forms mark the field touched. */
+  readonly touch = output();
   /** 0 = Sunday … 6 = Saturday. Default: from the locale. */
   readonly firstDayOfWeek = input<number>();
   readonly labelId = `fz-calendar-${nextId++}`;
   private readonly locale = inject(LOCALE_ID);
   private readonly injector = inject(Injector);
   private readonly grid = viewChild.required<ElementRef<HTMLElement>>('grid');
+  private readonly el: HTMLElement = inject(ElementRef).nativeElement;
   /** The day with the Tab stop; the shown month follows it. */
   readonly focused = linkedSignal(() => this.clamp(this.value() ?? today()));
   protected readonly nav =
@@ -145,7 +152,7 @@ export class FzCalendar {
   protected isFocused = (d: Date) => same(d, this.focused());
   protected isSelected = (d: Date) => same(d, this.value());
   protected isToday = (d: Date) => same(d, today());
-  protected isOff = (d: Date) => this.outside(d) || this.disabled()(d);
+  protected isOff = (d: Date) => this.outside(d) || this.dateDisabled()(d);
 
   /** Moves focus to the day with the Tab stop (after a render). */
   focus() {
@@ -164,7 +171,11 @@ export class FzCalendar {
 
   protected pick(d: Date) {
     this.focused.set(d);
-    if (!this.isOff(d)) this.value.set(d);
+    if (!this.isOff(d) && !this.disabled()) this.value.set(d);
+  }
+
+  protected onFocusOut(event: FocusEvent) {
+    if (!this.el.contains(event.relatedTarget as Node | null)) this.touch.emit();
   }
 
   protected onKeydown(event: KeyboardEvent) {
@@ -246,7 +257,7 @@ function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
  * A button that opens a calendar: `<fz-date-picker [(value)]="date" placeholder="Pick a date" />`,
  * labelled by `fzField` (its name reads "label, date"). Opening focuses the picked day (or today);
  * picking closes it and gives focus back to the button; Escape and a click outside close it.
- * `min`, `max` and `disabled` go to the calendar.
+ * `min`, `max` and `dateDisabled` go to the calendar.
  * shortcut: no typing a date in; use a native `<input type="date">` where typing matters most.
  */
 @Component({
@@ -260,8 +271,10 @@ function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
       aria-haspopup="dialog"
       [attr.aria-expanded]="open()"
       [attr.aria-controls]="open() ? popupId : null"
-      class="flex h-(--fz-h) w-full cursor-pointer items-center gap-2 rounded-md border bg-background px-(--fz-field-px) text-left text-(length:--fz-text) shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      [disabled]="disabled()"
+      class="flex h-(--fz-h) w-full cursor-pointer items-center gap-2 rounded-md border bg-background px-(--fz-field-px) text-left text-(length:--fz-text) shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:focus-visible:ring-destructive"
       (click)="toggle()"
+      (blur)="onFocusOut($event)"
     >
       <svg viewBox="0 0 16 16" class="size-4 shrink-0 text-muted-foreground" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" /><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" /></svg>
       <span class="truncate" [class.text-muted-foreground]="!value()">{{ text() }}</span>
@@ -281,17 +294,21 @@ function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
         (keydown.escape)="close(true)"
         (focusout)="onFocusOut($event)"
       >
-        <fz-calendar [value]="value()" (valueChange)="pick($event)" [min]="min()" [max]="max()" [disabled]="disabled()" />
+        <fz-calendar [value]="value()" (valueChange)="pick($event)" [min]="min()" [max]="max()" [dateDisabled]="dateDisabled()" />
       </div>
     </ng-template>
   `,
 })
 export class FzDatePicker {
-  readonly value = model<Date | undefined>();
+  readonly value = model<Date | null | undefined>();
   readonly placeholder = input('Pick a date');
   readonly min = input<Date>();
   readonly max = input<Date>();
-  readonly disabled = input<(d: Date) => boolean>(() => false);
+  readonly dateDisabled = input<(d: Date) => boolean>(() => false);
+  /** The button is disabled. Forms set it. */
+  readonly disabled = input(false, { transform: booleanAttribute });
+  /** Emits when focus leaves the button and the calendar: forms mark the field touched. */
+  readonly touch = output();
   /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
   readonly size = input<FzSize>();
   readonly open = signal(false);
@@ -342,7 +359,7 @@ export class FzDatePicker {
     if (refocus) this.trigger().nativeElement.focus();
   }
 
-  protected pick(d: Date | undefined) {
+  protected pick(d: Date | null | undefined) {
     this.value.set(d);
     this.close(true);
   }
@@ -351,9 +368,12 @@ export class FzDatePicker {
     if (!this.trigger().nativeElement.contains(event.target as Node)) this.close(false);
   }
 
+  /** Blur of the button or focusout of the popup: leaving both closes it and touches the field. */
   protected onFocusOut(event: FocusEvent) {
     const to = event.relatedTarget as Node | null;
-    if (to && !this.popup()?.nativeElement.contains(to) && to !== this.trigger().nativeElement) this.close(false);
+    if (to && (to === this.trigger().nativeElement || this.popup()?.nativeElement.contains(to))) return;
+    if (to) this.close(false);
+    this.touch.emit();
   }
 }
 

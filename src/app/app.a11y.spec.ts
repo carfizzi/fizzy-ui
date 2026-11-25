@@ -45,7 +45,7 @@ describe('docs', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     expect(await violations(fixture.nativeElement, true)).toEqual([]);
-    expect(fixture.nativeElement.querySelectorAll('nav a').length).toBe(DOCS.length + 3);
+    expect(fixture.nativeElement.querySelectorAll('nav a').length).toBe(DOCS.length + 4);
     const version = fixture.nativeElement.querySelector('header a[href*="npmjs.com"]');
     expect(version.textContent).toBe(`v${cli.version} on npm`);
   });
@@ -61,7 +61,7 @@ describe('docs', () => {
     await fixture.whenStable();
     expect(document.querySelectorAll('[role=dialog]').length).toBe(1);
     const input = document.querySelector<HTMLInputElement>('[role=dialog] input[role=combobox]')!;
-    expect(document.querySelectorAll('[role=dialog] [role=option]').length).toBe(DOCS.length + 3);
+    expect(document.querySelectorAll('[role=dialog] [role=option]').length).toBe(DOCS.length + 4);
     expect(await violations(document.body)).toEqual([]);
 
     input.value = 'toggle gr';
@@ -73,8 +73,21 @@ describe('docs', () => {
     expect(document.querySelector('[role=dialog]')).toBeNull();
   });
 
-  it.each(['/introduction', '/installation', '/theming'])('%s has no violations', async (url) => {
+  it.each(['/introduction', '/installation', '/forms', '/theming'])('%s has no violations', async (url) => {
     expect(await violations(await page(url))).toEqual([]);
+  });
+
+  it('/forms: submitting the empty example shows the errors on invalid controls, no violations', async () => {
+    const harness = await RouterTestingHarness.create('/forms');
+    await harness.fixture.whenStable();
+    const el = harness.routeNativeElement!;
+    el.querySelector<HTMLButtonElement>('app-forms-example button[type=submit]')!.click();
+    await harness.fixture.whenStable();
+    expect([...el.querySelectorAll('[fzFieldError]')].map((e) => e.textContent!.trim())).toEqual(['Pick a room.', 'Pick a date.']);
+    expect(el.querySelector('fz-select')!.getAttribute('aria-invalid')).toBe('true');
+    expect(el.querySelector('fz-date-picker button')!.getAttribute('aria-invalid')).toBe('true');
+    expect(el.querySelector('[role=status]')!.textContent!.trim()).toBe('');
+    expect(await violations(el)).toEqual([]);
   });
 
   it.each(DOCS.map((d) => d.name))('/components/%s renders its demo and source, no violations', async (name) => {

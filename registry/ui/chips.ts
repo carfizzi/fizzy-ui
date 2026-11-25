@@ -1,4 +1,4 @@
-import { Component, Directive, ElementRef, booleanAttribute, computed, contentChildren, inject, input, model, viewChild } from '@angular/core';
+import { Component, Directive, ElementRef, booleanAttribute, computed, contentChildren, inject, input, model, output, viewChild } from '@angular/core';
 import { Listbox, Option } from '@angular/aria/listbox';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
@@ -22,7 +22,7 @@ export class FzChip<V = unknown> {
   selector: 'fz-chip-listbox',
   imports: [Listbox, Option],
   // The listbox is inside: its label moves there, off the host.
-  host: { class: 'block', '[attr.aria-label]': 'null', '[attr.aria-labelledby]': 'null', '[attr.data-size]': 'size() ?? null' },
+  host: { class: 'block', '[attr.aria-label]': 'null', '[attr.aria-labelledby]': 'null', '[attr.data-size]': 'size() ?? null', '(focusout)': 'onFocusOut($event)' },
   template: `
     <div
       ngListbox
@@ -30,7 +30,8 @@ export class FzChip<V = unknown> {
       selectionMode="explicit"
       [multi]="multiple()"
       [disabled]="disabled()"
-      [(value)]="value"
+      [value]="values()"
+      (valueChange)="value.set($event)"
       [attr.aria-label]="ariaLabel()"
       [attr.aria-labelledby]="ariaLabelledby()"
       class="flex flex-wrap gap-2 rounded-md outline-none aria-disabled:opacity-50"
@@ -57,7 +58,16 @@ export class FzChipListbox<V = unknown> {
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly ariaLabel = input<string | undefined>(undefined, { alias: 'aria-label' });
   readonly ariaLabelledby = input<string | undefined>(undefined, { alias: 'aria-labelledby' });
+  /** Emits when focus leaves it: forms mark the field touched. */
+  readonly touch = output();
   protected readonly chips = contentChildren(FzChip<V>);
+  /** Forms write null (ngModel before its first value, `reset()`): read it as empty. */
+  protected readonly values = computed(() => this.value() ?? []);
+  private readonly el: HTMLElement = inject(ElementRef).nativeElement;
+
+  protected onFocusOut(event: FocusEvent) {
+    if (!this.el.contains(event.relatedTarget as Node | null)) this.touch.emit();
+  }
 }
 
 /**
@@ -70,19 +80,21 @@ export class FzChipListbox<V = unknown> {
   host: {
     '[attr.aria-label]': 'null',
     '[attr.data-size]': 'size() ?? null',
+    '(focusout)': 'onFocusOut($event)',
     class:
       'flex min-h-(--fz-h) w-full flex-wrap items-center gap-1.5 rounded-md border bg-background px-2 py-1 text-(length:--fz-text) shadow-xs ' +
-      'focus-within:ring-2 focus-within:ring-ring has-[input[aria-invalid=true]]:border-destructive',
+      'focus-within:ring-2 focus-within:ring-ring has-[input[aria-invalid=true]]:border-destructive has-disabled:opacity-50',
   },
   template: `
-    @if (value().length) {
+    @if (values().length) {
       <ul class="contents">
-        @for (tag of value(); track tag) {
+        @for (tag of values(); track tag) {
           <li class="inline-flex h-6 items-center gap-1 rounded-full bg-secondary pr-0.5 pl-2.5 text-xs font-medium text-secondary-foreground">
             {{ tag }}
             <button
               type="button"
               [attr.aria-label]="'Remove ' + tag"
+              [disabled]="disabled()"
               class="inline-flex size-5 cursor-pointer items-center justify-center rounded-full text-muted-foreground outline-none hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               (click)="remove(tag, true)"
             >
@@ -97,7 +109,8 @@ export class FzChipListbox<V = unknown> {
       [attr.id]="inputId() ?? null"
       [attr.aria-label]="ariaLabel() ?? null"
       [placeholder]="placeholder()"
-      class="h-[calc(var(--fz-h)-10px)] min-w-24 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+      [disabled]="disabled()"
+      class="h-[calc(var(--fz-h)-10px)] disabled:cursor-not-allowed min-w-24 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
       (keydown)="onKeydown($event)"
       (blur)="add()"
     />
@@ -106,21 +119,31 @@ export class FzChipListbox<V = unknown> {
 export class FzChipInput {
   readonly value = model<string[]>([]);
   readonly placeholder = input('');
+  readonly disabled = input(false, { transform: booleanAttribute });
   /** xs, sm, md, lg. Unset, it takes the size of the nearest `data-size` container, else md. */
   readonly size = input<FzSize>();
   /** Id of the inner input, for a `<label for>` outside `fzField`. */
   readonly inputId = input<string>();
   readonly ariaLabel = input<string | undefined>(undefined, { alias: 'aria-label' });
+  /** Emits when focus leaves it: forms mark the field touched. */
+  readonly touch = output();
+  private readonly el: HTMLElement = inject(ElementRef).nativeElement;
+  /** Forms write null (ngModel before its first value, `reset()`): read it as empty. */
+  protected readonly values = computed(() => this.value() ?? []);
   private readonly field = viewChild.required<ElementRef<HTMLInputElement>>('field');
   private readonly announcer = inject(LiveAnnouncer);
+
+  protected onFocusOut(event: FocusEvent) {
+    if (!this.el.contains(event.relatedTarget as Node | null)) this.touch.emit();
+  }
 
   protected onKeydown(event: KeyboardEvent) {
     const input = this.field().nativeElement;
     if (event.key === 'Enter' || event.key === ',') {
       if (input.value.trim()) event.preventDefault(); // an empty Enter still submits the form
       this.add();
-    } else if (event.key === 'Backspace' && !input.value && this.value().length) {
-      this.remove(this.value().at(-1)!);
+    } else if (event.key === 'Backspace' && !input.value && this.values().length) {
+      this.remove(this.values().at(-1)!);
     }
   }
 
@@ -128,13 +151,13 @@ export class FzChipInput {
     const input = this.field().nativeElement;
     const tag = input.value.trim();
     input.value = '';
-    if (!tag || this.value().includes(tag)) return;
-    this.value.update((tags) => [...tags, tag]);
+    if (!tag || this.values().includes(tag)) return;
+    this.value.set([...this.values(), tag]);
     void this.announcer.announce(`Added ${tag}`);
   }
 
   protected remove(tag: string, refocus = false) {
-    this.value.update((tags) => tags.filter((t) => t !== tag));
+    this.value.set(this.values().filter((t) => t !== tag));
     void this.announcer.announce(`Removed ${tag}`);
     if (refocus) this.field().nativeElement.focus(); // its button is gone
   }
