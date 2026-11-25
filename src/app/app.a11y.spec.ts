@@ -103,6 +103,21 @@ describe('docs', () => {
     expect(await violations(el)).toEqual([]);
   });
 
+  it('the accessibility box lists the roles and ARIA attributes of the live demo, and new ones as it is used', async () => {
+    const harness = await RouterTestingHarness.create('/components/select');
+    await harness.fixture.whenStable();
+    const el = harness.routeNativeElement!;
+    const codes = () => [...el.querySelectorAll('[data-a11y-box] code')].map((c) => c.textContent);
+    expect(el.querySelector('[data-a11y-box]')!.textContent).toContain('No axe-core violations');
+    expect(codes()).toContain('combobox');
+    expect(codes()).toContain('aria-expanded');
+    const closed = codes();
+    el.querySelector<HTMLElement>('fz-select')!.click();
+    await harness.fixture.whenStable();
+    // Opening adds attributes to the combobox (in a browser the inline popup's listbox too; jsdom has no popover API).
+    expect(codes().filter((c) => !closed.includes(c)).length).toBeGreaterThan(0);
+  });
+
   it('the code tab shows the demo as a user writes it', async () => {
     const harness = await RouterTestingHarness.create('/components/tabs');
     await harness.fixture.whenStable();

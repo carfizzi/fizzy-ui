@@ -1,4 +1,5 @@
-import { Component, computed, input, linkedSignal, resource } from '@angular/core';
+import { Component, ElementRef, computed, effect, input, linkedSignal, resource, signal, viewChild } from '@angular/core';
+import axe from 'axe-core/package.json';
 import { NgComponentOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FZ_KBD } from '../../../registry/ui/kbd';
@@ -27,7 +28,7 @@ import { DOCS, SIZED } from '../docs';
           <div fzTabPanel value="preview">
             <ng-template ngTabContent>
               <!-- The demo host gets the full width and centers its content, so w-full demos (accordion, card) don't shrink to their text. -->
-              <div class="flex min-h-48 items-center justify-center rounded-md border p-6 sm:p-10 [&>*]:flex [&>*]:w-full [&>*]:justify-center">
+              <div #demoHost class="flex min-h-48 items-center justify-center rounded-md border p-6 sm:p-10 [&>*]:flex [&>*]:w-full [&>*]:justify-center">
                 @if (files.hasValue()) {
                   <ng-container *ngComponentOutlet="files.value()[0]" />
                 } @else if (files.error()) {
@@ -97,16 +98,40 @@ import { DOCS, SIZED } from '../docs';
           </section>
         }
 
-        @if (d.a11y) {
-          <section class="flex flex-col gap-3">
-            <h2 class="text-xl font-semibold tracking-tight">Accessibility</h2>
+        <section class="flex flex-col gap-3">
+          <h2 class="text-xl font-semibold tracking-tight">Accessibility</h2>
+          <div class="flex flex-col gap-3 rounded-md border p-4 text-sm" data-a11y-box>
+            <p class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium">
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 8.5 3 3 6-7" /></svg>
+                No axe-core violations
+              </span>
+              <span class="text-muted-foreground">
+                axe-core {{ axeVersion }} checks this example, closed and with its panels open, on every build; the site is not published otherwise.
+              </span>
+            </p>
+            @if (aria().roles.length || aria().attributes.length) {
+              <dl class="grid gap-x-4 gap-y-1 sm:grid-cols-[auto_1fr]">
+                <dt class="font-medium">Roles</dt>
+                <dd class="flex flex-wrap gap-1">
+                  @for (r of aria().roles; track r) { <code class="rounded bg-muted px-1 text-xs">{{ r }}</code> } @empty { <span class="text-muted-foreground">native elements only</span> }
+                </dd>
+                <dt class="font-medium">ARIA</dt>
+                <dd class="flex flex-wrap gap-1">
+                  @for (a of aria().attributes; track a) { <code class="rounded bg-muted px-1 text-xs">{{ a }}</code> } @empty { <span class="text-muted-foreground">none</span> }
+                </dd>
+              </dl>
+              <p class="text-xs text-muted-foreground">Read from the example above as you use it: open it, select, expand, and new ones appear.</p>
+            }
+          </div>
+          @if (d.a11y) {
             <ul class="list-disc space-y-1 pl-6 text-sm text-muted-foreground">
               @for (note of d.a11y; track $index) {
                 <li>{{ note }}</li>
               }
             </ul>
-          </section>
-        }
+          }
+        </section>
 
         <section class="flex flex-col gap-3">
           <h2 class="text-xl font-semibold tracking-tight">Source</h2>
@@ -156,6 +181,32 @@ export class ComponentPage {
   protected readonly files = resource({ params: () => this.doc(), loader: ({ params }) => params.load() });
   protected readonly sized = computed(() => SIZED.has(this.name()));
   protected readonly sizes = resource({ params: () => this.sized() || undefined, loader: () => import('../demos/sizes').then((m) => m.Sizes) });
+  protected readonly axeVersion = axe.version;
+  /** Roles and aria-* attributes seen in the live demo (the lists grow as it is used). */
+  protected readonly aria = signal<{ roles: string[]; attributes: string[] }>({ roles: [], attributes: [] });
+  private readonly demoHost = viewChild<ElementRef<HTMLElement>>('demoHost');
+
+  constructor() {
+    effect((onCleanup) => {
+      const host = this.demoHost()?.nativeElement;
+      this.name(); // a new component starts a new list
+      if (!host || typeof MutationObserver === 'undefined') return; // no DOM observers when prerendering
+      const roles = new Set<string>();
+      const attributes = new Set<string>();
+      const scan = () => {
+        for (const el of host.querySelectorAll('*')) {
+          for (const r of el.getAttribute('role')?.split(' ') ?? []) if (r) roles.add(r);
+          for (const a of el.getAttributeNames()) if (a.startsWith('aria-')) attributes.add(a);
+        }
+        this.aria.set({ roles: [...roles].sort(), attributes: [...attributes].sort() });
+      };
+      const observer = new MutationObserver(scan);
+      observer.observe(host, { subtree: true, childList: true, attributes: true });
+      scan();
+      onCleanup(() => observer.disconnect());
+    });
+  }
+
   // Show the demo the way a user writes it: `add` puts the files in ./ui next to their component.
   protected readonly usage = computed(() => this.files.hasValue() ? this.files.value()[1].replaceAll('../../../registry/ui/', './ui/') : '');
 }
