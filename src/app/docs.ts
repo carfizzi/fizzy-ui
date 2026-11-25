@@ -171,6 +171,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'collapsible',
+    harness: 'FzCollapsibleHarness',
     title: 'Collapsible',
     description: 'Shows and hides one section of content.',
     file: 'collapsible.ts',
@@ -190,6 +191,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'command',
+    harness: 'FzCommandHarness',
     title: 'Command',
     description: 'A searchable list of commands, the core of a ⌘K palette.',
     file: 'command.ts',
@@ -257,6 +259,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'grid',
+    harness: 'FzGridHarness',
     title: 'Grid',
     description: 'A data table with cell navigation, selection and editable cells.',
     file: 'grid.ts',
@@ -332,6 +335,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'listbox',
+    harness: 'FzListboxHarness',
     title: 'Listbox',
     description: 'An inline list of options with single or multiple selection.',
     file: 'listbox.ts',
@@ -371,6 +375,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'navigation-menu',
+    harness: 'FzNavigationMenuHarness',
     title: 'Navigation menu',
     description: 'Site navigation with dropdown panels of links.',
     file: 'navigation-menu.ts',
@@ -457,6 +462,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'sidebar',
+    harness: 'FzSidebarHarness',
     title: 'Sidebar',
     description: 'App navigation in a column that collapses, a drawer on phones.',
     file: 'sidebar.ts',
@@ -495,6 +501,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'stepper',
+    harness: 'FzStepperHarness',
     title: 'Stepper',
     description: 'Breaks a task into ordered steps.',
     file: 'stepper.ts',
@@ -577,6 +584,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'toolbar',
+    harness: 'FzToolbarHarness',
     title: 'Toolbar',
     description: 'A row of buttons, toggles and toggle groups with one Tab stop.',
     file: 'toolbar.ts',
@@ -596,6 +604,7 @@ export const DOCS: ComponentDoc[] = [
   },
   {
     name: 'tree',
+    harness: 'FzTreeHarness',
     title: 'Tree',
     description: 'A hierarchical list that expands and collapses.',
     file: 'tree.ts',

@@ -34,6 +34,7 @@ npx fizzy-ui add button dialog tabs
 - **The code is yours.** Like [shadcn/ui](https://ui.shadcn.com), the CLI copies the source into your app. Nothing to upgrade at runtime and no wrapper to fight: change a component by editing its file.
 - **Modern Angular.** Standalone components, signals, zoneless-ready. Two-way bindings with `[(value)]`.
 - **Ready for AI assistants.** [`llms.txt`](https://carfizzi.github.io/fizzy-ui/llms.txt) indexes every component, and each page is also served as Markdown (install command, usage, keyboard, accessibility).
+- **Testable.** `npx fizzy-ui add select --harness` also copies an [Angular CDK test harness](https://material.angular.dev/cdk/test-harnesses/overview) for every interactive component, so your tests drive it like a user: `await (await loader.getHarness(FzSelectHarness)).clickOptions({ text: 'Kiwi' })`.
 - **Works with your forms.** Every control binds with Signal Forms, Reactive Forms or `ngModel`, including value, disabled and touched state, with no ControlValueAccessor. Put it in `fzField` and the error is announced and marks the control `aria-invalid`.
 - **Themeable.** Colors, radius, sizes and motion are CSS variables in one file, with dark mode built in.
 - **Motion that feels native.** Spring animations in the style of Apple's guidelines, replaced by fades when the user asks for Reduce Motion.
@@ -128,6 +129,7 @@ See [Forms](https://carfizzi.github.io/fizzy-ui/forms) in the docs.
 |---|---|
 | `--path <dir>` | Where the components live (default `src/app/ui`) |
 | `--overwrite` | `add`: replace files that exist (by default they are kept); `update`: replace instead of merging |
+| `--harness` | `add`: also copy the component's test harness (`<file>.harness.ts`) |
 | `--skip-install` | Do not install npm dependencies |
 | `--registry <dir\|url>` | Read components from another registry |
 

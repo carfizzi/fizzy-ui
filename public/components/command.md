@@ -50,6 +50,10 @@ export class Demo {
 - Groups are role="group", named by their heading. "No results" is announced.
 - Inside a dialog, give the dialog a title (fzDialogTitle): it names the palette.
 
+## Testing
+
+`npx fizzy-ui add command --harness` also copies `command.harness.ts`, an Angular CDK test harness: `FzCommandHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/command.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/command.ts (the file `add` copies; its doc comments describe the inputs)

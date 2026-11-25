@@ -63,6 +63,10 @@ export class Demo {}
 - One panel at a time. It closes on Escape, a click outside, or when focus leaves the nav.
 - Give the nav an aria-label and mark the current page with aria-current="page".
 
+## Testing
+
+`npx fizzy-ui add navigation-menu --harness` also copies `navigation-menu.harness.ts`, an Angular CDK test harness: `FzNavigationMenuHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/navigation-menu.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/navigation-menu.ts (the file `add` copies; its doc comments describe the inputs)

@@ -71,6 +71,10 @@ export class Demo {
 - One Tab stop for the whole grid.
 - Give the table an aria-label and each editable input its own label.
 
+## Testing
+
+`npx fizzy-ui add grid --harness` also copies `grid.harness.ts`, an Angular CDK test harness: `FzGridHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/grid.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/grid.ts (the file `add` copies; its doc comments describe the inputs)

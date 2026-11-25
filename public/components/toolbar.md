@@ -54,6 +54,10 @@ export class Demo {
 - Toggles expose aria-pressed; a group is a radiogroup with aria-checked.
 - Give the toolbar and each group an aria-label.
 
+## Testing
+
+`npx fizzy-ui add toolbar --harness` also copies `toolbar.harness.ts`, an Angular CDK test harness: `FzToolbarHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/toolbar.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/toolbar.ts (the file `add` copies; its doc comments describe the inputs)

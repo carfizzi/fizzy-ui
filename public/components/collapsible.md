@@ -46,6 +46,10 @@ export class Demo {
 - Closed content is inert, so it is out of the tab order and hidden from screen readers.
 - An icon-only trigger needs an aria-label.
 
+## Testing
+
+`npx fizzy-ui add collapsible --harness` also copies `collapsible.harness.ts`, an Angular CDK test harness: `FzCollapsibleHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/collapsible.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/collapsible.ts (the file `add` copies; its doc comments describe the inputs)

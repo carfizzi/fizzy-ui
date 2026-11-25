@@ -90,6 +90,7 @@ export class InstallationPage {
   protected readonly options = [
     ['--path <dir>', 'Where the components live (default src/app/ui)'],
     ['--overwrite', 'add: replace files that exist; update: replace instead of merging'],
+    ['--harness', 'add: also copy the test harness of each component (<file>.harness.ts)'],
     ['--skip-install', 'Do not install npm dependencies'],
     ['--registry <dir|url>', 'Read components from another registry'],
   ];

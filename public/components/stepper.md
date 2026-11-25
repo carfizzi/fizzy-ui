@@ -60,6 +60,10 @@ export class Demo {
 - In linear mode, steps that are not open yet are aria-disabled: still reachable, so the whole task can be read ahead.
 - next() and previous() move focus to the new step header, so the change is announced. Each step is a group named by its header.
 
+## Testing
+
+`npx fizzy-ui add stepper --harness` also copies `stepper.harness.ts`, an Angular CDK test harness: `FzStepperHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/stepper.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/stepper.ts (the file `add` copies; its doc comments describe the inputs)

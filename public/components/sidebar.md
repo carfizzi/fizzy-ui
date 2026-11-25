@@ -58,6 +58,10 @@ export class Demo {
 - On phones the open drawer is a modal dialog (named by aria-label on fz-sidebar): everything else on the page is inert and focus moves into it.
 - Escape, the backdrop or following a link closes the drawer and focus goes back to the trigger.
 
+## Testing
+
+`npx fizzy-ui add sidebar --harness` also copies `sidebar.harness.ts`, an Angular CDK test harness: `FzSidebarHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/sidebar.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/sidebar.ts (the file `add` copies; its doc comments describe the inputs)

@@ -132,7 +132,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 
 ## Phase 8: trust and look
 
-- [ ] **A11y you can show**: axe result badge on the site (from `app.a11y.spec.ts`), keyboard + ARIA box per component; CDK `ComponentHarness` per component (`registry/testing`) so users can test their own apps
+- [x] **A11y you can show**: an Accessibility box on every component page: an axe-core badge (true by construction: the site deploys only when the axe spec passes) and the roles and aria-* attributes read live from the example as it is used. CDK test harnesses for the 30 interactive items in `registry/testing` (`add --harness`), each tested against its demo, with a Testing section on the page and in the Markdown. Not for presentational/native items or hover-card
 - [ ] **Themes**: presets (`init --theme`) and a token editor on the site that outputs the CSS
 
 ## Phase 9: agents (needs phase 6 and the llms.txt data)

@@ -42,6 +42,10 @@ export class Demo {
 
 - Give the list an aria-label or aria-labelledby.
 
+## Testing
+
+`npx fizzy-ui add listbox --harness` also copies `listbox.harness.ts`, an Angular CDK test harness: `FzListboxHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/listbox.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/listbox.ts (the file `add` copies; its doc comments describe the inputs)

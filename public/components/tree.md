@@ -52,6 +52,10 @@ export class Demo {
 
 - Give the tree an aria-label.
 
+## Testing
+
+`npx fizzy-ui add tree --harness` also copies `tree.harness.ts`, an Angular CDK test harness: `FzTreeHarness` (methods documented in https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/testing/tree.harness.ts).
+
 ## Source
 
 https://raw.githubusercontent.com/carfizzi/fizzy-ui/main/registry/ui/tree.ts (the file `add` copies; its doc comments describe the inputs)
