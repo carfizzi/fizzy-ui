@@ -69,6 +69,7 @@ function index(docs) {
     '## Optional',
     '',
     `- [Source code](${REPO}): the registry (\`registry/ui/*.ts\`) is what \`add\` copies`,
+    '- MCP server: `npx fizzy-ui mcp` (stdio) offers list_components, get_component and add_components',
     '',
   ].join('\n');
 }

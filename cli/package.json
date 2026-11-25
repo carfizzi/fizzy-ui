@@ -8,8 +8,8 @@
   "bugs": "https://github.com/carfizzi/fizzy-ui/issues",
   "type": "module",
   "bin": { "fizzy-ui": "index.mjs" },
-  "files": ["index.mjs", "registry"],
-  "scripts": { "prepack": "rm -rf registry && cp -R ../registry ./registry && rm -f registry/ui/*.spec.ts registry/testing/*.spec.ts && cp ../README.md ../LICENSE .", "postpack": "rm -rf registry README.md LICENSE" },
+  "files": ["index.mjs", "registry", "docs"],
+  "scripts": { "prepack": "rm -rf registry && cp -R ../registry ./registry && rm -f registry/ui/*.spec.ts registry/testing/*.spec.ts && rm -rf docs && mkdir docs && cp -R ../public/components ../public/llms.txt docs/ && cp ../README.md ../LICENSE .", "postpack": "rm -rf registry docs README.md LICENSE" },
   "engines": { "node": ">=20" },
   "license": "MIT"
 }

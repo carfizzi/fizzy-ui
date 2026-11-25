@@ -103,6 +103,11 @@ import { CopyButton } from '../copy-button';
         <a href="llms.txt" class="underline underline-offset-4">llms.txt</a> lists every component with a link to its page in Markdown
         (install command, usage, keyboard, accessibility notes). Point your coding assistant at it.
       </p>
+      <p>
+        Or give it the MCP server: <code class="rounded bg-muted px-1">npx fizzy-ui mcp</code>, started in your project, lets an agent
+        list components, read their docs and source, and add them (never overwriting a file, never outside the project). With Claude Code:
+        <code class="rounded bg-muted px-1">claude mcp add fizzy-ui -- npx -y fizzy-ui&#64;22 mcp</code>.
+      </p>
     </article>
   `,
 })

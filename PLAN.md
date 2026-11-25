@@ -137,7 +137,7 @@ In priority order. Each one needs the usual four pieces (file, `registry.json`, 
 
 ## Phase 9: agents (needs phase 6 and the llms.txt data)
 
-- [ ] **MCP support**: an MCP server over `registry/` (list components, read a component's source and docs, `add`), so agents can use fizzy-ui; the CLI already knows the registry
+- [x] **MCP support**: `fizzy-ui mcp`, a zero-dependency stdio server in the CLI: `list_components`, `get_component` (the Markdown docs, the source and the harness), `add_components` (names from the registry only, a folder inside the project with symlinks followed, never overwrites, installs dependencies). Docs bundled in the package (`docs/`). Also hardened `install`: dependency names must be npm names before they reach the shell. Tested by a JSON-RPC session per case in `cli/index.test.mjs`
 - [ ] **Agent bridge** (inspired by https://ui-sdk.dev, docs read; their behaviors/primitives are not needed, `@angular/aria` covers them): `agent.ts`, a root service `FzAgent` (like `FzToaster`) + directive `fzAgent` that registers a control with label, state and actions.
   - API: `snapshot()` (components with state and `actions`), `act({steps:[{ref, action, args}]})` (ref = snapshot ref, label or row text; ambiguous fails and lists candidates; stops at the first error, no rollback), `subscribe()` (changes with `source: 'agent' | 'user'`).
   - Native controls (input, checkbox, switch, slider): set the value and dispatch `input`/`change`, so Angular forms react. Aria components use their own API (`open`, selected tab). Label read like `field.ts` does.

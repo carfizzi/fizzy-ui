@@ -2,10 +2,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync, spawn } from 'node:child_process';
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -233,4 +233,89 @@ test('init --theme sets a preset in both modes, keeps your other edits, and neut
   const bad = run(dir, 'init', '--theme', 'plaid');
   assert.equal(bad.status, 1);
   assert.match(bad.stderr, /unknown theme "plaid". Available: neutral, blue/);
+});
+
+// An MCP session: the server on stdio, newline-delimited JSON-RPC; resolves with every reply by id.
+async function mcpSession(cwd, messages) {
+  const child = spawn('node', [cli, 'mcp', '--registry', registry, '--skip-install'], { cwd });
+  let stdout = '';
+  child.stdout.on('data', (d) => (stdout += d));
+  for (const m of messages) child.stdin.write((typeof m === 'string' ? m : JSON.stringify({ jsonrpc: '2.0', ...m })) + '\n');
+  child.stdin.end();
+  await new Promise((done) => child.on('close', done));
+  const lines = stdout.trim().split('\n');
+  const replies = lines.map((l) => JSON.parse(l)); // every stdout line is JSON-RPC
+  return Object.fromEntries(replies.map((r) => [r.id, r]));
+}
+const call = (id, name, args = {}) => ({ id, method: 'tools/call', params: { name, arguments: args } });
+
+test('mcp: handshake, tools, listing and reading a component (docs and source), outside a project too', async () => {
+  const r = await mcpSession(mkdtempSync(join(tmpdir(), 'fizzy-mcp-')), [
+    { id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 't', version: '1' } } },
+    { method: 'notifications/initialized' },
+    { id: 2, method: 'tools/list' },
+    call(3, 'list_components'),
+    call(4, 'get_component', { name: 'select' }),
+    { id: 5, method: 'nope' },
+    call(6, 'rm_rf'),
+    'not json',
+  ]);
+  assert.equal(r[1].result.protocolVersion, '2025-06-18');
+  assert.equal(r[1].result.serverInfo.name, 'fizzy-ui');
+  assert.deepEqual(r[2].result.tools.map((t) => t.name), ['list_components', 'get_component', 'add_components']);
+  assert.match(r[3].result.content[0].text, /^select: Pick one value from a popup list\.$/m);
+  const select = r[4].result.content[0].text;
+  assert.match(select, /^# Select/);
+  assert.match(select, /## select\.ts\n\n```ts\nimport/);
+  assert.match(select, /## select\.harness\.ts/);
+  assert.equal(r[5].error.code, -32601);
+  assert.equal(r[6].error.code, -32602);
+  assert.equal(r[null].error.code, -32700);
+});
+
+test('mcp: add_components writes into the project, never overwrites, and refuses paths outside it and unknown names', async () => {
+  const dir = project();
+  mkdirSync(join(dir, 'src/app/ui'), { recursive: true });
+  writeFileSync(join(dir, 'src/app/ui/tabs.ts'), '// mine');
+  const outside = mkdtempSync(join(tmpdir(), 'fizzy-outside-'));
+  symlinkSync(outside, join(dir, 'link'));
+  const r = await mcpSession(dir, [
+    call(1, 'add_components', { names: ['select', 'tabs'], harness: true }),
+    call(2, 'add_components', { names: ['badge'], path: '../elsewhere' }),
+    call(3, 'add_components', { names: ['badge'], path: '/tmp' }),
+    call(4, 'add_components', { names: ['badge'], path: 'link/ui' }),
+    call(5, 'add_components', { names: ['badge', 'nope'] }),
+    call(6, 'get_component', { name: '../../package' }),
+    call(7, 'add_components', { names: ['badge'], path: `../${basename(dir)}/src/app/lib` }), // out and back in
+  ]);
+  assert.ok(!r[1].result.isError, r[1].result.content[0].text);
+  assert.match(r[1].result.content[0].text, /write src\/app\/ui\/select\.ts/);
+  assert.match(r[1].result.content[0].text, /skip src\/app\/ui\/tabs\.ts/);
+  assert.equal(read(dir, 'src/app/ui/select.ts'), read(registry, 'ui/select.ts'));
+  assert.ok(existsSync(join(dir, 'src/app/ui/select.harness.ts')));
+  assert.equal(read(dir, 'src/app/ui/tabs.ts'), '// mine');
+  for (const id of [2, 3, 4]) {
+    assert.equal(r[id].result.isError, true);
+    assert.match(r[id].result.content[0].text, /inside the project/);
+  }
+  assert.ok(!existsSync(join(outside, 'ui')));
+  assert.equal(r[5].result.isError, true);
+  assert.match(r[5].result.content[0].text, /unknown component "nope"/);
+  assert.ok(!existsSync(join(dir, 'src/app/ui/badge.ts')), 'nothing written when a name is unknown');
+  assert.equal(r[6].result.isError, true);
+  assert.ok(!r[7].result.isError, r[7].result.content[0].text);
+  assert.ok(existsSync(join(dir, 'src/app/lib/badge.ts')));
+  assert.ok(existsSync(join(dir, '.fizzy-ui/src/app/lib/badge.ts')), 'the base copy stays inside the project too');
+});
+
+test('install refuses a dependency name that is not an npm package name (a registry from a URL is not trusted code)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fizzy-reg-'));
+  mkdirSync(join(root, 'ui'));
+  writeFileSync(join(root, 'ui/x.ts'), '// x');
+  writeFileSync(join(root, 'registry.json'), JSON.stringify({ items: { x: { files: ['ui/x.ts'], dependencies: ['left-pad; touch pwned'] } } }));
+  const dir = project();
+  const out = spawnSync('node', [cli, 'add', 'x', '--registry', root], { cwd: dir, encoding: 'utf8' });
+  assert.equal(out.status, 1);
+  assert.match(out.stderr, /refusing to install "left-pad; touch pwned"/);
+  assert.ok(!existsSync(join(dir, 'pwned')));
 });

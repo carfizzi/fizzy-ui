@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // fizzy-ui CLI: copies component source from a registry into your Angular project (shadcn-style).
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { basename, dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve, sep } from 'node:path';
+import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { execSync, spawnSync } from 'node:child_process';
 import { parseArgs } from 'node:util';
@@ -19,7 +20,11 @@ const { values: opts, positionals } = parseArgs({
     'skip-install': { type: 'boolean', default: false },
   },
 });
-const [command, ...names] = positionals;
+const [command, ...positionalNames] = positionals;
+let names = positionalNames;
+// Progress lines: the console, or the result of an MCP tool call (stdout then carries only JSON-RPC).
+let out = (line) => console.log(line);
+let mcpMode = false;
 
 // Bundled registry when published, the repo's ./registry in development, or --registry <dir|url>.
 const base = opts.registry ?? [join(here, 'registry'), join(here, '../registry')].find(existsSync);
@@ -44,11 +49,16 @@ function install(deps, dev = false) {
   if (!missing.length) return;
   // @angular/aria and @angular/cdk must match the project's Angular, not be the latest
   const major = angularMajor();
+  // The names come from the registry, which --registry can point at a URL: never let one reach the shell as code.
+  const bad = missing.find((d) => !/^(@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*$/i.test(d));
+  if (bad) throw new Error(`refusing to install "${bad}": not an npm package name`);
   const specs = missing.map((d) => (major && d.startsWith('@angular/') ? `${d}@${major}` : d));
   const pm = existsSync('pnpm-lock.yaml') ? 'pnpm' : existsSync('yarn.lock') ? 'yarn' : 'npm';
   const cmd = `${pm} ${pm === 'npm' ? 'install' : 'add'} ${dev ? '-D ' : ''}${specs.join(' ')}`;
-  console.log(`> ${cmd}${opts['skip-install'] ? ' (skipped)' : ''}`);
-  if (!opts['skip-install']) execSync(cmd, { stdio: 'inherit' });
+  out(`> ${cmd}${opts['skip-install'] ? ' (skipped)' : ''}`);
+  if (opts['skip-install']) return;
+  if (mcpMode) out(execSync(cmd, { stdio: 'pipe', encoding: 'utf8' }));
+  else execSync(cmd, { stdio: 'inherit' });
 }
 
 // fizzy-ui's major is the Angular major its components are written for.
@@ -56,7 +66,7 @@ function checkAngular() {
   const ours = JSON.parse(readFileSync(join(here, 'package.json'), 'utf8')).version.split('.')[0];
   const theirs = angularMajor();
   if (theirs && theirs !== ours)
-    console.warn(`warning: this project uses Angular ${theirs}; fizzy-ui ${ours} is for Angular ${ours} (try npx fizzy-ui@${theirs})`);
+    (mcpMode ? out : console.warn)(`warning: this project uses Angular ${theirs}; fizzy-ui ${ours} is for Angular ${ours} (try npx fizzy-ui@${theirs})`);
 }
 
 // .fizzy-ui/<target> keeps the registry version a component file was last written from: the base
@@ -69,10 +79,10 @@ function put(file, content) {
 }
 
 function write(target, content, keepBase = false) {
-  if (existsSync(target) && !opts.overwrite) return console.log(`skip ${target} (exists, use --overwrite)`);
+  if (existsSync(target) && !opts.overwrite) return out(`skip ${target} (exists, use --overwrite)`);
   put(target, content);
   if (keepBase) put(baseOf(target), content);
-  console.log(`write ${target}`);
+  out(`write ${target}`);
 }
 
 function item(registry, name) {
@@ -96,7 +106,7 @@ async function selection() {
     for (const file of testing) if (opts.harness || existsSync(join(opts.path, basename(file)))) files.set(join(opts.path, basename(file)), file);
     dependencies.forEach((d) => deps.add(d));
   }
-  if (!files.size) console.log(`no fizzy-ui components in ${opts.path} (use --path)`);
+  if (!files.size) out(`no fizzy-ui components in ${opts.path} (use --path)`);
   return { files, deps };
 }
 
@@ -141,7 +151,7 @@ async function init() {
     // An existing theme keeps your other edits: only the preset's tokens change.
     const current = existsSync('src/fizzy.css') && !opts.overwrite ? readFileSync('src/fizzy.css', 'utf8') : theme;
     put('src/fizzy.css', applyTheme(current, theme, presets, opts.theme));
-    console.log(`theme ${opts.theme}: src/fizzy.css`);
+    out(`theme ${opts.theme}: src/fizzy.css`);
   } else write('src/fizzy.css', theme);
   const styles = 'src/styles.css';
   const css = existsSync(styles) ? readFileSync(styles, 'utf8') : '';
@@ -171,20 +181,20 @@ async function diff() {
   const { files } = await selection();
   for (const [target, file] of files) {
     if (!existsSync(target)) {
-      console.log(`${target}: not added`);
+      out(`${target}: not added`);
       continue;
     }
     const theirs = await read(file);
     if (readFileSync(target, 'utf8') === theirs) {
-      console.log(`${target}: up to date`);
+      out(`${target}: up to date`);
       continue;
     }
     const other = temp(file, theirs);
     const color = `--color=${process.stdout.isTTY ? 'always' : 'never'}`;
-    const out = spawnSync('git', ['diff', '--no-index', '--no-prefix', color, '--', target, other], { encoding: 'utf8' });
-    if (out.error) console.log(`${target}: differs from the registry (install git to see how)`);
+    const result = spawnSync('git', ['diff', '--no-index', '--no-prefix', color, '--', target, other], { encoding: 'utf8' });
+    if (result.error) out(`${target}: differs from the registry (install git to see how)`);
     // the headers name the temp file, with or without its leading slash
-    else process.stdout.write(out.stdout.replaceAll(other, `registry/${basename(file)}`).replaceAll(other.slice(1), `registry/${basename(file)}`));
+    else out(result.stdout.replaceAll(other, `registry/${basename(file)}`).replaceAll(other.slice(1), `registry/${basename(file)}`).trimEnd());
   }
 }
 
@@ -199,38 +209,167 @@ async function update() {
     const old = existsSync(base) ? readFileSync(base, 'utf8') : undefined;
     if (mine === theirs) {
       put(base, theirs);
-      console.log(`${target}: up to date`);
+      out(`${target}: up to date`);
     } else if (mine !== undefined && old === theirs) {
-      console.log(`${target}: kept your changes (nothing new in the registry)`);
+      out(`${target}: kept your changes (nothing new in the registry)`);
     } else if (mine === undefined || mine === old || opts.overwrite) {
       put(target, theirs);
       put(base, theirs);
-      console.log(`update ${target}`);
+      out(`update ${target}`);
     } else if (old === undefined) {
-      console.log(`${target}: you changed it and there is no base to merge from (added before this version). ` +
+      out(`${target}: you changed it and there is no base to merge from (added before this version). ` +
         `See the changes with "fizzy-ui diff", or replace it with "fizzy-ui update <name> --overwrite".`);
     } else {
       // git merge-file: exit status = number of conflicts (at most 127), above that an error
       const args = ['merge-file', '-p', '-L', 'yours', '-L', 'base', '-L', 'registry', target, temp(file, old), temp(file, theirs)];
-      const out = spawnSync('git', args, { encoding: 'utf8' });
-      if (out.error || out.status === null || out.status > 127) {
-        console.log(`${target}: you changed it; merging needs git. See "fizzy-ui diff", or use --overwrite.`);
+      const result = spawnSync('git', args, { encoding: 'utf8' });
+      if (result.error || result.status === null || result.status > 127) {
+        out(`${target}: you changed it; merging needs git. See "fizzy-ui diff", or use --overwrite.`);
         continue;
       }
-      put(target, out.stdout);
+      put(target, result.stdout);
       put(base, theirs);
-      console.log(out.status ? `merge ${target}: ${out.status} conflict(s), marked with <<<<<<< yours / >>>>>>> registry` : `merge ${target}`);
+      out(result.status ? `merge ${target}: ${result.status} conflict(s), marked with <<<<<<< yours / >>>>>>> registry` : `merge ${target}`);
     }
   }
   install([...deps]);
 }
 
-const commands = { init, add, diff, update, list: async () => console.log(Object.keys(JSON.parse(await read('registry.json')).items).join('\n')) };
+// MCP server on stdio (newline-delimited JSON-RPC 2.0): agents list, read and add components.
+// The agent picks only names from the registry and a folder inside the project; it never overwrites a file.
+const PROTOCOLS = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'];
+const TOOLS = [
+  {
+    name: 'list_components',
+    description: 'List the fizzy-ui components (accessible Angular components on @angular/aria, styled with Tailwind) with a one-line description each.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'get_component',
+    description: 'One component: its docs (install, usage example, keyboard, accessibility, testing) and the full source of its files.',
+    inputSchema: { type: 'object', properties: { name: { type: 'string', description: 'A name from list_components' } }, required: ['name'] },
+  },
+  {
+    name: 'add_components',
+    description: 'Copy components into the Angular project the server runs in (default folder src/app/ui) and install their npm dependencies. Existing files are kept, never overwritten.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        names: { type: 'array', items: { type: 'string' }, minItems: 1, description: 'Names from list_components' },
+        path: { type: 'string', description: 'Folder inside the project (default src/app/ui)' },
+        harness: { type: 'boolean', description: 'Also copy the Angular CDK test harnesses' },
+      },
+      required: ['names'],
+    },
+  },
+];
+
+// The Markdown docs: bundled in the package (docs/), or the repo's public/ in development.
+const docsDir = [join(here, 'docs'), join(here, '../public')].find((d) => existsSync(join(d, 'llms.txt')));
+const docOf = (name) => {
+  const file = docsDir && /^[a-z0-9-]+$/.test(name) ? join(docsDir, 'components', `${name}.md`) : '';
+  return file && existsSync(file) ? readFileSync(file, 'utf8') : '';
+};
+
+// Whether `path` stays inside the project, following symlinks: its deepest existing folder decides.
+function insideProject(path) {
+  const root = realpathSync('.');
+  let dir = resolve(path);
+  const rest = [];
+  while (!existsSync(dir)) {
+    rest.unshift(basename(dir));
+    dir = dirname(dir);
+  }
+  const real = join(realpathSync(dir), ...rest);
+  return real === root || real.startsWith(root + sep);
+}
+
+async function callTool(name, args) {
+  const registry = JSON.parse(await read('registry.json'));
+  if (name === 'list_components')
+    return Object.keys(registry.items)
+      .map((n) => `${n}: ${/^> (.*)$/m.exec(docOf(n))?.[1] ?? ''}`.trimEnd())
+      .join('\n');
+  if (name === 'get_component') {
+    const found = item(registry, String(args.name));
+    const files = [...found.files, ...(found.testing ?? [])];
+    const sources = await Promise.all(files.map(async (f) => `## ${basename(f)}\n\n\`\`\`ts\n${(await read(f)).trimEnd()}\n\`\`\``));
+    return [docOf(args.name) || `# ${args.name}`, ...sources].join('\n\n');
+  }
+  if (name === 'add_components') {
+    if (!existsSync('package.json')) throw new Error(`no package.json in ${process.cwd()}: start the MCP server in your Angular project`);
+    const list = args.names;
+    if (!Array.isArray(list) || !list.length || !list.every((n) => typeof n === 'string')) throw new Error('names: a non-empty list of component names');
+    const given = args.path === undefined ? 'src/app/ui' : String(args.path);
+    if (!insideProject(given)) throw new Error(`path must be a folder inside the project: ${given}`);
+    // Normalized: a path that climbs out and back in ('../../proj/x') would put the .fizzy-ui/ base copy outside.
+    const path = relative(process.cwd(), resolve(given));
+    for (const n of list) item(registry, n); // all known before anything is written
+    const saved = { names, path: opts.path, harness: opts.harness, overwrite: opts.overwrite };
+    Object.assign(opts, { path, harness: args.harness === true, overwrite: false });
+    names = list;
+    try {
+      await add();
+    } finally {
+      names = saved.names;
+      Object.assign(opts, { path: saved.path, harness: saved.harness, overwrite: saved.overwrite });
+    }
+    return '';
+  }
+  throw new Error(`unknown tool: ${name}`);
+}
+
+async function mcp() {
+  mcpMode = true;
+  const version = JSON.parse(readFileSync(join(here, 'package.json'), 'utf8')).version;
+  const send = (message) => process.stdout.write(JSON.stringify(message) + '\n');
+  const handle = async (line) => {
+    if (!line.trim()) return;
+    let message;
+    try {
+      message = JSON.parse(line);
+    } catch {
+      return send({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } });
+    }
+    const { id, method, params } = message;
+    const reply = (result) => send({ jsonrpc: '2.0', id, result });
+    const error = (code, text) => send({ jsonrpc: '2.0', id, error: { code, message: text } });
+    if (id === undefined) return; // a notification (initialized, cancelled…): nothing to answer
+    if (method === 'initialize')
+      return reply({
+        protocolVersion: PROTOCOLS.includes(params?.protocolVersion) ? params.protocolVersion : PROTOCOLS[0],
+        capabilities: { tools: {} },
+        serverInfo: { name: 'fizzy-ui', version },
+        instructions: 'fizzy-ui copies accessible Angular components into the project (src/app/ui/), where the user owns and edits them. Read a component with get_component before using it; each file exports FZ_<NAME> for the imports of a standalone component.',
+      });
+    if (method === 'ping') return reply({});
+    if (method === 'tools/list') return reply({ tools: TOOLS });
+    if (method !== 'tools/call') return error(-32601, `Method not found: ${method}`);
+    if (!TOOLS.some((t) => t.name === params?.name)) return error(-32602, `Unknown tool: ${params?.name}`);
+    const lines = [];
+    out = (text) => lines.push(String(text));
+    try {
+      const text = await callTool(params.name, params.arguments ?? {});
+      reply({ content: [{ type: 'text', text: [text, ...lines].filter(Boolean).join('\n') }] });
+    } catch (e) {
+      reply({ content: [{ type: 'text', text: [...lines, e.message].join('\n') }], isError: true });
+    }
+  };
+  // One message at a time: a tool call finishes before the next starts.
+  let queue = Promise.resolve();
+  const input = createInterface({ input: process.stdin });
+  input.on('line', (line) => (queue = queue.then(() => handle(line))));
+  await new Promise((done) => input.on('close', done));
+  await queue;
+}
+
+const commands = { init, add, diff, update, mcp, list: async () => out(Object.keys(JSON.parse(await read('registry.json')).items).join('\n')) };
 if (!commands[command]) {
-  console.log('usage: fizzy-ui <init|add|diff|update|list> [names...] [--path src/app/ui] [--registry dir|url] [--overwrite] [--harness] [--theme name]');
+  console.log('usage: fizzy-ui <init|add|diff|update|list|mcp> [names...] [--path src/app/ui] [--registry dir|url] [--overwrite] [--harness] [--theme name]');
   process.exit(command ? 1 : 0);
 }
-if (!existsSync(resolve('package.json'))) throw new Error('run fizzy-ui from your Angular project root');
+// The MCP server checks for a project when a tool needs one: listing and reading work anywhere.
+if (command !== 'mcp' && !existsSync(resolve('package.json'))) throw new Error('run fizzy-ui from your Angular project root');
 commands[command]().catch((e) => {
   console.error(e.message);
   process.exit(1);

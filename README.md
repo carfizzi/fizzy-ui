@@ -33,7 +33,7 @@ npx fizzy-ui add button dialog tabs
 - **Accessible by default.** Keyboard, focus and ARIA come from Angular Aria and the CDK, following the WAI-ARIA patterns. Every component has behavior tests, and every demo is checked with axe.
 - **The code is yours.** Like [shadcn/ui](https://ui.shadcn.com), the CLI copies the source into your app. Nothing to upgrade at runtime and no wrapper to fight: change a component by editing its file.
 - **Modern Angular.** Standalone components, signals, zoneless-ready. Two-way bindings with `[(value)]`.
-- **Ready for AI assistants.** [`llms.txt`](https://carfizzi.github.io/fizzy-ui/llms.txt) indexes every component, and each page is also served as Markdown (install command, usage, keyboard, accessibility).
+- **Ready for AI assistants.** An MCP server (`npx fizzy-ui mcp`) lets coding agents list, read and add components; [`llms.txt`](https://carfizzi.github.io/fizzy-ui/llms.txt) indexes every component, and each page is also served as Markdown (install command, usage, keyboard, accessibility).
 - **Testable.** `npx fizzy-ui add select --harness` also copies an [Angular CDK test harness](https://material.angular.dev/cdk/test-harnesses/overview) for every interactive component, so your tests drive it like a user: `await (await loader.getHarness(FzSelectHarness)).clickOptions({ text: 'Kiwi' })`.
 - **Works with your forms.** Every control binds with Signal Forms, Reactive Forms or `ngModel`, including value, disabled and touched state, with no ControlValueAccessor. Put it in `fzField` and the error is announced and marks the control `aria-invalid`.
 - **Themeable.** Colors, radius, sizes and motion are CSS variables in one file, with dark mode built in. `npx fizzy-ui init --theme blue` sets a preset (neutral, blue, green, rose, violet, orange), and the [theme editor](https://carfizzi.github.io/fizzy-ui/theming) builds your own; every preset meets WCAG AA contrast, checked by the tests.
@@ -123,6 +123,7 @@ See [Forms](https://carfizzi.github.io/fizzy-ui/forms) in the docs.
 | `fizzy-ui add <names...>` | Copy components into your project and install their dependencies |
 | `fizzy-ui diff [names...]` | Show what changed in the registry for the components you have |
 | `fizzy-ui update [names...]` | Bring those changes in, keeping your edits (three-way merge) |
+| `fizzy-ui mcp` | Run the MCP server for coding agents (see below) |
 | `fizzy-ui list` | Print the available components |
 
 | Option | |
@@ -133,6 +134,20 @@ See [Forms](https://carfizzi.github.io/fizzy-ui/forms) in the docs.
 | `--theme <name>` | `init`: set a color preset in `src/fizzy.css` (neutral, blue, green, rose, violet, orange) |
 | `--skip-install` | Do not install npm dependencies |
 | `--registry <dir\|url>` | Read components from another registry |
+
+### MCP server
+
+`fizzy-ui mcp` speaks the [Model Context Protocol](https://modelcontextprotocol.io) on stdio, so a coding agent (Claude Code, Cursor, VS Code…) can use fizzy-ui: `list_components`, `get_component` (docs and full source) and `add_components` (into the project, never overwriting a file, never outside it). Start it in your Angular project, with the fizzy-ui major that matches your Angular:
+
+```sh
+claude mcp add fizzy-ui -- npx -y fizzy-ui@22 mcp
+```
+
+or, in `.mcp.json` (Cursor and others use the same shape):
+
+```json
+{ "mcpServers": { "fizzy-ui": { "command": "npx", "args": ["-y", "fizzy-ui@22", "mcp"] } } }
+```
 
 ## Customizing
 

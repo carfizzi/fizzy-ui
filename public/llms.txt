@@ -81,3 +81,4 @@ A CLI copies each component's source into the app (`src/app/ui/`); the user owns
 ## Optional
 
 - [Source code](https://github.com/carfizzi/fizzy-ui): the registry (`registry/ui/*.ts`) is what `add` copies
+- MCP server: `npx fizzy-ui mcp` (stdio) offers list_components, get_component and add_components
