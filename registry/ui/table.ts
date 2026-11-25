@@ -17,7 +17,7 @@ export interface FzSort {
       'w-full caption-bottom border-collapse text-sm ' +
       '[&_thead_tr]:border-b [&_tbody_tr]:border-b [&_tbody_tr:last-child]:border-0 [&_tfoot]:border-t [&_tfoot]:bg-muted/50 [&_tfoot]:font-medium ' +
       '[&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-muted/50 ' +
-      '[&_th]:h-10 [&_th]:px-2 [&_th]:text-left [&_th]:align-middle [&_th]:font-medium [&_th]:whitespace-nowrap [&_th]:text-muted-foreground ' +
+      '[&_th]:h-10 [&_th]:px-2 [&_th]:text-start [&_th]:align-middle [&_th]:font-medium [&_th]:whitespace-nowrap [&_th]:text-muted-foreground ' +
       '[&_td]:p-2 [&_td]:align-middle [&_caption]:mt-4 [&_caption]:text-muted-foreground',
   },
 })

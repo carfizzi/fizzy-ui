@@ -86,7 +86,7 @@ export class FzCommandItem<V = unknown> {
                   >
                     {{ item.text() }}
                     @if (item.shortcut(); as shortcut) {
-                      <span class="ml-auto text-xs tracking-widest text-muted-foreground">{{ shortcut }}</span>
+                      <span class="ms-auto text-xs tracking-widest text-muted-foreground">{{ shortcut }}</span>
                     }
                   </div>
                 }

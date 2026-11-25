@@ -99,12 +99,12 @@ export class FzSidebarLayout {
     '[attr.aria-label]': 'layout.mobile() ? ariaLabel() : null',
     '(click)': 'onClick($event)',
     class:
-      'flex h-full shrink-0 flex-col overflow-hidden border-r bg-background ' +
+      'flex h-full shrink-0 flex-col overflow-hidden border-e bg-background ' +
       'motion-safe:transition-[width,translate,box-shadow] motion-safe:duration-(--fz-duration-popup) motion-safe:ease-spring ' +
       // wide screens: a column that collapses to nothing
-      'md:w-64 md:data-[state=closed]:w-0 md:data-[state=closed]:border-r-0 ' +
-      // phones: a drawer from the left
-      'max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-50 max-md:w-72 max-md:max-w-[85vw] max-md:shadow-lg max-md:data-[state=closed]:-translate-x-full max-md:data-[state=closed]:shadow-none',
+      'md:w-64 md:data-[state=closed]:w-0 md:data-[state=closed]:border-e-0 ' +
+      // phones: a drawer from the start side (left, or right in RTL)
+      'max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:z-50 max-md:w-72 max-md:max-w-[85vw] max-md:shadow-lg max-md:data-[state=closed]:-translate-x-full rtl:max-md:data-[state=closed]:translate-x-full max-md:data-[state=closed]:shadow-none',
   },
   // A fixed-width inside, so the content doesn't reflow while the column collapses.
   template: `<div class="flex h-full w-64 flex-col gap-4 overflow-y-auto p-3 max-md:w-full"><ng-content /></div>`,
@@ -149,7 +149,7 @@ export class FzSidebarGroupLabel {}
   selector: 'a[fzSidebarItem], button[fzSidebarItem]',
   host: {
     class:
-      'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm outline-none transition-colors hover:bg-accent/60 ' +
+      'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-start text-sm outline-none transition-colors hover:bg-accent/60 ' +
       'focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-accent aria-[current=page]:font-medium aria-[current=page]:text-accent-foreground',
   },
 })

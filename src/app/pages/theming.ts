@@ -5,9 +5,10 @@ import { FZ_INPUT } from '../../../registry/ui/input';
 import { FZ_SELECT } from '../../../registry/ui/select';
 import { FZ_INPUT_GROUP } from '../../../registry/ui/input-group';
 import { FZ_TOGGLE, FZ_TOGGLE_GROUP } from '../../../registry/ui/toggle';
+import { RtlExample } from './rtl-example';
 
 @Component({
-  imports: [CodeBlock, FZ_BUTTON, FZ_INPUT, FZ_SELECT, FZ_INPUT_GROUP, FZ_TOGGLE, FZ_TOGGLE_GROUP],
+  imports: [CodeBlock, RtlExample, FZ_BUTTON, FZ_INPUT, FZ_SELECT, FZ_INPUT_GROUP, FZ_TOGGLE, FZ_TOGGLE_GROUP],
   template: `
     <article class="flex max-w-2xl flex-col gap-6">
       <h1 class="text-3xl font-bold tracking-tight">Theming</h1>
@@ -80,6 +81,20 @@ import { FZ_TOGGLE, FZ_TOGGLE_GROUP } from '../../../registry/ui/toggle';
         <li><code class="rounded bg-muted px-1">--fz-spring</code> and <code class="rounded bg-muted px-1">--fz-spring-snappy</code> are the curves (bounce 0 and 0.15).</li>
         <li><code class="rounded bg-muted px-1">--fz-duration-*</code> set the timing. Set one to <code class="rounded bg-muted px-1">0s</code> to turn that motion off.</li>
         <li>With Reduce Motion on, scale and slide become fades, bounce goes away and the accordion changes at once.</li>
+      </ul>
+
+      <h2 class="mt-4 text-xl font-semibold tracking-tight">Right-to-left</h2>
+      <p>
+        Components use logical properties (start and end, not left and right), so they follow the text direction: rows,
+        padding, borders, chevrons, the switch thumb, the slider fill, popups and the tab highlight all mirror. Set
+        <code class="rounded bg-muted px-1">dir="rtl"</code> on <code class="rounded bg-muted px-1">&lt;html&gt;</code>. For one part of
+        a page, import <code class="rounded bg-muted px-1">Dir</code> from <code class="rounded bg-muted px-1">&#64;angular/cdk/bidi</code>
+        and put <code class="rounded bg-muted px-1">dir="rtl"</code> on its container, so the arrow keys and popups follow it too.
+      </p>
+      <div class="rounded-lg border p-4"><app-rtl-example /></div>
+      <ul class="list-disc space-y-1 pl-6 text-sm text-muted-foreground">
+        <li>Arrow keys follow the direction: in a right-to-left tab list or toolbar, Left moves to the next item.</li>
+        <li>A sheet's <code class="rounded bg-muted px-1">side</code> is physical (<code class="rounded bg-muted px-1">left</code>, <code class="rounded bg-muted px-1">right</code>): pick it from the direction.</li>
       </ul>
 
       <h2 class="mt-4 text-xl font-semibold tracking-tight">The file</h2>

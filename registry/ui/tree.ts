@@ -72,7 +72,7 @@ export class FzTree<V = unknown> {
       '[&:focus-visible>:first-child]:ring-2 [&:focus-visible>:first-child]:ring-ring ' +
       '[&[aria-selected=true]>:first-child]:bg-accent [&[aria-selected=true]>:first-child]:font-medium ' +
       '[&[aria-expanded=true]>:first-child>svg]:rotate-90 [&[aria-disabled=true]>:first-child]:opacity-50',
-    row: 'flex h-8 cursor-default select-none items-center gap-1.5 rounded-sm pr-2 hover:bg-accent/60',
+    row: 'flex h-8 cursor-default select-none items-center gap-1.5 rounded-sm pe-2 hover:bg-accent/60',
   };
 }
 

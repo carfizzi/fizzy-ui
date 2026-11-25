@@ -29,7 +29,7 @@ let nextId = 0;
             [id]="s.headerId"
             [attr.aria-current]="i === step() ? 'step' : null"
             [attr.aria-disabled]="!open(i) || null"
-            class="group flex cursor-pointer items-center gap-2 rounded-md p-1 pr-2 font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=step]:text-foreground aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:text-muted-foreground"
+            class="group flex cursor-pointer items-center gap-2 rounded-md p-1 pe-2 font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=step]:text-foreground aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:text-muted-foreground"
             (click)="go(i)"
           >
             <span
@@ -47,7 +47,7 @@ let nextId = 0;
             }
           </button>
           @if (!last) {
-            <span aria-hidden="true" class="h-px min-w-4 flex-1 bg-border in-data-[orientation=vertical]:ml-4.5 in-data-[orientation=vertical]:h-4 in-data-[orientation=vertical]:w-px in-data-[orientation=vertical]:min-w-0 in-data-[orientation=vertical]:flex-none"></span>
+            <span aria-hidden="true" class="h-px min-w-4 flex-1 bg-border in-data-[orientation=vertical]:ms-4.5 in-data-[orientation=vertical]:h-4 in-data-[orientation=vertical]:w-px in-data-[orientation=vertical]:min-w-0 in-data-[orientation=vertical]:flex-none"></span>
           }
         </li>
       }

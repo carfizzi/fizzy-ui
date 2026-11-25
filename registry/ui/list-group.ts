@@ -15,7 +15,7 @@ export class FzListGroup {}
   selector: '[fzListGroupItem]',
   host: {
     class:
-      'flex w-full items-center gap-3 px-4 py-3 text-left outline-none ' +
+      'flex w-full items-center gap-3 px-4 py-3 text-start outline-none ' +
       // only links and buttons react to the pointer
       '[a&]:cursor-pointer [button&]:cursor-pointer [a&]:hover:bg-accent [button&]:hover:bg-accent [a&]:transition-colors [button&]:transition-colors ' +
       'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset ' +

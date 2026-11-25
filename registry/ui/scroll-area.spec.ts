@@ -10,8 +10,14 @@ class Host {
   readonly label = signal<string | undefined>('Tags');
 }
 
+@Component({
+  imports: [FzScrollArea],
+  template: `<div dir="rtl"><fz-scroll-area orientation="horizontal" aria-label="Colors"><p>Wide content</p></fz-scroll-area></div>`,
+})
+class RtlHost {}
+
 // jsdom has no layout: give the viewport sizes by hand.
-function size(el: HTMLElement, sizes: { scrollHeight: number; clientHeight: number; scrollTop?: number }) {
+function size(el: HTMLElement, sizes: Record<string, number>) {
   for (const [k, v] of Object.entries(sizes)) Object.defineProperty(el, k, { value: v, configurable: true, writable: true });
 }
 
@@ -42,5 +48,19 @@ describe('FzScrollArea', () => {
     fixture.componentInstance.label.set(undefined);
     await fixture.whenStable();
     expect(viewport.hasAttribute('role')).toBe(false);
+  });
+
+  it('sideways in RTL, where scrollLeft runs from 0 down to minus the overflow, the fades follow the reading direction', async () => {
+    const fixture = TestBed.createComponent(RtlHost);
+    await fixture.whenStable();
+    const viewport = fixture.nativeElement.querySelector('[data-viewport]') as HTMLElement;
+    size(viewport, { scrollWidth: 600, clientWidth: 200, scrollLeft: 0 });
+    viewport.dispatchEvent(new Event('scroll'));
+    await fixture.whenStable();
+    expect([viewport.hasAttribute('data-more-start'), viewport.hasAttribute('data-more-end')]).toEqual([false, true]);
+    size(viewport, { scrollLeft: -400 });
+    viewport.dispatchEvent(new Event('scroll'));
+    await fixture.whenStable();
+    expect([viewport.hasAttribute('data-more-start'), viewport.hasAttribute('data-more-end')]).toEqual([true, false]);
   });
 });

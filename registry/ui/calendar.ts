@@ -272,7 +272,7 @@ function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
       [attr.aria-expanded]="open()"
       [attr.aria-controls]="open() ? popupId : null"
       [disabled]="disabled()"
-      class="flex h-(--fz-h) w-full cursor-pointer items-center gap-2 rounded-md border bg-background px-(--fz-field-px) text-left text-(length:--fz-text) shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:focus-visible:ring-destructive"
+      class="flex h-(--fz-h) w-full cursor-pointer items-center gap-2 rounded-md border bg-background px-(--fz-field-px) text-start text-(length:--fz-text) shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:focus-visible:ring-destructive"
       (click)="toggle()"
       (blur)="onFocusOut($event)"
     >
@@ -290,7 +290,7 @@ function leave(el: HTMLElement, done: () => void): (() => void) | undefined {
         [id]="popupId"
         role="dialog"
         aria-label="Choose date"
-        class="rounded-md border bg-background p-3 text-foreground shadow-md animate-fz-popup origin-top-left in-[.fz-above]:origin-bottom-left data-closing:animate-fz-fade-out"
+        class="rounded-md border bg-background p-3 text-foreground shadow-md animate-fz-popup origin-top-left in-[.fz-above]:origin-bottom-left rtl:origin-top-right rtl:in-[.fz-above]:origin-bottom-right data-closing:animate-fz-fade-out"
         (keydown.escape)="close(true)"
         (focusout)="onFocusOut($event)"
       >

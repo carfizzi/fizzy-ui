@@ -18,7 +18,7 @@ export class FzAccordion {}
         ngAccordionTrigger
         [panel]="panel"
         [disabled]="disabled()"
-        class="group flex flex-1 items-center justify-between gap-4 py-4 text-left text-sm font-medium outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+        class="group flex flex-1 items-center justify-between gap-4 py-4 text-start text-sm font-medium outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
       >
         {{ title() }}
         <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 shrink-0 text-muted-foreground transition-transform duration-(--fz-duration-popup) ease-spring group-aria-expanded:rotate-180" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6" /></svg>

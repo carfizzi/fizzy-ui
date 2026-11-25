@@ -12,9 +12,9 @@ import { Directive, ElementRef, afterEveryRender, inject } from '@angular/core';
     class:
       'h-5 w-full cursor-pointer appearance-none bg-transparent outline-none disabled:cursor-not-allowed disabled:opacity-50 ' +
       // Chrome / Safari: no progress pseudo, so the fill is a gradient on the track.
-      // shortcut: the gradient runs left to right, so the fill is mirrored in RTL; add rtl: variants if needed.
       '[&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full ' +
       '[&::-webkit-slider-runnable-track]:bg-[linear-gradient(to_right,var(--color-primary)_var(--fz-fill,0%),var(--color-muted)_var(--fz-fill,0%))] ' +
+      'rtl:[&::-webkit-slider-runnable-track]:bg-[linear-gradient(to_left,var(--color-primary)_var(--fz-fill,0%),var(--color-muted)_var(--fz-fill,0%))] ' +
       '[&::-webkit-slider-thumb]:-mt-[5px] [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full ' +
       '[&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:bg-background [&::-webkit-slider-thumb]:shadow-sm ' +
       'focus-visible:[&::-webkit-slider-thumb]:ring-4 focus-visible:[&::-webkit-slider-thumb]:ring-ring/50 ' +

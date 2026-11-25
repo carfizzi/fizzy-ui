@@ -137,7 +137,7 @@ export class FzNavigationMenuLink {}
     '[id]': 'item.contentId',
     '[attr.data-open]': 'item.open()',
     class:
-      'absolute top-full left-0 z-50 mt-2 w-max max-w-[calc(100vw-2rem)] origin-top-left rounded-md border bg-background p-2 text-foreground shadow-md ' +
+      'absolute top-full start-0 z-50 mt-2 w-max max-w-[calc(100vw-2rem)] origin-top-left rtl:origin-top-right rounded-md border bg-background p-2 text-foreground shadow-md ' +
       'animate-fz-popup data-[open=false]:not-data-closing:hidden data-closing:animate-fz-fade-out ' +
       '[&_a]:block [&_a]:rounded-sm [&_a]:px-3 [&_a]:py-2 [&_a]:outline-none [&_a:hover]:bg-accent [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-ring',
   },

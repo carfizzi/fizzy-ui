@@ -19,7 +19,7 @@ describe('FzInputGroup', () => {
     expect(el.querySelector('[fzInputGroupAddon]')!.classList).toContain('text-muted-foreground');
     const input = el.querySelector('input')!;
     expect(input.classList).toContain('bg-transparent');
-    expect(input.classList).toContain('not-first:pl-0');
+    expect(input.classList).toContain('not-first:ps-0');
     expect(input.classList).not.toContain('border');
   });
 });

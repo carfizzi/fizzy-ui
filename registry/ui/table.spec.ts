@@ -22,7 +22,7 @@ describe('FzTable', () => {
     const el: HTMLElement = fixture.nativeElement;
     const [name, age, note] = el.querySelectorAll<HTMLElement>('th');
     const sorts = () => [name, age, note].map((th) => th.getAttribute('aria-sort'));
-    expect(el.querySelector('table')!.classList).toContain('[&_th]:text-left');
+    expect(el.querySelector('table')!.classList).toContain('[&_th]:text-start');
     expect(name.querySelector('button')!.textContent!.trim()).toBe('Name');
     expect(note.querySelector('button')).toBeNull();
     expect(sorts()).toEqual([null, 'descending', null]);

@@ -1,5 +1,6 @@
 import { Component, DestroyRef, Directive, ElementRef, Injector, afterNextRender, computed, effect, inject, input, untracked, viewChild } from '@angular/core';
 import { Menu, MenuBar, MenuItem, MenuTrigger } from '@angular/aria/menu';
+import { Directionality } from '@angular/cdk/bidi';
 import { DomPortal } from '@angular/cdk/portal';
 import {
   ConnectedPosition,
@@ -17,6 +18,8 @@ const SUBMENU: ConnectedPosition[] = [
   { originX: 'end', originY: 'top', overlayX: 'start', overlayY: 'top', offsetX: 4, offsetY: -5 },
   { originX: 'start', originY: 'top', overlayX: 'end', overlayY: 'top', offsetX: -4, offsetY: -5 },
 ];
+// The CDK mirrors start/end in RTL but not offsetX.
+const SUBMENU_RTL = SUBMENU.map((p) => ({ ...p, offsetX: -p.offsetX! }));
 
 /**
  * Exit animation: marks `el` data-closing (its exit keyframes) and inert, then calls `done` once the
@@ -116,7 +119,7 @@ export class FzMenu {
       positionStrategy: createFlexibleConnectedPositionStrategy(this.injector, anchor)
         .withPopoverLocation('inline')
         .withTransformOriginOn(':scope > .cdk-overlay-pane > *')
-        .withPositions(this.isNested() ? SUBMENU : DROPDOWN),
+        .withPositions(!this.isNested() ? DROPDOWN : this.injector.get(Directionality, null)?.value === 'rtl' ? SUBMENU_RTL : SUBMENU),
       scrollStrategy: createRepositionScrollStrategy(this.injector),
     });
     this.overlay.attach(new DomPortal(this.el));
@@ -143,7 +146,7 @@ export class FzMenuTrigger {}
       'flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 outline-none ' +
       'data-[active=true]:bg-accent data-[active=true]:text-accent-foreground aria-expanded:bg-accent ' +
       'aria-disabled:pointer-events-none aria-disabled:opacity-50 ' +
-      "aria-[haspopup=true]:after:ml-auto aria-[haspopup=true]:after:content-['›']",
+      "aria-[haspopup=true]:after:ms-auto aria-[haspopup=true]:after:content-['›'] rtl:aria-[haspopup=true]:after:content-['‹']",
   },
 })
 export class FzMenuItem {

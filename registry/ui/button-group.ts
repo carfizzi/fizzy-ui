@@ -15,7 +15,7 @@ type FzSize = 'xs' | 'sm' | 'md' | 'lg';
     '[attr.data-size]': 'size() ?? null',
     class:
       'inline-flex w-fit items-stretch [&>*]:relative [&>*:focus-visible]:z-10 ' +
-      'data-[orientation=horizontal]:[&>*:not(:first-child)]:-ml-px data-[orientation=horizontal]:[&>*:not(:first-child)]:rounded-l-none data-[orientation=horizontal]:[&>*:not(:last-child)]:rounded-r-none ' +
+      'data-[orientation=horizontal]:[&>*:not(:first-child)]:-ms-px data-[orientation=horizontal]:[&>*:not(:first-child)]:rounded-s-none data-[orientation=horizontal]:[&>*:not(:last-child)]:rounded-e-none ' +
       'data-[orientation=vertical]:flex-col data-[orientation=vertical]:[&>*:not(:first-child)]:-mt-px data-[orientation=vertical]:[&>*:not(:first-child)]:rounded-t-none data-[orientation=vertical]:[&>*:not(:last-child)]:rounded-b-none',
   },
 })

@@ -32,7 +32,7 @@ export class FzInputGroupAddon {}
   selector: 'input[fzInputGroupInput]',
   host: {
     class:
-      'h-full min-w-0 flex-1 bg-transparent px-(--fz-field-px) outline-none placeholder:text-muted-foreground not-first:pl-0 not-last:pr-0 ' +
+      'h-full min-w-0 flex-1 bg-transparent px-(--fz-field-px) outline-none placeholder:text-muted-foreground not-first:ps-0 not-last:pe-0 ' +
       'disabled:cursor-not-allowed',
   },
 })

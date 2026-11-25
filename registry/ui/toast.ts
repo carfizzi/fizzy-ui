@@ -88,7 +88,7 @@ export class FzToaster {
       usePopover: true,
       width: '100%',
       maxWidth: '26rem',
-      positionStrategy: createGlobalPositionStrategy(this.injector).bottom('0').right('0'),
+      positionStrategy: createGlobalPositionStrategy(this.injector).bottom('0').end('0'),
       // the empty part of the region must not catch clicks (CDK's pane style is unlayered: !)
       panelClass: 'pointer-events-none!',
     });
@@ -114,7 +114,7 @@ export class FzToaster {
     @for (t of toaster.toasts(); track t.id) {
       <!-- animate.leave: Angular keeps the toast until its exit animation ends; ! beats animate-fz-toast -->
       <div
-        class="group pointer-events-auto relative flex items-center gap-3 rounded-lg border bg-background p-4 pr-10 text-sm text-foreground shadow-lg animate-fz-toast data-[variant=destructive]:border-destructive"
+        class="group pointer-events-auto relative flex items-center gap-3 rounded-lg border bg-background p-4 pe-10 text-sm text-foreground shadow-lg animate-fz-toast data-[variant=destructive]:border-destructive"
         animate.leave="animate-fz-fade-out!"
         [attr.data-variant]="t.variant"
         (keydown.escape)="close(t.id)"
@@ -137,7 +137,7 @@ export class FzToaster {
         <button
           type="button"
           aria-label="Dismiss"
-          class="absolute top-2 right-2 inline-flex size-6 cursor-pointer items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          class="absolute top-2 end-2 inline-flex size-6 cursor-pointer items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           (click)="close(t.id)"
         >
           <svg viewBox="0 0 16 16" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">

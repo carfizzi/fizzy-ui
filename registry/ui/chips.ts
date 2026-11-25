@@ -89,7 +89,7 @@ export class FzChipListbox<V = unknown> {
     @if (values().length) {
       <ul class="contents">
         @for (tag of values(); track tag) {
-          <li class="inline-flex h-6 items-center gap-1 rounded-full bg-secondary pr-0.5 pl-2.5 text-xs font-medium text-secondary-foreground">
+          <li class="inline-flex h-6 items-center gap-1 rounded-full bg-secondary pe-0.5 ps-2.5 text-xs font-medium text-secondary-foreground">
             {{ tag }}
             <button
               type="button"

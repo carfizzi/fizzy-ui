@@ -28,7 +28,7 @@ import { Component, DestroyRef, ElementRef, afterNextRender, inject, input, sign
       [attr.data-more-end]="more()[1] || null"
       class="min-h-0 flex-1 rounded-[inherit] outline-none [scrollbar-width:thin] [scrollbar-color:color-mix(in_oklab,var(--muted-foreground)_45%,transparent)_transparent]
         data-[orientation=vertical]:overflow-y-auto data-[orientation=horizontal]:overflow-x-auto data-[orientation=horizontal]:overflow-y-hidden
-        [--fz-fade-dir:to_bottom] data-[orientation=horizontal]:[--fz-fade-dir:to_right] [--fz-fade-start:0px] [--fz-fade-end:0px]
+        [--fz-fade-dir:to_bottom] data-[orientation=horizontal]:[--fz-fade-dir:to_right] rtl:data-[orientation=horizontal]:[--fz-fade-dir:to_left] [--fz-fade-start:0px] [--fz-fade-end:0px]
         data-more-start:[--fz-fade-start:1.5rem] data-more-end:[--fz-fade-end:1.5rem]
         [mask-image:linear-gradient(var(--fz-fade-dir),transparent,black_var(--fz-fade-start),black_calc(100%-var(--fz-fade-end)),transparent)]"
       (scroll)="measure()"
@@ -62,8 +62,9 @@ export class FzScrollArea {
 
   protected measure() {
     const el = this.viewport().nativeElement;
+    // In RTL, scrollLeft goes from 0 down to -max.
     const [pos, size, total] =
-      this.orientation() === 'horizontal' ? [el.scrollLeft, el.clientWidth, el.scrollWidth] : [el.scrollTop, el.clientHeight, el.scrollHeight];
+      this.orientation() === 'horizontal' ? [Math.abs(el.scrollLeft), el.clientWidth, el.scrollWidth] : [el.scrollTop, el.clientHeight, el.scrollHeight];
     this.overflows.set(total > size + 1);
     this.more.set([pos > 1, pos + size < total - 1]);
   }

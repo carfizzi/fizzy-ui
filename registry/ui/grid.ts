@@ -37,7 +37,7 @@ export class FzGridRow {}
   ],
   host: {
     class:
-      'h-10 px-2 text-left align-middle outline-none ' +
+      'h-10 px-2 text-start align-middle outline-none ' +
       // Aria keeps one cell active even at rest: show it only while focus is in the grid.
       'group-focus-within/grid:data-[active=true]:ring-2 group-focus-within/grid:data-[active=true]:ring-inset group-focus-within/grid:data-[active=true]:ring-ring ' +
       '[&[role=columnheader]]:font-medium [&[role=columnheader]]:text-muted-foreground ' +
@@ -59,7 +59,7 @@ export class FzGridCell {}
   ],
   host: {
     class:
-      '-ml-1 h-8 w-full rounded-sm bg-transparent px-1 outline-none ' +
+      '-ms-1 h-8 w-full rounded-sm bg-transparent px-1 outline-none ' +
       // the cell ring shows where focus is; this one says "editing"
       'data-[active-control=widget]:ring-2 data-[active-control=widget]:ring-ring',
   },
