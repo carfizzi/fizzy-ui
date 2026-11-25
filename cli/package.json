@@ -1,6 +1,6 @@
 {
   "name": "fizzy-ui",
-  "version": "22.5.0",
+  "version": "22.6.0",
   "description": "shadcn-style Angular components built on @angular/aria. Copy the source, own the code.",
   "keywords": ["angular", "components", "ui", "aria", "accessibility", "tailwind", "shadcn", "cli"],
   "homepage": "https://carfizzi.github.io/fizzy-ui/",
